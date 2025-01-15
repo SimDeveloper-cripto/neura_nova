@@ -1,0 +1,7 @@
+numpy~=2.2.1
+scipy~=1.15.1
+networkx~=3.4.2
+matplotlib~=3.10.0
+torch~=2.5.1
+torchvision~=0.20.1
+torchaudio~=2.5.1
