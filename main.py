@@ -1,10 +1,34 @@
 import torch
 from torchvision import datasets, transforms
 from torch.utils.data import DataLoader
+import matplotlib.pyplot as plt
 
 # TODO: CREA LIBRERIA E SUDDIVIDI GIA' IN MODULI
 # TODO: CREA STRUTTURA PER LO SVILUPPO DI UNA RETE
 # TODO: PROVARE A STAMPARE UN'IMMAGINE
+
+# DEBUG
+def showImage(train_l, index):
+    # Mostra un'immagine
+    data_iter = iter(train_l)
+    images, labels = next(data_iter)
+
+    img = images[index]
+    mean = 0.1307
+    std = 0.3081
+
+    # Riportiamo i pixel ai valori originali
+    img = img * std + mean  # De-normalizza
+
+    # Rimuovi la dimensione del canale per matplotlib (da (1, 28, 28) a (28, 28))
+    img = img.squeeze()
+
+    # Visualizza l'immagine
+    plt.imshow(img, cmap='gray')
+    plt.title(f'Label: {labels[0].item()}')
+    plt.axis('off')  # Rimuove gli assi
+    plt.show()
+
 
 # Conversione delle immagini in tensori
 transform = transforms.Compose([
@@ -36,6 +60,8 @@ test_dataset = datasets.MNIST(
 # Per evitare un adattamento troppo evidente alle sequenze fisse dei dati
 train_loader = DataLoader(train_dataset, batch_size=64, shuffle=True)
 test_loader = DataLoader(test_dataset, batch_size=64, shuffle=False)
+
+showImage(train_loader, 0)
 
 # Batch Learning
 # Esempio di iterazione: stampa le forme di un batch di dati dal train_loader
