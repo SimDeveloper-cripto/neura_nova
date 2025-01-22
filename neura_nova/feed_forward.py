@@ -3,6 +3,7 @@
 import os
 import struct
 import numpy as np
+from utils import visualize_predictions
 
 # TODO: ADD ENCAPSULATION
 # TODO: USE GPU
@@ -200,7 +201,7 @@ class NeuralNetwork:
         logits = self.predict(X)
         predictions = np.argmax(logits, axis=1)
         true_labels = np.argmax(y, axis=1)
-        accuracy = np.mean(predictions == true_labels)
+        accuracy    = np.mean(predictions == true_labels)
         return accuracy
 
 
@@ -233,12 +234,15 @@ if __name__ == "__main__":
 
     loss_fn = SoftmaxCrossEntropyLoss()
 
-    epochs = 10
+    epochs = 20
     batch_size = 64
     learning_rate = 0.01
 
     print("(SGD) Training started...")
     nn.train(X_train, y_train_onehot, epochs, learning_rate, loss_fn, batch_size)
 
+    # TODO: PRINT ACCURACY PERCENTAGE
     test_accuracy = nn.evaluate(X_test, y_test_onehot)
     print("Test accuracy: ", test_accuracy)
+
+    visualize_predictions(nn, X_test, y_test_onehot, num_immagini=16)
