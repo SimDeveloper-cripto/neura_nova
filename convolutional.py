@@ -2,6 +2,10 @@
 
 import numpy as np
 
+"""
+NOTE: DO NOT RUN THIS CODE, IT IS HORRIBLE
+"""
+
 # TODO: Import MNIST dataset
 # TODO: USE GPU
 
