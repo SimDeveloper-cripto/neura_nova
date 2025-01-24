@@ -1,9 +1,9 @@
 # main.py
 
-from neura_nova import NeuraNova
+from neura_nova import build_and_train_model
 
-def main():
-    pass
+# PROBLEM: PATTERN RECOGNITION (DISCRIMINATIVE NETWORK)
+# TODO: ADD ENCAPSULATION
 
-if __name__ == '__main__':
-    main()
+if __name__ == "__main__":
+    build_and_train_model()
