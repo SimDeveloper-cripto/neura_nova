@@ -1,4 +1,4 @@
-# neura_nova/data/load_mnist.py
+# neura_nova/data.py
 
 import os
 import struct

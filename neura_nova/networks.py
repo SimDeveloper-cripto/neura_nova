@@ -5,15 +5,19 @@ from .loss import LossFunction
 
 
 class FeedForward:
-    def __init__(self):
-        self.layers = []
-        self.loss_fn = None
+    def __init__(self, loss_fn: LossFunction):
+        self.layers    = []
+        self.loss_fn   = loss_fn
+        self.__history = {
+            "loss": [],
+            "accuracy": []
+        }
 
     def add_layer(self, layer):
         self.layers.append(layer)
 
-    def set_loss(self, loss_fn: LossFunction):
-        self.loss_fn = loss_fn
+    def getHistory(self):
+        return self.__history
 
     def predict(self, input_X):
         output = input_X
@@ -22,21 +26,20 @@ class FeedForward:
         return output
 
     # TODO: THIS IS MINI-BATCH, IS IT CORRECT?
-    def train(self, X, y, epochs, learning_rate, loss_fn: LossFunction, batch_size=64):
+    def train(self, X, y, epochs, learning_rate, batch_size=64):
         num_samples = X.shape[0]
+
         for epoch in range(1, epochs + 1):
             # Shuffle Data
             indices = np.random.permutation(num_samples)
+            X_shuffled, y_shuffled = X[indices], y[indices]
             # indices = np.arange(num_samples)
             # np.random.shuffle(indices)
-            X_shuffled = X[indices]
-            y_shuffled = y[indices]
 
             epoch_loss = 0.0  # TODO: SHOULD IT START WITH MAX ERROR?
             for start in range(0, num_samples, batch_size):
                 end     = start + batch_size
-                X_batch = X_shuffled[start:end]
-                y_batch = y_shuffled[start:end]
+                X_batch, y_batch = X_shuffled[start:end], y_shuffled[start:end]
 
                 # Forward
                 logits     = self.predict(X_batch)
@@ -46,11 +49,14 @@ class FeedForward:
                 # Backward
                 grad = self.loss_fn.backward()
                 for layer in reversed(self.layers):
-                    grad = layer.backward(grad, learning_rate)
+                    grad = layer.backward(grad, learning_rate)  # TODO: THIS 'backward' REFERS TO THE SGD
 
             epoch_loss /= num_samples
-            if epoch % 5 == 0 or epoch == 1:
-                print(f"Epoch {epoch}/{epochs}, Loss: {epoch_loss:.4f}")
+            epoch_accuracy = self.evaluate(X_shuffled, y_shuffled)
+            print(f"Epoch {epoch}/{epochs}, Loss: {epoch_loss:.4f}")
+
+            self.__history["loss"].append(epoch_loss)
+            self.__history["accuracy"].append(epoch_accuracy)
 
     def evaluate(self, X, y):
         logits      = self.predict(X)

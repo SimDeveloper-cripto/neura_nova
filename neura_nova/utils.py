@@ -4,12 +4,12 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-async def visualize_predictions(nn, X_test, y_test_onehot, num_immagini=16):
+async def visualize_predictions(nn, X_test, y_test_onehot, num_immagini=25):
     """
-    :param nn: neural network used
-    :param X_test: images in test set, already processed
-    :param y_test_onehot: labels of test's one-hot encoding
-    :param num_immagini: how many images to visualize
+    :param nn           : neural network
+    :param X_test       : test set of images (already processed)
+    :param y_test_onehot: test set one-hot encoding labels
+    :param num_immagini : how many images to visualize
     """
     indici             = np.random.choice(X_test.shape[0], num_immagini, replace=False)
     immagini_campione  = X_test[indici]
@@ -20,7 +20,7 @@ async def visualize_predictions(nn, X_test, y_test_onehot, num_immagini=16):
     predizioni = np.argmax(logits, axis=1)
     truth      = np.argmax(etichette_campione, axis=1)
 
-    # Display images in a grid
+    # Display images in a grid (each row contains 5 elements)
     griglia_dim = int(np.sqrt(num_immagini))
     if griglia_dim * griglia_dim < num_immagini:
         griglia_dim += 1
@@ -33,4 +33,18 @@ async def visualize_predictions(nn, X_test, y_test_onehot, num_immagini=16):
         plt.title(f"Pred: {predizioni[i]}\nTrue: {truth[i]}")
         plt.axis('off')
     plt.tight_layout()
+    plt.show()
+
+async def plot_metrics(title, history, metric_names):
+    epochs = range(1, len(history[metric_names[0]]) + 1)
+
+    plt.figure(figsize=(12, 6))
+    for metric in metric_names:
+        plt.plot(epochs, history[metric], label=metric)
+
+    plt.xlabel("epoch")
+    plt.ylabel("loss")
+    plt.title(title)
+    plt.legend()
+    plt.grid(True)
     plt.show()

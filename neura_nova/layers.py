@@ -7,9 +7,9 @@ class DenseLayer:
     # A fully connected neural network layer
     def __init__(self, input_dim, output_dim, activation='relu'):
         """
-        :param input_dim: Number of input features
-        :param output_dim: Number of neurons in the layer
-        :param activation: Activation function instance
+        :param input_dim : number of input features
+        :param output_dim: number of neurons in the layer
+        :param activation: activation function
         """
         # TODO: FIX RANDOM INIT
         self.weights    = np.random.randn(input_dim, output_dim) * np.sqrt(2. / input_dim)
@@ -22,21 +22,21 @@ class DenseLayer:
     def forward(self, input_data):
         self.input = input_data
 
-        # Z = WX + B
+        # TODO: Z = WX + B
         z = np.dot(input_data, self.weights) + self.bias
 
-        # TODO: FIX WITH SWITCH-CASE
-        if self.activation == 'relu':
-            self.output = np.maximum(0, z)
-            self.activation_cache = z > 0
-        elif self.activation == 'sigmoid':
-            self.output = 1 / (1 + np.exp(-z))
-            self.activation_cache = self.output * (1 - self.output)
-        elif self.activation == 'identity':
-            self.output = z
-            self.activation_cache = 1
-        else:
-            raise ValueError(f"Unsupported activation function: {self.activation}")
+        match self.activation:
+            case 'relu':
+                self.output = np.maximum(0, z)
+                self.activation_cache = z > 0
+            case 'sigmoid':
+                self.output = 1 / (1 + np.exp(-z))
+                self.activation_cache = self.output * (1 - self.output)
+            case 'identity':
+                self.output = z
+                self.activation_cache = 1
+            case _:
+                raise ValueError(f"Unsupported activation function: {self.activation}")
         return self.output
 
     def backward(self, grad_output, learning_rate):
