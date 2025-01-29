@@ -9,6 +9,7 @@ class LossFunction:
     def backward(self):
         raise NotImplementedError
 
+# TODO: E' CORRETTO UTILIZZARLA? LA USANO TUTTI I LAYER GIUSTO? NON SO SE E' CORRETTO
 class SoftmaxCrossEntropyLoss(LossFunction):
     def __init__(self):
         self.probs = None

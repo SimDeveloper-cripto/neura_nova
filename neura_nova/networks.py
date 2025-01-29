@@ -25,7 +25,6 @@ class FeedForward:
             output = layer.forward(output)
         return output
 
-    # TODO: THIS IS MINI-BATCH, IS IT CORRECT?
     def train(self, X, y, epochs, learning_rate, batch_size=64):
         num_samples = X.shape[0]
 
@@ -49,7 +48,8 @@ class FeedForward:
                 # Backward
                 grad = self.loss_fn.backward()
                 for layer in reversed(self.layers):
-                    grad = layer.backward(grad, learning_rate)  # TODO: THIS 'backward' REFERS TO THE SGD
+                    # TODO: ADATTA QUESTO CODICE PER UTILIZZARE GLI OTTIMIZZATORI
+                    grad = layer.backward(grad, learning_rate)
 
             epoch_loss /= num_samples
             epoch_accuracy = self.evaluate(X_shuffled, y_shuffled)
@@ -62,7 +62,7 @@ class FeedForward:
         logits      = self.predict(X)
         predictions = np.argmax(logits, axis=1)
         true_labels = np.argmax(y, axis=1)
-        accuracy    = np.mean(predictions == true_labels)  # TODO: THIS IS ARITHMETIC MEAN
+        accuracy    = np.mean(predictions == true_labels)  # TODO: THIS IS ARITHMETIC MEAN, VA BENE?
         return accuracy
 
 

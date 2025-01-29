@@ -11,7 +11,7 @@ class DenseLayer:
         :param output_dim: number of neurons in the layer
         :param activation: activation function
         """
-        # TODO: FIX RANDOM INIT
+        # TODO: SI PUò FARE MEGLIO IN TERMINI DI INIZIALIZZAZIONE? UNA STRATEGIA PIù INTELLIGENTE
         self.weights    = np.random.randn(input_dim, output_dim) * np.sqrt(2. / input_dim)
         self.bias       = np.zeros((1, output_dim))
         self.input      = None
@@ -23,6 +23,7 @@ class DenseLayer:
         self.input = input_data
 
         # TODO: Z = WX + B
+        # TODO: W MATRICE DI PESI, X MATRICE DI INPUT. IL CALCOLO np.dot(...) E' CORRETTO CONSIDERANDO LA RETE?
         z = np.dot(input_data, self.weights) + self.bias
 
         match self.activation:
