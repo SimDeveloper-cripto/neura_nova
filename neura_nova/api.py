@@ -55,6 +55,7 @@ def build_and_train_model_with_sgd():
 
     # Create Feed-Forward Neural Network
     nn = FeedForward(SoftmaxCrossEntropyLoss())
+    # TODO: FIX NETWORK STRUCTURE
     nn.add_layer(DenseLayer(784, 128, activation='relu'))
     nn.add_layer(DenseLayer(128, 64, activation='relu'))
 
