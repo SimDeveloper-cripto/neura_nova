@@ -7,49 +7,79 @@ class DenseLayer:
     # A fully connected neural network layer
     def __init__(self, input_dim, output_dim, activation='relu'):
         """
-        :param input_dim : number of input features
+        :param input_dim : number of input features/neurons
         :param output_dim: number of neurons in the layer
         :param activation: activation function
+
+        WX + B
+            - W shape: (output_dim, input_dim)
+            - B shape: (output_dim, 1)
         """
-        # TODO: SI PUò FARE MEGLIO IN TERMINI DI INIZIALIZZAZIONE? UNA STRATEGIA PIù INTELLIGENTE
-        self.weights    = np.random.randn(input_dim, output_dim) * np.sqrt(2. / input_dim)
-        self.bias       = np.zeros((1, output_dim))
-        self.input      = None
-        self.output     = None
+
+        # TODO: LE INIT SONO FATTE BENE?
+        self.weights = None
+        if activation == 'relu':
+            # Kaiming/He initialization
+            self.weights = np.random.randn(output_dim, input_dim) * np.sqrt(2. / input_dim)
+        else:
+            # Xavier/Glorot initialization
+            self.weights = np.random.randn(output_dim, input_dim) * np.sqrt(1. / input_dim)
+
+        self.bias       = np.zeros((output_dim, 1))
+        self.input      = None        # shape: (input_dim, batch_size)
+        self.output     = None        # shape: (output_dim, batch_size)
         self.activation = activation
         self.activation_cache = None  # Derivative of activation
 
     def forward(self, input_data):
+        # X
         self.input = input_data
 
-        # TODO: Z = WX + B
-        # TODO: W MATRICE DI PESI, X MATRICE DI INPUT. IL CALCOLO np.dot(...) E' CORRETTO CONSIDERANDO LA RETE?
-        z = np.dot(input_data, self.weights) + self.bias
+        """
+        - input_data shape: (input_dim, batch_size)
+        - W          shape: (output_dim, input_dim)
+        - B          shape: (output_dim, 1)
+        - Z = WX + B shape: (output_dim, batch_size)
+        """
+        z = self.weights @ input_data + self.bias
+        # z = np.dot(self.weights, input_data) + self.bias
 
         match self.activation:
             case 'relu':
                 self.output = np.maximum(0, z)
-                self.activation_cache = z > 0
+                self.activation_cache = (z > 0).astype(z.dtype)
             case 'sigmoid':
                 self.output = 1 / (1 + np.exp(-z))
                 self.activation_cache = self.output * (1 - self.output)
             case 'identity':
                 self.output = z
-                self.activation_cache = 1
+                self.activation_cache = np.ones_like(z)
             case _:
                 raise ValueError(f"Unsupported activation function: {self.activation}")
         return self.output
 
     def backward(self, grad_output, learning_rate):
-        if self.activation == 'relu' or self.activation == 'sigmoid'\
-                or self.activation == 'identity':
-            grad_z = grad_output * self.activation_cache
-        else:
-            raise ValueError(f"Unsupported activation function: {self.activation}")
+        """
+        grad_output shape: (output_dim, batch_size)
 
-        grad_weights = np.dot(self.input.T, grad_z)           # shape (input_dim, output_dim)
-        grad_bias    = np.sum(grad_z, axis=0, keepdims=True)  # shape (1, output_dim)
-        grad_input   = np.dot(grad_z, self.weights.T)
+        Calculate dL/dW, dL/db & dL/dX to propagate backwards
+        If Z = WX + B, and out = f(z), practically: grad_z = grad_output * f'(z).
+
+        => dW = grad_z @ X^T
+        => dB = sum over batch (axis = 1) of grad_z
+        => dX = W^T @ grad_z
+        """
+        grad_z = grad_output * self.activation_cache
+
+        # gradient W: (output_dim, batch_size) @ (batch_size, input_dim) = (output_dim, input_dim)
+        grad_weights = grad_z @ self.input.T
+
+        # gradient B, shape: (output_dim, 1)
+        grad_bias = np.sum(grad_z, axis=1, keepdims=True)
+
+        # gradient X: W^T @ grad_z
+        # W^T shape:  (input_dim, output_dim), grad_z: (output_dim, batch_size) => (input_dim, batch_size)
+        grad_input = self.weights.T @ grad_z
 
         # Update network parameters
         self.weights -= learning_rate * grad_weights

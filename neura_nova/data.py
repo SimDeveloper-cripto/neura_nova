@@ -7,13 +7,6 @@ import numpy as np
 
 def load_mnist(path='../data/MNIST/raw'):
     def load_images(filename):
-        """
-        Retrieve first 16 bytes (in order):
-            - Magic number
-            - Number of images
-            - rows
-            - columns
-        """
         with open(filename, 'rb') as f:
             magic_num, total, rows, cols = struct.unpack(">IIII", f.read(16))
             images = np.frombuffer(f.read(), dtype=np.uint8)
