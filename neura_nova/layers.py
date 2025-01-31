@@ -93,7 +93,6 @@ class DenseLayer:
                 raise ValueError(f"Unsupported activation function: {self.activation}")
         return self.output
 
-    # TODO: QUESTA FUNZIONE CAUSA IL MAGGIOR OVERHEAD
     def backward(self, grad_output, learning_rate):
         """
         - Propagazione all'indietro con aggiornamento dei pesi usando Adam

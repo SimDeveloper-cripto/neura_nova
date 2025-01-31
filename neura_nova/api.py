@@ -10,7 +10,6 @@ from .data import load_mnist
 from .graphic_utils import visualize_predictions, plot_metrics
 
 # TODO: USA GPU
-# TODO: ESTRAZIONE DELLE CARATTERISTICHE
 # TODO: MEDIA ARITMETICA OPPURE PRECISION PER ACCURACY
 
 def one_hot_encode(y, num_classes):
