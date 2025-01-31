@@ -49,12 +49,12 @@ class FeedForward:
                 y_batch = y_shuffled[:, start:end]  # (num_classes, batch_size)
 
                 # Forward
-                logits     = self.predict(X_batch)  # (num_classes, batch_size)
+                logits     = self.predict(X_batch)
                 loss       = self.loss_fn.forward(logits, y_batch)
                 epoch_loss += loss * X_batch.shape[1]
 
                 # Backward
-                grad = self.loss_fn.backward()      # (num_classes, batch_size)
+                grad = self.loss_fn.backward()
                 for layer in reversed(self.layers):
                     grad = layer.backward(grad, learning_rate)
 

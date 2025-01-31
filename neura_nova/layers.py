@@ -43,6 +43,9 @@ class DenseLayer:
             self.weights = np.random.randn(output_dim, input_dim) * np.sqrt(1. / input_dim)
         self.bias = np.zeros((output_dim, 1))
 
+        self.weights = np.ascontiguousarray(self.weights, dtype=np.float32)
+        self.bias    = np.ascontiguousarray(self.bias, dtype=np.float32)
+
         # Memoria per Adam
         self.m_weights = np.zeros_like(self.weights)
         self.v_weights = np.zeros_like(self.weights)
@@ -66,6 +69,7 @@ class DenseLayer:
         # X
         input_data = input_data.astype(np.float32)
         self.input = input_data
+        self.input = np.ascontiguousarray(input_data, dtype=np.float32)
 
         """
         - input_data shape: (input_dim, batch_size)
@@ -95,6 +99,7 @@ class DenseLayer:
         - Propagazione all'indietro con aggiornamento dei pesi usando Adam
         """
         self.t += 1  # Incrementiamo il contatore degli step
+        grad_output = np.ascontiguousarray(grad_output, dtype=np.float32)
 
         # Calcolo del gradiente locale dL/dZ
         grad_output = grad_output.astype(np.float32)
@@ -107,18 +112,27 @@ class DenseLayer:
         grad_bias = np.sum(grad_z, axis=1, keepdims=True)
 
         # Aggiornamento dei momenti esponenziali
-        self.m_weights = self.beta1 * self.m_weights + (1 - self.beta1) * grad_weights
-        self.v_weights = self.beta2 * self.v_weights + (1 - self.beta2) * (grad_weights ** 2)
+        self.m_weights *= self.beta1
+        self.m_weights += (1 - self.beta1) * grad_weights
 
-        self.m_bias = self.beta1 * self.m_bias + (1 - self.beta1) * grad_bias
-        self.v_bias = self.beta2 * self.v_bias + (1 - self.beta2) * (grad_bias ** 2)
+        self.v_weights *= self.beta2
+        self.v_weights += (1 - self.beta2) * (grad_weights ** 2)
+
+        self.m_bias *= self.beta1
+        self.m_bias += (1 - self.beta1) * grad_bias
+
+        self.v_bias *= self.beta2
+        self.v_bias += (1 - self.beta2) * (grad_bias ** 2)
 
         # Correzione del Bias
-        m_hat_weights = self.m_weights / (1 - self.beta1 ** self.t)
-        v_hat_weights = self.v_weights / (1 - self.beta2 ** self.t)
+        bias_correction1 = 1 - self.beta1 ** self.t
+        bias_correction2 = 1 - self.beta2 ** self.t
 
-        m_hat_bias = self.m_bias / (1 - self.beta1 ** self.t)
-        v_hat_bias = self.v_bias / (1 - self.beta2 ** self.t)
+        m_hat_weights = self.m_weights / bias_correction1
+        v_hat_weights = self.v_weights / bias_correction2
+
+        m_hat_bias = self.m_bias / bias_correction1
+        v_hat_bias = self.v_bias / bias_correction2
 
         # Aggiornamento dei pesi con Adam
         self.weights -= self.learning_rate * m_hat_weights / (np.sqrt(v_hat_weights) + self.epsilon)
@@ -127,3 +141,42 @@ class DenseLayer:
         # Gradiente in input per lo strato precedente
         grad_input = self.weights.T @ grad_z
         return grad_input
+
+
+class ConvLayer:
+    # Convolutional neural network layer
+    def __init__(self, input_channels, num_filters, kernel_size=3, stride=1, padding=1, activation='relu'):
+        """
+        :param input_channels: number of input channels (depth of input)
+        :param num_filters: number of convolutional filters
+        :param kernel_size: size of the convolutional kernel (square is assumed)
+        :param stride: stride of the convolution
+        :param padding: padding added to the input on all sides
+        :param activation: activation function
+        """
+        self.input_channels = input_channels
+        self.num_filters    = num_filters
+        self.kernel_size    = kernel_size
+        self.stride         = stride
+        self.padding        = padding
+        self.activation     = activation
+
+        self.input            = None
+        self.output           = None
+        self.activation_cache = None
+
+        if activation == 'relu':
+            # Kaiming/He initialization
+            self.weights = np.random.randn(num_filters, input_channels, kernel_size, kernel_size) *\
+                           np.sqrt(2. / (input_channels * kernel_size * kernel_size))
+        else:
+            # Xavier/Glorot initialization
+            self.weights = np.random.randn(num_filters, input_channels, kernel_size, kernel_size) * \
+                           np.sqrt(1. / (input_channels * kernel_size * kernel_size))
+        self.bias = np.zeros((num_filters, 1))
+
+    def forward(self, input_data):
+        pass
+
+    def backward(self, grad_output, learning_rate):
+        pass
