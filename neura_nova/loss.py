@@ -9,11 +9,11 @@ class LossFunction:
     def backward(self):
         raise NotImplementedError
 
-# TODO: E' CORRETTO UTILIZZARLA? LA USANO TUTTI I LAYER GIUSTO? NON SO SE E' CORRETTO
-class SoftmaxCrossEntropyLoss(LossFunction):
+class SoftmaxCrossEntropy(LossFunction):
     def __init__(self):
-        self.probs  = None  # (num_classes, batch_size)
-        self.labels = None  # (num_classes, batch_size)
+        self.probs      = None  # (num_classes, batch_size)
+        self.labels     = None  # (num_classes, batch_size)
+        self.batch_size = None
 
     def forward(self, logits, labels):
         """
@@ -32,15 +32,14 @@ class SoftmaxCrossEntropyLoss(LossFunction):
         self.labels    = labels
 
         # Cross-Entropy
-        batch_size = logits.shape[1]
+        self.batch_size = logits.shape[1]
         log_p      = np.log(self.probs + 1e-9)
-        loss       = -np.sum(labels * log_p) / batch_size
+        loss       = -np.sum(labels * log_p) / self.batch_size
         return loss
 
     def backward(self):
         """
         dL/d(logits) = (probs - labels) / batch_size
-        :return: shape of (num_classes, batch_size)
+        :return shape: (num_classes, batch_size)
         """
-        batch_size = self.labels.shape[0]
-        return (self.probs - self.labels) / batch_size
+        return (self.probs - self.labels) / self.batch_size

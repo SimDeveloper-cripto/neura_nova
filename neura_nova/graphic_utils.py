@@ -1,10 +1,10 @@
-# neura_nova/utils.py
+# neura_nova/graphic_utils.py
 
 import numpy as np
 import matplotlib.pyplot as plt
 
 
-async def visualize_predictions(nn, X_test, y_test_onehot, num_immagini=25):
+def visualize_predictions(nn, X_test, y_test_onehot, num_immagini=25):
     """
     :param nn           : neural network
     :param X_test       : test set of images (already processed)
@@ -37,7 +37,7 @@ async def visualize_predictions(nn, X_test, y_test_onehot, num_immagini=25):
     plt.ioff()
     plt.show()
 
-async def plot_metrics(title, history, metric_names):
+def plot_metrics(title, history, metric_names):
     epochs = range(1, len(history[metric_names[0]]) + 1)
 
     plt.figure(figsize=(12, 6))

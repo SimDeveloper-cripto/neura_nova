@@ -15,7 +15,7 @@ class DenseLayer:
             - W shape: (output_dim, input_dim)
             - B shape: (output_dim, 1)
 
-        N = batch_size (64)
+        N = batch_size (128)
         Layer1
             Input : (784, N)
             W     : (512, 784)
@@ -46,6 +46,7 @@ class DenseLayer:
 
     def forward(self, input_data):
         # X
+        input_data = input_data.astype(np.float32)
         self.input = input_data
 
         """
@@ -55,7 +56,6 @@ class DenseLayer:
         - Z = WX + B shape: (output_dim, batch_size)
         """
         z = self.weights @ input_data + self.bias
-        # z = np.dot(self.weights, input_data) + self.bias
 
         match self.activation:
             case 'relu':
@@ -82,6 +82,7 @@ class DenseLayer:
         => dB = sum over batch (axis = 1) of grad_z
         => dX = W^T @ grad_z
         """
+        grad_output = grad_output.astype(np.float32)
         grad_z = grad_output * self.activation_cache
 
         # gradient W: (output_dim, batch_size) @ (batch_size, input_dim) = (output_dim, input_dim)

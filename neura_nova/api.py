@@ -1,24 +1,22 @@
 # neura_nova/api.py
 
-import asyncio
 import numpy as np
 
 from .layers import DenseLayer
 from .networks import FeedForward
-from .loss import SoftmaxCrossEntropyLoss
+from .loss import SoftmaxCrossEntropy
 
 from .data import load_mnist
-from .utils import visualize_predictions, plot_metrics
+from .graphic_utils import visualize_predictions, plot_metrics
 
 # TODO: USE GPU AND SPEED-UP THE PROGRAM
 # TODO: USE `cProfile` FOR BOTTLENECKS
 # TODO: SAVE MODELS OUTPUT
-
 # TODO: WHERE DOES FEATURE EXTRACTION TAKE PLACE?
 # TODO: is there a bound to the loss function? Or can I normalize it?
 
 def one_hot_encode(y, num_classes):
-    one_hot = np.zeros((y.shape[0], num_classes))
+    one_hot = np.zeros((y.shape[0], num_classes), dtype=np.float32)
     one_hot[np.arange(y.shape[0]), y] = 1.0
     return one_hot
 
@@ -47,7 +45,7 @@ def load_and_preprocess_data():
     y_test_onehot  = y_test_onehot.T   # shape: (10,  N_test)
     return X_train, y_train_onehot, X_test, y_test_onehot
 
-def build_ff_model(loss_fun=SoftmaxCrossEntropyLoss()):
+def build_ff_model(loss_fun=SoftmaxCrossEntropy()):
     """
     - input_dim     = 784
     - output_dim    = 10
@@ -71,7 +69,7 @@ def build_and_train_model():
     X_train, y_train_onehot, X_test, y_test_onehot = load_and_preprocess_data()
     nn = build_ff_model()
 
-    epochs = 2
+    epochs = 25
     batch_size = 64
     learning_rate = 0.01
 
@@ -85,5 +83,5 @@ def build_and_train_model():
     print("\n[INFO] TRAIN ACCURACY: {:.2f}%".format(train_accuracy * 100))
     print("[INFO] TEST ACCURACY: {:.2f}%".format(test_accuracy * 100))
 
-    asyncio.run(plot_metrics("TRAIN: LOSS FUNCTION", nn.getHistory(), metric_names=["loss", "accuracy"]))
-    asyncio.run(visualize_predictions(nn, X_test, y_test_onehot))
+    plot_metrics("TRAIN: LOSS FUNCTION", nn.getHistory(), metric_names=["loss", "accuracy"])
+    visualize_predictions(nn, X_test, y_test_onehot)
