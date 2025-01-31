@@ -41,8 +41,7 @@ class DenseLayer:
         else:
             # Xavier/Glorot initialization
             self.weights = np.random.randn(output_dim, input_dim) * np.sqrt(1. / input_dim)
-
-        self.bias       = np.zeros((output_dim, 1))
+        self.bias = np.zeros((output_dim, 1))
 
         # Memoria per Adam
         self.m_weights = np.zeros_like(self.weights)
@@ -51,13 +50,13 @@ class DenseLayer:
         self.v_bias = np.zeros_like(self.bias)
 
         # Parametri per Adam
-        self.learning_rate = learning_rate
+        self.t = 0  # step counter
         self.beta1 = beta1
         self.beta2 = beta2
         self.epsilon = epsilon
-        self.t = 0  # Contatore degli step
+        self.learning_rate = learning_rate
 
-        #Variabili di attivazione
+        # Variabili di attivazione
         self.input      = None        # shape: (input_dim, batch_size)
         self.output     = None        # shape: (output_dim, batch_size)
         self.activation = activation
@@ -90,8 +89,11 @@ class DenseLayer:
                 raise ValueError(f"Unsupported activation function: {self.activation}")
         return self.output
 
+    # TODO: QUESTA FUNZIONE CAUSA IL MAGGIOR OVERHEAD
     def backward(self, grad_output, learning_rate):
-        """Propagazione all'indietro con aggiornamento dei pesi usando Adam"""
+        """
+        - Propagazione all'indietro con aggiornamento dei pesi usando Adam
+        """
         self.t += 1  # Incrementiamo il contatore degli step
 
         # Calcolo del gradiente locale dL/dZ
@@ -111,7 +113,7 @@ class DenseLayer:
         self.m_bias = self.beta1 * self.m_bias + (1 - self.beta1) * grad_bias
         self.v_bias = self.beta2 * self.v_bias + (1 - self.beta2) * (grad_bias ** 2)
 
-        # Correzione del bias
+        # Correzione del Bias
         m_hat_weights = self.m_weights / (1 - self.beta1 ** self.t)
         v_hat_weights = self.v_weights / (1 - self.beta2 ** self.t)
 
@@ -122,6 +124,6 @@ class DenseLayer:
         self.weights -= self.learning_rate * m_hat_weights / (np.sqrt(v_hat_weights) + self.epsilon)
         self.bias -= self.learning_rate * m_hat_bias / (np.sqrt(v_hat_bias) + self.epsilon)
 
-        # Gradiente per lo strato precedente
+        # Gradiente in input per lo strato precedente
         grad_input = self.weights.T @ grad_z
         return grad_input

@@ -9,11 +9,9 @@ from .loss import SoftmaxCrossEntropy
 from .data import load_mnist
 from .graphic_utils import visualize_predictions, plot_metrics
 
-# TODO: USE GPU AND SPEED-UP THE PROGRAM
-# TODO: USE `cProfile` FOR BOTTLENECKS
-# TODO: SAVE MODELS OUTPUT
-# TODO: WHERE DOES FEATURE EXTRACTION TAKE PLACE?
-# TODO: is there a bound to the loss function? Or can I normalize it?
+# TODO: USA GPU
+# TODO: ESTRAZIONE DELLE CARATTERISTICHE
+# TODO: MEDIA ARITMETICA OPPURE PRECISION PER ACCURACY
 
 def one_hot_encode(y, num_classes):
     one_hot = np.zeros((y.shape[0], num_classes), dtype=np.float32)
@@ -60,28 +58,34 @@ def build_ff_model(loss_fun=SoftmaxCrossEntropy()):
     nn.add_layer(DenseLayer(64,  10,  activation='identity'))   # 10  neurons, W: (10,  64)
     return nn
 
-def evaluate_model(model, X, y, dataset="TRAIN"):
-    accuracy = model.evaluate(X, y)
-    print(f"\n[INFO] {dataset} ACCURACY: {accuracy * 100:.2f}%")
-    return accuracy
+def build_cnn_model(loss_fun=SoftmaxCrossEntropy()):
+    pass
 
-def build_and_train_model():
+def build_and_train_models():
     X_train, y_train_onehot, X_test, y_test_onehot = load_and_preprocess_data()
     nn = build_ff_model()
 
-    epochs = 25
-    batch_size = 64
-    learning_rate = 0.01
+    epochs = 15
+    batch_size = 128
+    learning_rate = 0.001
 
-    # SGD update rule
+    # Using ADAM update rule
     nn.train(X_train, y_train_onehot, epochs, learning_rate, batch_size)
 
     # Evaluate learning and test accuracy
-    train_accuracy = nn.evaluate(X_train, y_train_onehot)
-    test_accuracy  = nn.evaluate(X_test, y_test_onehot)
+    train_accuracy = nn.arithmetic_mean_accuracy(X_train, y_train_onehot)
+    test_accuracy  = nn.arithmetic_mean_accuracy(X_test, y_test_onehot)
 
-    print("\n[INFO] TRAIN ACCURACY: {:.2f}%".format(train_accuracy * 100))
-    print("[INFO] TEST ACCURACY: {:.2f}%".format(test_accuracy * 100))
+    print("\n[INFO] TRAIN ARITHMETIC_MEAN_ACCURACY: {:.2f}%".format(train_accuracy * 100))
+    print("[INFO] TEST ARITHMETIC_MEAN_ACCURACY: {:.2f}%".format(test_accuracy * 100))
 
-    plot_metrics("TRAIN: LOSS FUNCTION", nn.getHistory(), metric_names=["loss", "accuracy"])
-    visualize_predictions(nn, X_test, y_test_onehot)
+    # plot_metrics("TRAIN: LOSS FUNCTION", nn.getHistory(), metric_names=["loss", "accuracy"])
+    # visualize_predictions(nn, X_test, y_test_onehot)
+
+"""
+    train_accuracy = nn.precision_accuracy(X_train, y_train_onehot, "----- TRAIN")
+    print("\n[INFO] TRAIN PRECISION_ACCURACY: ", train_accuracy)
+
+    test_accuracy = nn.precision_accuracy(X_test, y_test_onehot, "----- TEST")
+    print("\n[INFO] TEST PRECISION_ACCURACY: ", test_accuracy)
+"""

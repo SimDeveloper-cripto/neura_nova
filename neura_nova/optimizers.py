@@ -2,7 +2,7 @@
 
 import numpy as np
 
-# TODO: SONO IMPLEMENTATI CORRETTAMENTE QUESTI OTTIMIZZATORI?
+# TODO: ELIMINARE QUESTO FILE
 
 class Optimizer:
     def update(self, params, grads):
