@@ -5,11 +5,15 @@ import numpy as np
 
 class DenseLayer:
     # A fully connected neural network layer
-    def __init__(self, input_dim, output_dim, activation='relu'):
+    def __init__(self, input_dim, output_dim, activation='relu', learning_rate=0.001, beta1=0.9, beta2=0.999, epsilon=1e-8):
         """
         :param input_dim : number of input features/neurons
         :param output_dim: number of neurons in the layer
         :param activation: activation function
+        :param learning_rate: tasso di apprendimento per Adam
+        :param beta1: coefficiente per il primo momento (default: 0.9)
+        :param beta2: coefficiente per il secondo momento (default: 0.999)
+        :param epsilon: valore per evitare divisioni per zero (default: 1e-8)
 
         WX + B
             - W shape: (output_dim, input_dim)
@@ -39,6 +43,21 @@ class DenseLayer:
             self.weights = np.random.randn(output_dim, input_dim) * np.sqrt(1. / input_dim)
 
         self.bias       = np.zeros((output_dim, 1))
+
+        # Memoria per Adam
+        self.m_weights = np.zeros_like(self.weights)
+        self.v_weights = np.zeros_like(self.weights)
+        self.m_bias = np.zeros_like(self.bias)
+        self.v_bias = np.zeros_like(self.bias)
+
+        # Parametri per Adam
+        self.learning_rate = learning_rate
+        self.beta1 = beta1
+        self.beta2 = beta2
+        self.epsilon = epsilon
+        self.t = 0  # Contatore degli step
+
+        #Variabili di attivazione
         self.input      = None        # shape: (input_dim, batch_size)
         self.output     = None        # shape: (output_dim, batch_size)
         self.activation = activation
@@ -72,16 +91,10 @@ class DenseLayer:
         return self.output
 
     def backward(self, grad_output, learning_rate):
-        """
-        grad_output shape: (output_dim, batch_size)
+        """Propagazione all'indietro con aggiornamento dei pesi usando Adam"""
+        self.t += 1  # Incrementiamo il contatore degli step
 
-        Calculate dL/dW, dL/db & dL/dX to propagate backwards
-        If Z = WX + B, and out = f(z), practically: grad_z = grad_output * f'(z).
-
-        => dW = grad_z @ X^T
-        => dB = sum over batch (axis = 1) of grad_z
-        => dX = W^T @ grad_z
-        """
+        # Calcolo del gradiente locale dL/dZ
         grad_output = grad_output.astype(np.float32)
         grad_z = grad_output * self.activation_cache
 
@@ -91,11 +104,24 @@ class DenseLayer:
         # gradient B, shape: (output_dim, 1)
         grad_bias = np.sum(grad_z, axis=1, keepdims=True)
 
-        # gradient X: W^T @ grad_z
-        # W^T shape:  (input_dim, output_dim), grad_z: (output_dim, batch_size) => (input_dim, batch_size)
-        grad_input = self.weights.T @ grad_z
+        # Aggiornamento dei momenti esponenziali
+        self.m_weights = self.beta1 * self.m_weights + (1 - self.beta1) * grad_weights
+        self.v_weights = self.beta2 * self.v_weights + (1 - self.beta2) * (grad_weights ** 2)
 
-        # Update network parameters
-        self.weights -= learning_rate * grad_weights
-        self.bias    -= learning_rate * grad_bias
-        return grad_input  # shape: (output_dim, batch_size)
+        self.m_bias = self.beta1 * self.m_bias + (1 - self.beta1) * grad_bias
+        self.v_bias = self.beta2 * self.v_bias + (1 - self.beta2) * (grad_bias ** 2)
+
+        # Correzione del bias
+        m_hat_weights = self.m_weights / (1 - self.beta1 ** self.t)
+        v_hat_weights = self.v_weights / (1 - self.beta2 ** self.t)
+
+        m_hat_bias = self.m_bias / (1 - self.beta1 ** self.t)
+        v_hat_bias = self.v_bias / (1 - self.beta2 ** self.t)
+
+        # Aggiornamento dei pesi con Adam
+        self.weights -= self.learning_rate * m_hat_weights / (np.sqrt(v_hat_weights) + self.epsilon)
+        self.bias -= self.learning_rate * m_hat_bias / (np.sqrt(v_hat_bias) + self.epsilon)
+
+        # Gradiente per lo strato precedente
+        grad_input = self.weights.T @ grad_z
+        return grad_input
