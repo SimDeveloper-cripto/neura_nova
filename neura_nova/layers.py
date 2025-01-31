@@ -14,9 +14,22 @@ class DenseLayer:
         WX + B
             - W shape: (output_dim, input_dim)
             - B shape: (output_dim, 1)
+
+        N = batch_size (64)
+        Layer1
+            Input : (784, N)
+            W     : (512, 784)
+            B     : (512, 1)
+            Output: (512, N)
+        ...
+
+        Layer5
+            Input : (64, N)
+            W     : (10, 64)
+            B     : (10, 1)
+            Output: (10, N)
         """
 
-        # TODO: LE INIT SONO FATTE BENE?
         self.weights = None
         if activation == 'relu':
             # Kaiming/He initialization
@@ -84,4 +97,4 @@ class DenseLayer:
         # Update network parameters
         self.weights -= learning_rate * grad_weights
         self.bias    -= learning_rate * grad_bias
-        return grad_input
+        return grad_input  # shape: (output_dim, batch_size)
