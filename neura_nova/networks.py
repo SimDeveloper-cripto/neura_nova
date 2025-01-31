@@ -56,7 +56,7 @@ class FeedForward:
                 # Backward
                 grad = self.loss_fn.backward()
                 for layer in reversed(self.layers):
-                    grad = layer.backward(grad, learning_rate)
+                    grad = layer.backward(grad)
 
             epoch_loss /= num_samples
             epoch_accuracy = self.arithmetic_mean_accuracy(X_shuffled, y_shuffled)

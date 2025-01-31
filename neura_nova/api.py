@@ -2,7 +2,7 @@
 
 import numpy as np
 
-from .layers import DenseLayer
+from .ff_layer import DenseLayer
 from .networks import FeedForward
 from .loss import SoftmaxCrossEntropy
 
@@ -49,7 +49,7 @@ def build_ff_model(loss_fun=SoftmaxCrossEntropy()):
     - weights shape = (output_dim, input_dim)
     """
     nn = FeedForward(loss_fun)
-    # See layers.py __init__() and forward()
+    # See ff_layer.py __init__() and forward()
     nn.add_layer(DenseLayer(784, 512, activation='relu'))       # 512 neurons, W: (512, 784)
     nn.add_layer(DenseLayer(512, 256, activation='relu'))       # 256 neurons, W: (256, 512)
     nn.add_layer(DenseLayer(256, 128, activation='relu'))       # 128 neurons, W: (128, 256)
