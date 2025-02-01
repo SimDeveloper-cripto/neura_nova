@@ -6,7 +6,7 @@ from .ff_layer import DenseLayer
 from .networks import FeedForward
 from .loss import SoftmaxCrossEntropy
 
-from .data import load_mnist
+from .data import load_mnist_ff
 from .graphic_utils import visualize_predictions, plot_metrics
 
 # TODO: USA GPU
@@ -17,8 +17,8 @@ def one_hot_encode(y, num_classes):
     one_hot[np.arange(y.shape[0]), y] = 1.0
     return one_hot
 
-def load_and_preprocess_data():
-    (X_train, y_train), (X_test, y_test) = load_mnist()
+def load_and_preprocess_data_for_ff():
+    (X_train, y_train), (X_test, y_test) = load_mnist_ff()
 
     # print(f"[INFO] TRAIN SET SIZE: {X_train.shape[0]}")
     # print(f"[INFO] TEST SET SIZE:  {X_test.shape[0]}")
@@ -57,11 +57,8 @@ def build_ff_model(loss_fun=SoftmaxCrossEntropy()):
     nn.add_layer(DenseLayer(64,  10,  activation='identity'))   # 10  neurons, W: (10,  64)
     return nn
 
-def build_cnn_model(loss_fun=SoftmaxCrossEntropy()):
-    pass
-
-def build_and_train_models():
-    X_train, y_train_onehot, X_test, y_test_onehot = load_and_preprocess_data()
+def build_and_train_ff_model():
+    X_train, y_train_onehot, X_test, y_test_onehot = load_and_preprocess_data_for_ff()
     nn = build_ff_model()
 
     epochs = 15
@@ -88,3 +85,9 @@ def build_and_train_models():
     test_accuracy = nn.precision_accuracy(X_test, y_test_onehot, "----- TEST")
     print("\n[INFO] TEST PRECISION_ACCURACY: ", test_accuracy)
 """
+
+def build_cnn_model(loss_fun=SoftmaxCrossEntropy()):
+    pass
+
+def build_and_train_cnn_model():
+    pass
