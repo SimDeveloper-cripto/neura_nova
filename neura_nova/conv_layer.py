@@ -31,7 +31,7 @@ class ConvLayer:
         self.weights = None
         if activation == 'relu':
             # Kaiming/He initialization
-            self.weights = np.random.randn(num_filters, input_channels, kernel_size, kernel_size) *\
+            self.weights = np.random.randn(num_filters, input_channels, kernel_size, kernel_size) * \
                            np.sqrt(2. / (input_channels * kernel_size * kernel_size))
         else:
             # Xavier/Glorot initialization
@@ -67,7 +67,17 @@ class ConvLayer:
 
 
     def forward(self, input_data):
-        # TODO: DA IMPLEMENTARE
+        input_data = input_data.astype(np.float32)
+        self.input = input_data
+        self.input = np.ascontiguousarray(input_data, dtype=np.float32)
+
+        """
+        - input_data shape: (input_dim, batch_size)
+        - W          shape: (output_dim, input_dim)
+        - B          shape: (output_dim, 1)
+        - Z = WX + B shape: (output_dim, batch_size)
+        """
+        z = self.weights @ input_data + self.bias
         pass
 
     def backward(self, grad_output, learning_rate):
