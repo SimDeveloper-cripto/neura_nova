@@ -122,4 +122,5 @@ class FeedForward:
 
 
 class Convolutional:
+    # TODO: DA IMPLEMENTARE
     pass

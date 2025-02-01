@@ -10,7 +10,9 @@ from .data import load_mnist_ff
 from .graphic_utils import visualize_predictions, plot_metrics
 
 # TODO: USA GPU
-# TODO: MEDIA ARITMETICA OPPURE PRECISION PER ACCURACY
+# TODO [CARMINE]: CREARE UNA LOGICA PER IL NUMERO DI NEURONI PER OGNI LAYER
+# TODO [PROF]: MEDIA ARITMETICA OPPURE PRECISION PER ACCURACY
+# TODO [PROF]: BISOGNA CREARE L'OGGETTO NEURONE OPPURE LO SI PUO' ASTRARRE?
 
 def one_hot_encode(y, num_classes):
     one_hot = np.zeros((y.shape[0], num_classes), dtype=np.float32)
@@ -46,8 +48,9 @@ def build_ff_model(loss_fun=SoftmaxCrossEntropy()):
     """
     - input_dim     = 784
     - output_dim    = 10
-    - weights shape = (output_dim, input_dim)
+    - weights shape = (output_dim, input_dim) = (# neurons, # features)
     """
+
     nn = FeedForward(loss_fun)
     # See ff_layer.py __init__() and forward()
     nn.add_layer(DenseLayer(784, 512, activation='relu'))       # 512 neurons, W: (512, 784)
@@ -87,7 +90,9 @@ def build_and_train_ff_model():
 """
 
 def build_cnn_model(loss_fun=SoftmaxCrossEntropy()):
+    # TODO: DA IMPLEMENTARE
     pass
 
 def build_and_train_cnn_model():
+    # TODO: DA IMPLEMENTARE
     pass
