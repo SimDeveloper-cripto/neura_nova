@@ -7,6 +7,7 @@ from .networks import FeedForward
 from .loss import SoftmaxCrossEntropy
 import array
 import random
+import math
 
 from .data import load_mnist_ff
 from .graphic_utils import visualize_predictions, plot_metrics
@@ -16,19 +17,38 @@ from .graphic_utils import visualize_predictions, plot_metrics
 # TODO [PROF]: MEDIA ARITMETICA OPPURE PRECISION PER ACCURACY
 # TODO [PROF]: BISOGNA CREARE L'OGGETTO NEURONE OPPURE LO SI PUO' ASTRARRE?
 
+
+
+def closest_power_of_2(n):
+    lower = 2 ** math.floor(math.log2(n))
+    upper = 2 ** math.ceil(math.log2(n))
+    return lower if (n - lower) < (upper - n) else upper
+
+
 def create_neurons(input_dim, output_dim, hidden_layers):
     neurons = array.array('i', [input_dim])
-    # TODO [CARMINE]: LA PRIMA POTENZA DI 2 VICINO AL VALORE RICAVATO RANDOM
-    print("elemento numero 0 ha " + str(neurons[0]))
+    print("Elemento numero 0 ha " + str(neurons[0]))
+
     i = 1
     while i < hidden_layers:
         last_layer = neurons[-1]
-        neurons_in_layer = random.randint(last_layer//2, last_layer)
+
+        while True:
+            random_number = random.randint(last_layer // 2, last_layer)
+            neurons_in_layer = closest_power_of_2(random_number)
+
+            # Qui mi assicuro che non sia sempre uguale
+            # Va bene così? o nel caso prendiamo proprio il numero uscito randomicamente?
+            if neurons_in_layer != neurons[-1]:
+                break
+
         neurons.append(neurons_in_layer)
-        print("elemento numero " + str(i) + " ha " + str(neurons[i]))
+        print(f"Elemento numero {i} ha {neurons[i]}")
         i += 1
+
     neurons.append(output_dim)
-    print("elemento numero " + str(hidden_layers) + " ha " + str(neurons[hidden_layers]))
+    print(f"Elemento numero {hidden_layers} ha {neurons[hidden_layers]}")
+
     return neurons
 
 
