@@ -5,6 +5,8 @@ import numpy as np
 from .ff_layer import DenseLayer
 from .networks import FeedForward
 from .loss import SoftmaxCrossEntropy
+import array
+import random
 
 from .data import load_mnist_ff
 from .graphic_utils import visualize_predictions, plot_metrics
@@ -13,6 +15,21 @@ from .graphic_utils import visualize_predictions, plot_metrics
 # TODO [CARMINE]: CREARE UNA LOGICA PER IL NUMERO DI NEURONI PER OGNI LAYER
 # TODO [PROF]: MEDIA ARITMETICA OPPURE PRECISION PER ACCURACY
 # TODO [PROF]: BISOGNA CREARE L'OGGETTO NEURONE OPPURE LO SI PUO' ASTRARRE?
+
+def create_neurons(input_dim, output_dim, hidden_layers):
+    neurons = array.array('i',[input_dim])
+    # LA PRIMA POTENZA DI 2 VICINO ALLA SUA META'
+    print("elemento numero 0 ha " + str(neurons[0]))
+    i = 1
+    while i< hidden_layers:
+        last_layer=neurons[-1]
+        neurons_in_layer= random.randint(last_layer//2, last_layer)
+        neurons.append(neurons_in_layer)
+        print("elemento numero " + str(i) + " ha " + str(neurons[i]))
+        i+=1
+    neurons.append(output_dim)
+    print("elemento numero " + str(hidden_layers) + " ha " + str(neurons[hidden_layers]))
+    return neurons
 
 def one_hot_encode(y, num_classes):
     one_hot = np.zeros((y.shape[0], num_classes), dtype=np.float32)
@@ -53,11 +70,23 @@ def build_ff_model(loss_fun=SoftmaxCrossEntropy()):
 
     nn = FeedForward(loss_fun)
     # See ff_layer.py __init__() and forward()
+    # qui creo l'array di neuroni
+    layers = create_neurons(784, 10, 5)
+
+    nn.add_layer(DenseLayer(layers[0], layers[1], activation='relu'))  # 512 neurons, W: (512, 784)
+    nn.add_layer(DenseLayer(layers[1], layers[2], activation='relu'))  # 256 neurons, W: (256, 512)
+    nn.add_layer(DenseLayer(layers[2], layers[3], activation='relu'))  # 128 neurons, W: (128, 256)
+    nn.add_layer(DenseLayer(layers[3], layers[4], activation='relu'))  # 64  neurons, W: (64,  128)
+    nn.add_layer(DenseLayer(layers[4], layers[5], activation='identity'))  # 10  neurons, W: (10,  64)
+
+    '''
     nn.add_layer(DenseLayer(784, 512, activation='relu'))       # 512 neurons, W: (512, 784)
     nn.add_layer(DenseLayer(512, 256, activation='relu'))       # 256 neurons, W: (256, 512)
     nn.add_layer(DenseLayer(256, 128, activation='relu'))       # 128 neurons, W: (128, 256)
     nn.add_layer(DenseLayer(128, 64,  activation='relu'))       # 64  neurons, W: (64,  128)
     nn.add_layer(DenseLayer(64,  10,  activation='identity'))   # 10  neurons, W: (10,  64)
+    
+    '''
     return nn
 
 def build_and_train_ff_model():
