@@ -7,13 +7,13 @@ class DenseLayer:
     # A fully connected neural network layer
     def __init__(self, input_dim, output_dim, activation='relu', learning_rate=0.001, beta1=0.9, beta2=0.999, epsilon=1e-8):
         """
-        :param input_dim : number of input features/neurons
-        :param output_dim: number of neurons in the layer
-        :param activation: activation function
+        :param input_dim    : number of input features/neurons
+        :param output_dim   : number of neurons in the layer
+        :param activation   : activation function
         :param learning_rate: tasso di apprendimento per Adam
-        :param beta1: coefficiente per il primo momento (default: 0.9)
-        :param beta2: coefficiente per il secondo momento (default: 0.999)
-        :param epsilon: valore per evitare divisioni per zero (default: 1e-8)
+        :param beta1        : coefficiente per il primo momento (default: 0.9)
+        :param beta2        : coefficiente per il secondo momento (default: 0.999)
+        :param epsilon      : valore per evitare divisioni per zero (default: 1e-8)
 
         WX + B
             - W shape: (output_dim, input_dim)
