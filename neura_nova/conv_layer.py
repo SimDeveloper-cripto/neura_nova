@@ -209,4 +209,68 @@ class MaxPoolLayer:
         self.input       = None
         self.mask        = None  # Mask for position of the maximum value
 
-    # TODO: DA IMPLEMENTARE
+    def forward(self, input_data):
+        self.input = input_data
+        batch_size, input_channels, H, W = input_data.shape
+        k = self.kernel_size
+        s = self.stride
+
+        # 14x14 output
+        H_out = (H - k) // s + 1
+        W_out = (W - k) // s + 1
+
+        output = np.zeros((batch_size, input_channels, H_out, W_out), dtype=input_data.dtype)
+        self.mask = np.zeros_like(input_data, dtype=bool)
+
+        # Per ogni immagine, canale e batch
+        for b in range(batch_size):
+            for c in range(input_channels):
+                for i in range(H_out):
+                    for j in range(W_out):
+                        h_start = i * s
+                        h_end   = h_start + k
+                        w_start = j * s
+                        w_end   = w_start + k
+
+                        patch = input_data[b, c, h_start:h_end, w_start:w_end]
+
+                        # Max Pooling
+                        max_val = np.max(patch)
+                        output[b, c, i, j] = max_val
+
+                        # Mark position to True if the value is the maximum
+                        self.mask[b, c, h_start:h_end, w_start:w_end] = (patch == max_val)
+        return output
+
+    def backward(self, grad_output):
+        '''
+        Performs a backward pass of the maxpool layer.
+        Returns the loss gradient for this layer's inputs.
+        - d_L_d_out is the loss gradient for this layer's outputs.
+        '''
+        # grad_output.shape[0]
+
+        batch_size, input_channels, H, W = self.input.shape
+        k = self.kernel_size
+        s = self.stride
+        H_out, W_out = grad_output.shape[2], grad_output.shape[3]
+        output = np.zeros(self.input)
+
+        for b in range(batch_size):
+            for c in range(input_channels):
+                for i in range(H_out):
+                    for j in range(W_out):
+                        h_start = i * s
+                        h_end = h_start + k
+                        w_start = j * s
+                        w_end = w_start + k
+
+                        patch_mask = self.mask[b, c, h_start:h_end, w_start:w_end]
+
+                        max_sums = np.sum(patch_mask)
+                        if max_sums > 0:
+                            output[b, c, h_start:h_end, w_start:w_end] += (patch_mask *
+                                                                           (grad_output[b, c, i, j] // max_sums))
+
+
+        return output
