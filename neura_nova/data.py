@@ -23,4 +23,5 @@ def load_mnist(path='../data/MNIST/raw'):
     y_train = load_labels(os.path.join(path, 'train-labels-idx1-ubyte'))
     X_test  = load_images(os.path.join(path, 't10k-images-idx3-ubyte'))
     y_test  = load_labels(os.path.join(path, 't10k-labels-idx1-ubyte'))
+
     return (X_train, y_train), (X_test, y_test)

@@ -4,14 +4,25 @@ from .graphic_utils import visualize_predictions, plot_metrics
 from .ff.setup import load_and_preprocess_data_for_ff, build_ff_model
 from .cnn.setup import load_and_preprocess_data_for_cnn, build_cnn_model
 
-# TODO [IMPORTANTE]: USA GPU
+# 1
+# TODO [IMPORTANTE]: CON DATASET DI DIMENSIONE MINORE LA RETE PEGGIORA
+# TODO [IMPORTANTE]: IPER-PARAMETRI
+# TODO [IMPORTANTE]: K-FOLD PER CONFIGURAZIONE MIGLIORE
+# TODO [IMPORTANTE]: SALVA I RISULTATI
+
+# 2
 # TODO [IMPORTANTE]: OTTIMIZZARE RETE CONVOLUZIONALE
 # TODO [IMPORTANTE]: OTTIMIZZARE RETE FEED-FORWARD
+# TODO [IMPORTANTE]: MOSTRARE I RISULTATI
+# TODO [IMPORTANTE]: DOVE ESTRAZIONE CARATTERISTICHE
+# TODO [IMPORTANTE]: SULLA BASE DI COSA DOBBIAMO METTERE A CONFRONTO LE RETI
+
+# TODO: NEURONI PER RETE CONVOLUZIONALE
 
 # TODO [PROF]: MEDIA ARITMETICA OPPURE PRECISION PER ACCURACY
 # TODO [PROF]: BISOGNA CREARE L'OGGETTO NEURONE OPPURE LO SI PUO' ASTRARRE? DA UN PUNTO DI VISTA DI MEMORIA
-
-# TODO: NEURONI PER RETE CONVOLUZIONALE
+# TODO [PROF]: COSA BISOGNA METTERE A PARAGONE TRA LE DUE RETI?
+# TODO [ALLA FINE]: USA GPU
 
 
 def build_and_train_ff_model():
@@ -29,8 +40,8 @@ def build_and_train_ff_model():
     train_accuracy = nn.arithmetic_mean_accuracy(X_train, y_train_onehot)
     test_accuracy  = nn.arithmetic_mean_accuracy(X_test, y_test_onehot)
 
-    print("\n[INFO] TRAIN ARITHMETIC_MEAN_ACCURACY: {:.2f}%".format(train_accuracy * 100))
-    print("[INFO] TEST ARITHMETIC_MEAN_ACCURACY: {:.2f}%".format(test_accuracy * 100))
+    print("\n[FEED-FORWARD] TRAIN ARITHMETIC_MEAN_ACCURACY: {:.2f}%".format(train_accuracy * 100))
+    print("[FEED-FORWARD] TEST ARITHMETIC_MEAN_ACCURACY: {:.2f}%".format(test_accuracy * 100))
 
     plot_metrics("TRAIN: LOSS FUNCTION", nn.getHistory(), metric_names=["loss", "accuracy"])
     visualize_predictions(nn, X_test, y_test_onehot)
@@ -57,8 +68,8 @@ def build_and_train_cnn_model():
     train_accuracy = nn.arithmetic_mean_accuracy(X_train, y_train_onehot)
     test_accuracy  = nn.arithmetic_mean_accuracy(X_test, y_test_onehot)
 
-    print("\n[INFO] TRAIN ARITHMETIC_MEAN_ACCURACY: {:.2f}%".format(train_accuracy * 100))
-    print("[INFO] TEST ARITHMETIC_MEAN_ACCURACY: {:.2f}%".format(test_accuracy * 100))
+    print("\n[CONVOLUTIONAL] TRAIN ARITHMETIC_MEAN_ACCURACY: {:.2f}%".format(train_accuracy * 100))
+    print("[CONVOLUTIONAL] TEST ARITHMETIC_MEAN_ACCURACY: {:.2f}%".format(test_accuracy * 100))
 
     plot_metrics("TRAIN: LOSS FUNCTION", nn.getHistory(), metric_names=["loss", "accuracy"])
     visualize_predictions(nn, X_test, y_test_onehot)
