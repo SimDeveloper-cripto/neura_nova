@@ -10,6 +10,7 @@ if __name__ == "__main__":
     # profiler.enable()
 
     build_and_train_ff_model()
+    # build_and_train_cnn_model()
 
     # profiler.disable()
     # stats = pstats.Stats(profiler).sort_stats('cumtime')

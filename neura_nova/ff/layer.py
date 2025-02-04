@@ -1,4 +1,4 @@
-# neura_nova/ff_layer.py
+# neura_nova/ff/conv_layer.py
 
 import numpy as np
 

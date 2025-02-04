@@ -1,10 +1,14 @@
-# neura_nova/networks.py
+# neura_nova/ff/network.py
 
 import numpy as np
-from .loss import LossFunction
+from ..loss import LossFunction
 
 
-class FeedForward:
+class Network:
+    def train(self, X, y, epochs, learning_rate, batch_size=128):
+        raise NotImplementedError
+
+class FeedForward(Network):
     def __init__(self, loss_fn: LossFunction):
         self.layers    = []
         self.loss_fn   = loss_fn
@@ -29,7 +33,7 @@ class FeedForward:
             output = layer.forward(output)
         return output
 
-    def train(self, X, y, epochs, learning_rate, batch_size=64):
+    def train(self, X, y, epochs, learning_rate, batch_size=128):
         """
         X shape: (input_dim, N)
         y shape: (num_classes, N)
@@ -60,7 +64,7 @@ class FeedForward:
 
             epoch_loss /= num_samples
             epoch_accuracy = self.arithmetic_mean_accuracy(X_shuffled, y_shuffled)
-            print(f"Epoch {epoch}/{epochs}, Loss: {epoch_loss:.4f}")
+            print(f"Epoch {epoch}/{epochs}, Loss: {epoch_loss:.4f}, Accuracy: {epoch_accuracy:.4f}")
 
             self.__history["loss"].append(epoch_loss)
             self.__history["accuracy"].append(epoch_accuracy)
@@ -119,8 +123,3 @@ class FeedForward:
             "precision_micro": precision_micro
         }
 """
-
-
-class Convolutional:
-    # TODO: DA IMPLEMENTARE
-    pass
