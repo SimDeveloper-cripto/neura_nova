@@ -75,15 +75,13 @@ class ConvLayer:
     in modo da minimizzare l'errore della rete sul compito specifico (ovvero la classificazione delle immagini).
     """
 
-    def __init__(self, input_channels, activation='relu',
-                 learning_rate=0.001, beta1=0.9, beta2=0.999, epsilon=1e-8,
-                 manual_filters=False):
+    def __init__(self, input_channels, num_filters, kernel_size, stride, padding, activation='relu',
+                 learning_rate=0.001, beta1=0.9, beta2=0.999, epsilon=1e-8):
         self.input_channels = input_channels
-        self.num_filters    = 6
-        self.kernel_size    = 3
-        self.stride         = 1
-        self.padding        = 1
-        self.manual_filters = manual_filters
+        self.num_filters    = num_filters
+        self.kernel_size    = kernel_size
+        self.stride         = stride
+        self.padding        = padding
         self.activation     = activation
 
         self.weights = None
@@ -91,62 +89,28 @@ class ConvLayer:
         self.weights = np.ascontiguousarray(self.weights, dtype=np.float32)
         self.bias    = np.ascontiguousarray(self.bias, dtype=np.float32)
 
-        if manual_filters:
-            base_filters = [
-                np.array([[1,  0, -1],
-                          [2,  0, -2],
-                          [1,  0, -1]], dtype=np.float32),  # Vertical lines
-                np.array([[1,  2,  1],
-                          [0,  0,  0],
-                          [-1, -2, -1]], dtype=np.float32),  # Horizontal lines
-                np.array([[2,  1,  0],
-                          [1,  0, -1],
-                          [0, -1, -2]], dtype=np.float32),  # 45° diagonal
-                np.array([[0,  1,  2],
-                          [-1, 0,  1],
-                          [-2, -1,  0]], dtype=np.float32),  # 135° diagonal
-                np.array([[0,  1,  0],
-                          [1, -4,  1],
-                          [0,  1,  0]], dtype=np.float32),  # Curves (Laplacian)
-                np.array([[-1, -1, -1],
-                          [-1,  8, -1],
-                          [-1, -1, -1]], dtype=np.float32)   # Angles
-            ]
-            self.weights = np.zeros((self.num_filters, self.input_channels, self.kernel_size, self.kernel_size), dtype=np.float32)
-
-            for f in range(self.num_filters):
-                for c in range(self.input_channels):
-                    self.weights[f, c, :, :] = base_filters[f]
-            self.bias = np.zeros((self.num_filters, 1), dtype=np.float32)
-
-            # Memoria per Adam (non verranno però aggiornate)
-            self.m_weights = np.zeros_like(self.weights)
-            self.v_weights = np.zeros_like(self.weights)
-            self.m_bias    = np.zeros_like(self.bias)
-            self.v_bias    = np.zeros_like(self.bias)
+        if activation == 'relu':
+            # Kaiming/He initialization
+            self.weights = np.random.randn(self.num_filters, self.input_channels, self.kernel_size, self.kernel_size) * \
+                           np.sqrt(2. / (self.input_channels * self.kernel_size * self.kernel_size))
         else:
-            if activation == 'relu':
-                # Kaiming/He initialization
-                self.weights = np.random.randn(self.num_filters, self.input_channels, self.kernel_size, self.kernel_size) * \
-                               np.sqrt(2. / (self.input_channels * self.kernel_size * self.kernel_size))
-            else:
-                # Xavier/Glorot initialization
-                self.weights = np.random.randn(self.num_filters, self.input_channels, self.kernel_size, self.kernel_size) * \
-                               np.sqrt(1. / (self.input_channels * self.kernel_size * self.kernel_size))
-                # self.weights shape: (6, 1, 3, 3)
-            self.bias = np.zeros((self.num_filters, 1), dtype=np.float32)
+            # Xavier/Glorot initialization
+            self.weights = np.random.randn(self.num_filters, self.input_channels, self.kernel_size, self.kernel_size) * \
+                           np.sqrt(1. / (self.input_channels * self.kernel_size * self.kernel_size))
+            # self.weights shape: (filters, input_channels, kernel_size, kernel_size)
+        self.bias = np.zeros((self.num_filters, input_channels), dtype=np.float32)
 
-            # Parametri per Adam
-            self.learning_rate = learning_rate
-            self.beta1         = beta1
-            self.beta2         = beta2
-            self.epsilon       = epsilon
-            self.t             = 0  # step counter
+        # Parametri per Adam
+        self.learning_rate = learning_rate
+        self.beta1         = beta1
+        self.beta2         = beta2
+        self.epsilon       = epsilon
+        self.t             = 0  # step counter
 
-            self.m_weights = np.zeros_like(self.weights)
-            self.v_weights = np.zeros_like(self.weights)
-            self.m_bias    = np.zeros_like(self.bias)
-            self.v_bias    = np.zeros_like(self.bias)
+        self.m_weights = np.zeros_like(self.weights)
+        self.v_weights = np.zeros_like(self.weights)
+        self.m_bias    = np.zeros_like(self.bias)
+        self.v_bias    = np.zeros_like(self.bias)
 
         # Variabili per forward/backward
         self.input            = None  # input originale in forma (batch_size, input_channels, H, W)

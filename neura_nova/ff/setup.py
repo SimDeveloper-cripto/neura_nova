@@ -36,8 +36,8 @@ def one_hot_encode(y, num_classes):
     one_hot[np.arange(y.shape[0]), y] = 1.0
     return one_hot
 
-def load_and_preprocess_data_for_ff():
-    (X_train, y_train), (X_test, y_test) = load_mnist()
+def load_and_preprocess_data_for_ff(train_limit, test_limit):
+    (X_train, y_train), (X_test, y_test) = load_mnist(train_limit, test_limit)
 
     # print(f"[INFO] TRAIN SET SIZE: {X_train.shape[0]}")
     # print(f"[INFO] TEST SET SIZE:  {X_test.shape[0]}")

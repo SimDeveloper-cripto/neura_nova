@@ -15,8 +15,8 @@ def one_hot_encode(y, num_classes):
     one_hot[np.arange(y.shape[0]), y] = 1.0
     return one_hot
 
-def load_and_preprocess_data_for_cnn():
-    (X_train, y_train), (X_test, y_test) = load_mnist()
+def load_and_preprocess_data_for_cnn(train_limit, test_limit):
+    (X_train, y_train), (X_test, y_test) = load_mnist(train_limit, test_limit)
 
     # Pre-Processing (normalization)
     X_train = X_train.astype(np.float32) / 255.0
@@ -34,8 +34,7 @@ def load_and_preprocess_data_for_cnn():
 
 def build_cnn_model(loss_fun=SoftmaxCrossEntropy()):
     nn = Convolutional(loss_fun)
-
-    nn.add_conv_layer(ConvLayer(1, activation='relu', manual_filters=False))
+    nn.add_conv_layer(ConvLayer(1, 6, 3, 1, 1, 'relu'))
     nn.add_pool_layer(MaxPoolLayer())
 
     d_input = np.zeros((1, 1, 28, 28), dtype=np.float32)
