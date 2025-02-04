@@ -11,8 +11,8 @@ class DenseLayer:
         :param output_dim   : number of neurons in the layer
         :param activation   : activation function
         :param learning_rate: tasso di apprendimento per Adam
-        :param beta1        : coefficiente per il primo momento (default: 0.9)
-        :param beta2        : coefficiente per il secondo momento (default: 0.999)
+        :param beta1        : coefficiente per il primo momento     (default: 0.9)
+        :param beta2        : coefficiente per il secondo momento   (default: 0.999)
         :param epsilon      : valore per evitare divisioni per zero (default: 1e-8)
 
         WX + B

@@ -1,3 +1,5 @@
+import os
+import csv
 import math
 import array
 import random
@@ -9,6 +11,17 @@ from .layer import DenseLayer
 from .network import FeedForward
 from ..loss import SoftmaxCrossEntropy
 
+def save_to_csv(results, filename='results/ff/results.csv'):
+    os.makedirs(os.path.dirname(filename), exist_ok=True)
+    headers = ["train_accuracy", "test_accuracy", "epochs", "batch_size"]
+
+    with open(filename, 'w', newline='') as file:
+        writer = csv.writer(file)
+        if file.tell() == 0:
+            writer.writerow(headers)
+
+        for result in results:
+            writer.writerow([result['train_accuracy'], result['test_accuracy'], result['epochs'], result['batch_size']])
 
 def closest_power_of_2(n):
     lower = 2 ** math.floor(math.log2(n))
@@ -61,30 +74,32 @@ def load_and_preprocess_data_for_ff(train_limit, test_limit):
     y_test_onehot  = y_test_onehot.T   # shape: (10,  N_test)
     return X_train, y_train_onehot, X_test, y_test_onehot
 
-def build_ff_model(loss_fun=SoftmaxCrossEntropy()):
+def build_and_train_ff_model_with_config(config, loss_fun=SoftmaxCrossEntropy()):
     """
     - input_dim     = 784
     - output_dim    = 10
     - weights shape = (output_dim, input_dim) = (# neurons, # features)
     """
+    X_train, y_train_onehot, X_test, y_test_onehot = load_and_preprocess_data_for_ff(config['train_dimension'], config['test_dimension'])
     nn = FeedForward(loss_fun)  # See conv_layer.py __init__() and forward()
 
-    # Qui creo l'array di neuroni
-    layers = create_neurons(784, 10, 5)
+    for layer_config in config['layers']:
+        nn.add_layer(DenseLayer(input_dim=784 if len(nn.layers) == 0 else nn.layers[-1].weights.shape[0],
+                                output_dim=layer_config['neurons'],
+                                activation=layer_config['activation']))
 
-    # layers[0]: input vector
-    # layers[5]: output neurons
-    nn.add_layer(DenseLayer(layers[0], layers[1], activation='relu'))      # layers[1] neurons,  W: (layers[1], 784)
-    nn.add_layer(DenseLayer(layers[1], layers[2], activation='relu'))      # layers[2] neurons,  W: (layers[2], layers[1])
-    nn.add_layer(DenseLayer(layers[2], layers[3], activation='relu'))      # layers[3] neurons,  W: (layers[3], layers[2])
-    nn.add_layer(DenseLayer(layers[3], layers[4], activation='relu'))      # layers[4]  neurons, W: (layers[4], layers[3])
-    nn.add_layer(DenseLayer(layers[4], layers[5], activation='identity'))  # layers[5]  neurons, W: (layers[5], layers[4])
+    epochs     = config['epochs']
+    batch_size = config['batch_size']
+    nn.train(X_train, y_train_onehot, epochs, 0.001, batch_size)
 
-    '''
-    nn.add_layer(DenseLayer(784, 512, activation='relu'))       # 512 neurons, W: (512, 784)
-    nn.add_layer(DenseLayer(512, 256, activation='relu'))       # 256 neurons, W: (256, 512)
-    nn.add_layer(DenseLayer(256, 128, activation='relu'))       # 128 neurons, W: (128, 256)
-    nn.add_layer(DenseLayer(128, 64,  activation='relu'))       # 64  neurons, W: (64,  128)
-    nn.add_layer(DenseLayer(64,  10,  activation='identity'))   # 10  neurons, W: (10,  64)    
-    '''
-    return nn
+    train_accuracy = nn.arithmetic_mean_accuracy(X_train, y_train_onehot)
+    test_accuracy  = nn.arithmetic_mean_accuracy(X_test, y_test_onehot)
+
+    # Read ffconfig.json
+    result = {
+        'train_accuracy': "{:.2f}".format(train_accuracy * 100),
+        'test_accuracy': "{:.2f}".format(test_accuracy * 100),
+        'epochs': epochs,
+        'batch_size': batch_size,
+    }
+    return result

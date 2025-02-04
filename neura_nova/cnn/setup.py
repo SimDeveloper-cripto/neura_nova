@@ -9,7 +9,6 @@ from ..loss import SoftmaxCrossEntropy
 from .conv_layer import ConvLayer
 from .pool_layer import MaxPoolLayer
 
-
 def one_hot_encode(y, num_classes):
     one_hot = np.zeros((y.shape[0], num_classes), dtype=np.float32)
     one_hot[np.arange(y.shape[0]), y] = 1.0

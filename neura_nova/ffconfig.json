@@ -9,7 +9,7 @@
     ],
     "train_dimension": 60000,
     "test_dimension": 10000,
-    "epochs": 20,
+    "epochs": 15,
     "batch_size": 128
   },
 
@@ -23,10 +23,9 @@
     ],
     "train_dimension": 60000,
     "test_dimension": 10000,
-    "epochs": 20,
+    "epochs": 15,
     "batch_size": 128
   },
-
 
   {
     "layers": [
@@ -38,7 +37,7 @@
     ],
     "train_dimension": 60000,
     "test_dimension": 10000,
-    "epochs": 15,
+    "epochs": 20,
     "batch_size": 128
   },
 
@@ -52,7 +51,7 @@
     ],
     "train_dimension": 60000,
     "test_dimension": 10000,
-    "epochs": 15,
+    "epochs": 20,
     "batch_size": 128
   },
 
@@ -167,5 +166,4 @@
     "epochs": 10,
     "batch_size": 32
   }
-
 ]
