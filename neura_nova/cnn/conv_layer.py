@@ -177,19 +177,18 @@ class ConvLayer:
         dcols = dconv_reshaped.dot(filters_col.T)
         dx = col2im(dcols, self.input.shape, self.kernel_size, self.stride, self.padding, self.out_h, self.out_w)
 
-        if not self.manual_filters:
-            self.t += 1
+        self.t += 1
 
-            self.m_weights = self.beta1 * self.m_weights + (1 - self.beta1) * dW
-            self.v_weights = self.beta2 * self.v_weights + (1 - self.beta2) * (dW ** 2)
-            m_hat_weights  = self.m_weights / (1 - self.beta1 ** self.t)
-            v_hat_weights  = self.v_weights / (1 - self.beta2 ** self.t)
-            self.weights   -= self.learning_rate * m_hat_weights / (np.sqrt(v_hat_weights) + self.epsilon)
+        self.m_weights = self.beta1 * self.m_weights + (1 - self.beta1) * dW
+        self.v_weights = self.beta2 * self.v_weights + (1 - self.beta2) * (dW ** 2)
+        m_hat_weights  = self.m_weights / (1 - self.beta1 ** self.t)
+        v_hat_weights  = self.v_weights / (1 - self.beta2 ** self.t)
+        self.weights   -= self.learning_rate * m_hat_weights / (np.sqrt(v_hat_weights) + self.epsilon)
 
-            self.m_bias = self.beta1 * self.m_bias + (1 - self.beta1) * dB
-            self.v_bias = self.beta2 * self.v_bias + (1 - self.beta2) * (dB ** 2)
-            m_hat_bias  = self.m_bias / (1 - self.beta1 ** self.t)
-            v_hat_bias  = self.v_bias / (1 - self.beta2 ** self.t)
-            self.bias   -= self.learning_rate * m_hat_bias / (np.sqrt(v_hat_bias) + self.epsilon)
+        self.m_bias = self.beta1 * self.m_bias + (1 - self.beta1) * dB
+        self.v_bias = self.beta2 * self.v_bias + (1 - self.beta2) * (dB ** 2)
+        m_hat_bias  = self.m_bias / (1 - self.beta1 ** self.t)
+        v_hat_bias  = self.v_bias / (1 - self.beta2 ** self.t)
+        self.bias   -= self.learning_rate * m_hat_bias / (np.sqrt(v_hat_bias) + self.epsilon)
 
         return dx
