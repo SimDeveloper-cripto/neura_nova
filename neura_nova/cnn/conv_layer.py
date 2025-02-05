@@ -65,14 +65,18 @@ class ConvLayer:
     # Convolutional neural network layer
 
     """ [NOTA]
-    In un layer convoluzionale il neurone non corrisponde a un’unità isolata come nei layer fully-connected, ma a ciascuna posizione spaziale nella feature map in output.
+    - In un layer convoluzionale il neurone non corrisponde a un’unità isolata come nei layer fully-connected, ma a ciascuna posizione spaziale nella feature map in output.
     Se l'input (immagine) ha dimensioni H×W e viene usata una convoluzione con filtro 3×3, stride 1 e padding 1, l’output manterrà le stesse dimensioni spaziali (H×W).
     Quindi, per ciascuno dei filtri (ciascuno dei quali “scansiona” l’immagine con la sua finestra 3×3), si ottiene una feature map formata da H×W “neuroni” (cioè da H×W uscite).
-    Il numero totale di neuroni nel layer sarà dunque (# di filtri) × (H * W).
+    Il numero totale di neuroni nel layer sarà dunque (# di filtri) × (H×W).
 
-    Per ora i filtri non sembrano cercare dei pattern specifici.
-    Con il passare delle epoche, i filtri imparano a estrarre le caratteristiche rilevanti presenti nei dati, come bordi, texture o forme complesse,
-    in modo da minimizzare l'errore della rete sul compito specifico (ovvero la classificazione delle immagini).
+    - Le immagini MNIST sono in bianco e nero, quindi hanno naturalmente un solo canale.
+    Grouped convolution: si divide l’insieme dei canali di input in vari gruppi (sottoinsiemi) e ogni filtro (o sottoinsieme di filtri) vede solo
+    i canali di uno specifico gruppo. Così si riducono i collegamenti (e i parametri) e si può modellare la rete in modo che un dato numero di “neuroni” (canali) venga
+    effettivamente usato per il calcolo di ognuna delle feature map.
+
+    --> Verificare quindi che input_channels % groups == 0, e che num_filters % groups == 0.
+    Quindi con un solo canale di input, il grouping non ha effetto.
     """
 
     def __init__(self, input_channels, num_filters, kernel_size, stride, padding, activation='relu',

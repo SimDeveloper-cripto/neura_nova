@@ -12,7 +12,6 @@
     "epochs": 15,
     "batch_size": 128
   },
-
   {
     "layers": [
       {"neurons": 512, "activation": "sigmoid"},
@@ -26,7 +25,6 @@
     "epochs": 15,
     "batch_size": 128
   },
-
   {
     "layers": [
       {"neurons": 512, "activation": "relu"},
@@ -40,7 +38,6 @@
     "epochs": 20,
     "batch_size": 128
   },
-
   {
     "layers": [
       {"neurons": 512, "activation": "sigmoid"},
@@ -54,7 +51,6 @@
     "epochs": 20,
     "batch_size": 128
   },
-
   {
     "layers": [
       {"neurons": 512, "activation": "sigmoid"},
@@ -68,7 +64,6 @@
     "epochs": 20,
     "batch_size": 64
   },
-
   {
     "layers": [
       {"neurons": 512, "activation": "relu"},
@@ -82,7 +77,6 @@
     "epochs": 20,
     "batch_size": 64
   },
-
   {
     "layers": [
       {"neurons": 512, "activation": "sigmoid"},
@@ -96,7 +90,6 @@
     "epochs": 15,
     "batch_size": 64
   },
-
   {
     "layers": [
       {"neurons": 512, "activation": "relu"},
@@ -110,7 +103,6 @@
     "epochs": 15,
     "batch_size": 64
   },
-
   {
     "layers": [
       {"neurons": 512, "activation": "relu"},
@@ -124,7 +116,6 @@
     "epochs": 20,
     "batch_size": 128
   },
-
   {
     "layers": [
       {"neurons": 512, "activation": "sigmoid"},
@@ -138,7 +129,6 @@
     "epochs": 20,
     "batch_size": 128
   },
-
   {
     "layers": [
       {"neurons": 500, "activation": "relu"},
@@ -152,7 +142,6 @@
     "epochs": 20,
     "batch_size": 128
   },
-
   {
     "layers": [
       {"neurons": 500, "activation": "relu"},

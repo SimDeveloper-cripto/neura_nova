@@ -1,17 +1,19 @@
 # main.py
 
-# import pstats
-# import cProfile
 from neura_nova import run_ff_model, run_cnn_model
 
-# PROBLEM: PATTERN RECOGNITION (DISCRIMINATIVE NETWORK)
 if __name__ == "__main__":
-    # profiler = cProfile.Profile()
-    # profiler.enable()
+    while True:
+        try:
+            model = int(input("[1] FEED-FORWARD, [2] CONVOLUTIONAL: "))
+            if model in (1, 2):
+                break
+            else:
+                print("The input is not valid.")
+        except ValueError:
+            print("The input is not valid. Please enter a number.")
 
-    run_ff_model()
-    # build_and_train_cnn_model()
-
-    # profiler.disable()
-    # stats = pstats.Stats(profiler).sort_stats('cumtime')
-    # stats.print_stats(20)
+    if model == 1:
+        run_ff_model()
+    else:
+        run_cnn_model()

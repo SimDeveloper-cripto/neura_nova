@@ -1,23 +1,28 @@
 # neura_nova/api.py
 
-from .config import load_ff_config
-# from .graphic_utils import visualize_predictions, plot_metrics
-from .ff.setup import build_and_train_ff_model_with_config, save_to_csv
+# TODO: USE GPU TO COMPUTE
+
+from .config import load_config
+from .graphic_utils import visualize_predictions, plot_metrics
+from .ff.setup import build_and_train_ff_model_with_config, save_to_json
 from .cnn.setup import load_and_preprocess_data_for_cnn, build_cnn_model
 
-# TODO: USA GPU
-# TODO [PROF]: MEDIA ARITMETICA OPPURE PRECISION PER ACCURACY
-# TODO [PROF]: BISOGNA CREARE L'OGGETTO NEURONE OPPURE LO SI PUO' ASTRARRE? DA UN PUNTO DI VISTA DI MEMORIA
-# TODO [PROF]: COSA BISOGNA METTERE A PARAGONE TRA LE DUE RETI?
-# TODO [PROF]: LA FUNZIONE D'ERRORE E' UN IPER-PARAMETRO? ABBIAMO SOLO CROSS-ENTROPY
+# TODO 1 [PROF]: MEDIA ARITMETICA OPPURE PRECISION PER ACCURACY
+# TODO 2 [PROF]: BISOGNA CREARE L'OGGETTO NEURONE OPPURE LO SI PUO' ASTRARRE? DA UN PUNTO DI VISTA DI MEMORIA
+# TODO 3 [PROF]: LA FUNZIONE D'ERRORE E I PARAMETRI PER ADAM SONO IPER-PARAMETRI? (ABBIAMO SOLO CROSS-ENTROPY)
+# TODO 4 [PROF]: I FILTRI PER ORA NON CERCANO NESSUN PATTERN SPECIFICO MA IMPARANO COSA ESTRARRE CON LE EPOCHE
+# TODO 5 [PROF]: PARLARE DEL COMMENTO PRESENTE IN conv_layer.py
+# TODO 6 [PROF]: ABBIAMO PENSATO AD UN DROP-OUT PER AUMENTARE LA GENERALIZZAZIONE
+# TODO 7 [PROF]: ABBIAMO PENSATO AD UN WEIGHT-DECAY (TERMINE DI PENALITA' NELLA LOSS) NELL'AGGIORNAMENTO DEI PESI
 
-# TODO [CARMINE]: STABILIRE UN MODO PER CONFIGURARE GLI IPER-PARAMETRI DELLA RETE CONVOLUZIONALE
+# TODO 1 [CARMINE]: NELLA CONFIG DELLA FEED-FORWARD AGGIUNGERE NUOVE CONFIG CON PIU' E MENO LAYER
+# TODO 2 [CARMINE]: SUDDIVIDERE IL DATASET DI TRAINING, IN TRAINING + VALIDATION (MODIFICARE IL TRAIN) E VEDERE COME MIGLIORA L'APPRENDIMENTO
+# TODO 3 [CARMINE]: SULLA BASE DI QUELLO FATTO NEL TODO 2, IMPLEMENTA EARLY-STOPPING (E' FACILE, SERVE A RIDURRE L'OVER-FITTING)
+# TODO 4 [CARMINE]: STABILIRE UN MODO PER CONFIGURARE GLI IPER-PARAMETRI DELLA RETE CONVOLUZIONALE
 
-"""
-# TODO [SIMONE]: SE HO UN CANALE IN INPUT, HO SOLO UN SINGOLO GRUPPO DI NEURONI. 
-    - input_channels deve essere divisibile per il numero di gruppi
-# TODO [SIMONE]: RISOLVERE LA QUESTIONE DEI NEURONI PER LA RETE CONVOLUZIONALE
-"""
+def show_results(nn, X_test, y_test_onehot):
+    plot_metrics("TRAIN: LOSS FUNCTION", nn.getHistory(), metric_names=["loss", "accuracy"])
+    visualize_predictions(nn, X_test, y_test_onehot)
 
 def run_ff_model():
     # IPER-PARAMETRI [K-FOLD]
@@ -28,7 +33,7 @@ def run_ff_model():
     # 4 --> EPOCHS
     # 5 --> BATCH SIZE
 
-    configs = load_ff_config()
+    configs = load_config('config/ffconfig.json')
     results = []
 
     index = 1
@@ -38,10 +43,7 @@ def run_ff_model():
         results.append(result)
         index += 1
 
-    save_to_csv(results)
-    # plot_metrics("TRAIN: LOSS FUNCTION", nn.getHistory(), metric_names=["loss", "accuracy"])
-    # visualize_predictions(nn, X_test, y_test_onehot)
-
+    save_to_json(results)
 
 def run_cnn_model():
     X_train, y_train_onehot, X_test, y_test_onehot = load_and_preprocess_data_for_cnn(60000, 10000)
@@ -78,6 +80,3 @@ def run_cnn_model():
 
     print("\n[CONVOLUTIONAL] TRAIN ARITHMETIC_MEAN_ACCURACY: {:.2f}%".format(train_accuracy * 100))
     print("[CONVOLUTIONAL] TEST ARITHMETIC_MEAN_ACCURACY: {:.2f}%".format(test_accuracy * 100))
-
-    # plot_metrics("TRAIN: LOSS FUNCTION", nn.getHistory(), metric_names=["loss", "accuracy"])
-    # visualize_predictions(nn, X_test, y_test_onehot)

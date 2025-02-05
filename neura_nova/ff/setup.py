@@ -1,5 +1,5 @@
 import os
-import csv
+import json
 import math
 import array
 import random
@@ -11,17 +11,10 @@ from .layer import DenseLayer
 from .network import FeedForward
 from ..loss import SoftmaxCrossEntropy
 
-def save_to_csv(results, filename='results/ff/results.csv'):
+def save_to_json(results, filename='results/ff/results.json'):
     os.makedirs(os.path.dirname(filename), exist_ok=True)
-    headers = ["train_accuracy", "test_accuracy", "epochs", "batch_size"]
-
-    with open(filename, 'w', newline='') as file:
-        writer = csv.writer(file)
-        if file.tell() == 0:
-            writer.writerow(headers)
-
-        for result in results:
-            writer.writerow([result['train_accuracy'], result['test_accuracy'], result['epochs'], result['batch_size']])
+    with open(filename, 'w', newline='', encoding='utf-8') as file:
+        json.dump([results], file, indent=4)
 
 def closest_power_of_2(n):
     lower = 2 ** math.floor(math.log2(n))
@@ -51,9 +44,6 @@ def one_hot_encode(y, num_classes):
 
 def load_and_preprocess_data_for_ff(train_limit, test_limit):
     (X_train, y_train), (X_test, y_test) = load_mnist(train_limit, test_limit)
-
-    # print(f"[INFO] TRAIN SET SIZE: {X_train.shape[0]}")
-    # print(f"[INFO] TEST SET SIZE:  {X_test.shape[0]}")
 
     # Pre-Processing (normalization)
     X_train = X_train.astype(np.float32) / 255.0
@@ -95,11 +85,14 @@ def build_and_train_ff_model_with_config(config, loss_fun=SoftmaxCrossEntropy())
     train_accuracy = nn.arithmetic_mean_accuracy(X_train, y_train_onehot)
     test_accuracy  = nn.arithmetic_mean_accuracy(X_test, y_test_onehot)
 
-    # Read ffconfig.json
+    # Read config/ffconfig.json
     result = {
-        'train_accuracy': "{:.2f}".format(train_accuracy * 100),
-        'test_accuracy': "{:.2f}".format(test_accuracy * 100),
+        'layers': config['layers'],
+        'train_dimension': config['train_dimension'],
+        'test_dimension': config['test_dimension'],
         'epochs': epochs,
         'batch_size': batch_size,
+        'train_accuracy': "{:.2f}".format(train_accuracy * 100),
+        'test_accuracy': "{:.2f}".format(test_accuracy * 100),
     }
     return result
