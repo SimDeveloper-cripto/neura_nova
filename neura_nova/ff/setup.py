@@ -87,7 +87,7 @@ def build_and_train_ff_model_with_config(config, loss_fun=SoftmaxCrossEntropy())
     - output_dim    = 10
     - weights shape = (output_dim, input_dim) = (# neurons, # features)
     """
-    X_train, y_train_onehot, X_test, y_test_onehot = load_and_preprocess_data_for_ff(config['train_dimension'], config['test_dimension'])
+    X_train, y_train_onehot, X_val, y_val, X_test, y_test_onehot = load_and_preprocess_data_for_ff(config['train_dimension'], config['test_dimension'])
     nn = FeedForward(loss_fun)  # See conv_layer.py __init__() and forward()
 
     for layer_config in config['layers']:
@@ -97,10 +97,11 @@ def build_and_train_ff_model_with_config(config, loss_fun=SoftmaxCrossEntropy())
 
     epochs     = config['epochs']
     batch_size = config['batch_size']
-    nn.train(X_train, y_train_onehot, epochs, 0.001, batch_size)
+    nn.train(X_train, y_train_onehot, epochs, X_val, y_val , 0.001, batch_size)
 
     train_accuracy = nn.arithmetic_mean_accuracy(X_train, y_train_onehot)
     test_accuracy  = nn.arithmetic_mean_accuracy(X_test, y_test_onehot)
+    validation_accuracy = nn.arithmetic_mean_accuracy(X_val, y_val)
 
     # Read config/ffconfig.json
     result = {
@@ -111,5 +112,6 @@ def build_and_train_ff_model_with_config(config, loss_fun=SoftmaxCrossEntropy())
         'batch_size': batch_size,
         'train_accuracy': "{:.2f}".format(train_accuracy * 100),
         'test_accuracy': "{:.2f}".format(test_accuracy * 100),
+        'validation_accuracy': "{:.2f}".format(validation_accuracy * 100)
     }
     return result

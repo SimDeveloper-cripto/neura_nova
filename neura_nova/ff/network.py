@@ -5,23 +5,30 @@ from ..loss import LossFunction
 
 
 class Network:
-    def train(self, X, y, epochs, learning_rate, batch_size=128):
+    def train(self, X, y, epochs, X_val, y_val ,learning_rate, batch_size=128):
         raise NotImplementedError
 
 class FeedForward(Network):
     def __init__(self, loss_fn: LossFunction):
         self.layers    = []
         self.loss_fn   = loss_fn
-        self.__history = {
-            "loss": [],
-            "accuracy": []
+        self.__train_history = {
+            "train_loss": [],
+            "train_accuracy": []
+        }
+        self.__validation_history = {
+            "validation_loss" : [],
+            "validation_accuracy" : []
         }
 
     def add_layer(self, layer):
         self.layers.append(layer)
 
-    def getHistory(self):
-        return self.__history
+    def getTrainHistory(self):
+        return self.__train_history
+
+    def getValidationHistory(self):
+        return self.__validation_history
 
     def predict(self, input_X):
         """
@@ -33,7 +40,7 @@ class FeedForward(Network):
             output = layer.forward(output)
         return output
 
-    def train(self, X, y, epochs, learning_rate, batch_size=128):
+    def train(self, X, y, epochs, X_val, y_val, learning_rate, batch_size=128):
         """
         X shape: (input_dim, N)
         y shape: (num_classes, N)
@@ -64,10 +71,18 @@ class FeedForward(Network):
 
             epoch_loss /= num_samples
             epoch_accuracy = self.arithmetic_mean_accuracy(X_shuffled, y_shuffled)
-            print(f"Epoch {epoch}/{epochs}, Loss: {epoch_loss:.4f}, Accuracy: {epoch_accuracy:.4f}")
 
-            self.__history["loss"].append(epoch_loss)
-            self.__history["accuracy"].append(epoch_accuracy)
+            val_logits = self.predict(X_val)
+            val_loss = self.loss_fn.forward(val_logits, y_val)
+            val_accuracy = self.arithmetic_mean_accuracy(X_val, y_val)
+
+            print(f"epoch {epoch}/{epochs}, train_loss: {epoch_loss:.4f}, train_accuracy: {epoch_accuracy:.4f}, "
+                  f"validation_loss: {val_loss:.4f}, validation_accuracy: {val_accuracy:.4f}")
+
+            self.__train_history["train_loss"].append(epoch_loss)
+            self.__train_history["train_accuracy"].append(epoch_accuracy)
+            self.__validation_history["validation_loss"].append(val_loss)
+            self.__validation_history["validation_accuracy"].append(val_accuracy)
 
     def arithmetic_mean_accuracy(self, X, y):
         """
