@@ -14,7 +14,7 @@ def one_hot_encode(y, num_classes):
     one_hot[np.arange(y.shape[0]), y] = 1.0
     return one_hot
 
-def load_and_preprocess_data_for_cnn(train_limit, test_limit):
+def load_and_preprocess_data_for_cnn(train_limit, test_limit, validation_limit):
     (X_train, y_train), (X_test, y_test) = load_mnist(train_limit, test_limit)
 
     # Pre-Processing (normalization)
@@ -29,13 +29,10 @@ def load_and_preprocess_data_for_cnn(train_limit, test_limit):
     y_train_onehot = one_hot_encode(y_train, num_classes)
     y_test_onehot  = one_hot_encode(y_test, num_classes)
 
-    train_ratio = 0.8
-    split_index = int(X_train.shape[0] * train_ratio)
-
-    X_train_final = X_train[:split_index]
-    y_train_final = y_train_onehot[:split_index]
-    X_val         = X_train[split_index:]
-    y_val         = y_train_onehot[split_index:]
+    X_train_final = X_train[:validation_limit]
+    y_train_final = y_train_onehot[:validation_limit]
+    X_val         = X_train[validation_limit:]
+    y_val         = y_train_onehot[validation_limit:]
 
     return X_train_final, y_train_final, X_val, y_val, X_test, y_test_onehot
 

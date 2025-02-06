@@ -7,8 +7,9 @@
       {"neurons": 64,  "activation": "relu"},
       {"neurons": 10,  "activation": "identity"}
     ],
-    "train_dimension": 60000,
+    "train_dimension": 40000,
     "test_dimension": 10000,
+    "validation_dimension": 20000,
     "epochs": 15,
     "batch_size": 128
   },
@@ -20,7 +21,7 @@
       {"neurons": 64,  "activation": "sigmoid"},
       {"neurons": 10,  "activation": "identity"}
     ],
-    "train_dimension": 60000,
+    "train_dimension": 40000,
     "test_dimension": 10000,
     "epochs": 15,
     "batch_size": 128

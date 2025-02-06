@@ -42,7 +42,7 @@ def one_hot_encode(y, num_classes):
     one_hot[np.arange(y.shape[0]), y] = 1.0
     return one_hot
 
-def load_and_preprocess_data_for_ff(train_limit, test_limit):
+def load_and_preprocess_data_for_ff(train_limit, test_limit, validation_limit):
     (X_train, y_train), (X_test, y_test) = load_mnist(train_limit, test_limit)
 
     # Pre-Processing (normalization)
@@ -57,14 +57,11 @@ def load_and_preprocess_data_for_ff(train_limit, test_limit):
     y_train_onehot = one_hot_encode(y_train, num_classes)  # shape: (N, 10)
     y_test_onehot  = one_hot_encode(y_test, num_classes)
 
-    # 80% training_set + 20% validation_set
-    train_ratio = 0.8
-    split_index = int(X_train.shape[0] * train_ratio)
-
-    X_train_final = X_train[:split_index]
-    y_train_final = y_train_onehot[:split_index]
-    X_val         = X_train[split_index:]
-    y_val         = y_train_onehot[split_index:]
+    # % train_set + % validation_set
+    X_train_final = X_train[:validation_limit]
+    y_train_final = y_train_onehot[:validation_limit]
+    X_val         = X_train[validation_limit:]
+    y_val         = y_train_onehot[validation_limit:]
 
     # Use WX + B convention
     # Training
@@ -87,7 +84,7 @@ def build_and_train_ff_model_with_config(config, loss_fun=SoftmaxCrossEntropy())
     - output_dim    = 10
     - weights shape = (output_dim, input_dim) = (# neurons, # features)
     """
-    X_train, y_train_onehot, X_val, y_val, X_test, y_test_onehot = load_and_preprocess_data_for_ff(config['train_dimension'], config['test_dimension'])
+    X_train, y_train_onehot, X_val, y_val, X_test, y_test_onehot = load_and_preprocess_data_for_ff(config['train_dimension'], config['test_dimension'], config['validation_dimension'])
     nn = FeedForward(loss_fun)  # See conv_layer.py __init__() and forward()
 
     for layer_config in config['layers']:
@@ -97,7 +94,7 @@ def build_and_train_ff_model_with_config(config, loss_fun=SoftmaxCrossEntropy())
 
     epochs     = config['epochs']
     batch_size = config['batch_size']
-    nn.train(X_train, y_train_onehot, epochs, X_val, y_val , 0.001, batch_size)
+    nn.train(X_train, y_train_onehot, epochs, X_val, y_val, 0.001, batch_size)
 
     train_accuracy = nn.arithmetic_mean_accuracy(X_train, y_train_onehot)
     test_accuracy  = nn.arithmetic_mean_accuracy(X_test, y_test_onehot)

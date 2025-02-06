@@ -5,7 +5,7 @@ from ..loss import LossFunction
 
 
 class Network:
-    def train(self, X, y, epochs, X_val, y_val ,learning_rate, batch_size=128):
+    def train(self, X, y, epochs, X_val, y_val, learning_rate, batch_size=128):
         raise NotImplementedError
 
 class FeedForward(Network):
@@ -17,8 +17,8 @@ class FeedForward(Network):
             "train_accuracy": []
         }
         self.__validation_history = {
-            "validation_loss" : [],
-            "validation_accuracy" : []
+            "validation_loss": [],
+            "validation_accuracy": []
         }
 
     def add_layer(self, layer):

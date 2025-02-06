@@ -37,17 +37,27 @@ def visualize_predictions(nn, X_test, y_test_onehot, num_immagini=25):
     plt.ioff()
     plt.show()
 
-def plot_metrics(title, history, metric_names):
-    epochs = range(1, len(history[metric_names[0]]) + 1)
+def plot_metrics(title, history1, history2, metric_names1, metric_names2):
+    epochs1 = range(1, len(history1[metric_names1[0]]) + 1)
+    epochs2 = range(1, len(history2[metric_names2[0]]) + 1)
 
-    plt.figure(figsize=(12, 6))
-    for metric in metric_names:
-        plt.plot(epochs, history[metric], label=metric)
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 6))
+    for metric in metric_names1:
+        ax1.plot(epochs1, history1[metric], label=metric)
+    ax1.set_xlabel("epoch")
+    ax1.set_ylabel("loss")
+    ax1.set_title(f"{title} - Set 1")
+    ax1.legend()
+    ax1.grid(True)
 
-    plt.xlabel("epoch")
-    plt.ylabel("loss")
-    plt.title(title)
-    plt.legend()
-    plt.grid(True)
+    for metric in metric_names2:
+        ax2.plot(epochs2, history2[metric], label=metric)
+    ax2.set_xlabel("epoch")
+    ax2.set_ylabel("loss")
+    ax2.set_title(f"{title} - Set 2")
+    ax2.legend()
+    ax2.grid(True)
+
+    plt.tight_layout()
     plt.ioff()
     plt.show()

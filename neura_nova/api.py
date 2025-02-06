@@ -14,21 +14,25 @@ from .cnn.setup import load_and_preprocess_data_for_cnn, build_cnn_model
 # TODO 5 [PROF]: PARLARE DEL COMMENTO PRESENTE IN conv_layer.py
 # TODO 6 [PROF]: ABBIAMO PENSATO AD UN DROP-OUT PER AUMENTARE LA GENERALIZZAZIONE
 # TODO 7 [PROF]: ABBIAMO PENSATO AD UN WEIGHT-DECAY (TERMINE DI PENALITA' NELLA LOSS) NELL'AGGIORNAMENTO DEI PESI
+# TODO 8 [PROF]: PER LA LOSS DEL VALIDATION SET DEVE ESSERE DIVERSA DA QUELLA PER IL TRAINING SET?
 
-# TODO 1 [CARMINE]: SUDDIVIDERE IL DATASET DI TRAINING, IN TRAINING + VALIDATION (MODIFICARE IL TRAIN) E VEDERE COME MIGLIORA L'APPRENDIMENTO
-# TODO 2 [CARMINE]: SULLA BASE DI QUELLO FATTO NEL TODO 2, IMPLEMENTA EARLY-STOPPING (E' FACILE, SERVE A RIDURRE L'OVER-FITTING)
+# TODO 1 [CARMINE]: AGGIUGNERE ALLA CONFIG DELLA FF L'ATTRIBUTO "validation_dimension" AD OGNI MODELLO
+# TODO 2 [CARMINE]: IMPLEMENTA EARLY-STOPPING (PER RIDURRE L'OVER-FITTING)
 # TODO 3 [CARMINE]: STABILIRE UN MODO PER CONFIGURARE GLI IPER-PARAMETRI DELLA RETE CONVOLUZIONALE
 
-def show_results(nn, X_test, y_test_onehot):
-    plot_metrics("TRAIN: LOSS FUNCTION", nn.getHistory(), metric_names=["loss", "accuracy"])
-    visualize_predictions(nn, X_test, y_test_onehot)
+# TODO 1 [SIMONE]: INCLUDI cnnconfig.json PER CONFIGURARE LA RETE CONVOLUZIONALE E AGGIUNGI ALTRI MODELLI
+
+def show_results(nn, X_test, y_train_onehot, X_val, y_val):
+    plot_metrics("RESULTS", nn.getTrainHistory(), nn.getValidationHistory(), metric_names1=["train_loss", "train_accuracy"], metric_names2=["val_loss", "val_accuracy"])
+    visualize_predictions(nn, X_test, y_train_onehot)
+    visualize_predictions(nn, X_val, y_val)
 
 def run_ff_model():
     # IPER-PARAMETRI [K-FOLD]
     # 0 --> LAYERS
     # 1 --> NEURONS PER LAYER
     # 2 --> ACTIVATION FUNCTION
-    # 3 --> TRAINING SET AND TEST SET DIMENSIONS  # TODO [SIMONE]: AGGIUNGERE VALIDATION SET
+    # 3 --> DIMENSION OF TRAINING SET, VALIDATION SET AND TEST SET
     # 4 --> EPOCHS
     # 5 --> BATCH SIZE
 
@@ -45,33 +49,26 @@ def run_ff_model():
     save_to_json(results)
 
 def run_cnn_model():
-    X_train, y_train_onehot, X_test, y_test_onehot = load_and_preprocess_data_for_cnn(60000, 10000)
+    X_train, y_train_onehot, X_val, y_val, X_test, y_test_onehot = load_and_preprocess_data_for_cnn(40000, 10000, 20000)
     nn = build_cnn_model()
 
-    # TODO [SIMONE]
     # IPER-PARAMETRI [K-FOLD]
-    # 0  --> NUMERO DI CONV. LAYER E POOL. LAYER
-    # 1  --> NUMERO DI NEURONI PER LAYER
-    # 2  --> FUNZIONE DI ATTIVAZIONE
-    # 3  --> DIMENSIONE DEI DATASET DI ALLENAMENTO E DI TEST
-    # 4  --> EPOCHE
-    # 5  --> BATCH SIZE
-    # 6  --> LEARNING RATE
-    # 7  --> KERNEL SIZE
-    # 8  --> PADDING
-    # 9  --> STRIDE
-    # 10 --> DIMENSIONE DELLA FINESTRA (QUANTI PIXEL PRENDE OGNI NEURONE)
-    # 11 --> NUMERO DI FILTRI
-    # 12 --> BETA 1
-    # 13 --> BETA 2
-    # 14 --> EPSILON
+    # 0  --> NUMERO DI CONV. LAYER, POOL. LAYER, FC LAYER
+    # 1  --> FUNZIONE DI ATTIVAZIONE
+    # 2  --> DIMENSIONE DEI DATASET DI ALLENAMENTO, VALIDAZIONE E DI TEST
+    # 3  --> EPOCHE
+    # 4  --> BATCH SIZE
+    # 5  --> KERNEL SIZE
+    # 6  --> PADDING
+    # 7  --> STRIDE
+    # TODO [SIMONE, DOPO IL PROF] 8 --> DIMENSIONE DELLA FINESTRA (QUANTI PIXEL PRENDE OGNI NEURONE)
 
     epochs = 15
     batch_size = 128
     learning_rate = 0.001
 
     # Using ADAM update rule
-    nn.train(X_train, y_train_onehot, epochs, learning_rate, batch_size)
+    nn.train(X_train, y_train_onehot, epochs, X_val, y_val, learning_rate, batch_size)
 
     # Evaluate learning and test accuracy
     train_accuracy = nn.arithmetic_mean_accuracy(X_train, y_train_onehot)
