@@ -50,19 +50,35 @@ def load_and_preprocess_data_for_ff(train_limit, test_limit):
     X_test  = X_test.astype(np.float32) / 255.0
 
     # Flatten images
-    X_train = X_train.reshape(X_train.shape[0], -1)
-    X_test  = X_test.reshape(X_test.shape[0], -1)
+    X_train = X_train.reshape(X_train.shape[0], -1)  # shape: (N_train, 784)
+    X_test  = X_test.reshape(X_test.shape[0], -1)    # shape: (N_train, 784)
 
     num_classes = 10
     y_train_onehot = one_hot_encode(y_train, num_classes)  # shape: (N, 10)
     y_test_onehot  = one_hot_encode(y_test, num_classes)
 
+    train_ratio = 0.8
+    split_index = int(X_train.shape[0] * train_ratio)
+
+    X_train_final = X_train[:split_index]
+    y_train_final = y_train[:split_index]
+    X_val         = X_train[split_index:]
+    y_val         = y_train_onehot[split_index:]
+
     # Use WX + B convention
-    X_train        = X_train.T         # shape: (784, N_train)
-    X_test         = X_test.T          # shape: (784, N_test)
-    y_train_onehot = y_train_onehot.T  # shape: (10,  N_train)
-    y_test_onehot  = y_test_onehot.T   # shape: (10,  N_test)
-    return X_train, y_train_onehot, X_test, y_test_onehot
+    # Training
+    X_train_final = X_train_final.T  # shape: (784,  N_train_final)
+    y_train_final = y_train_final.T  # shape: (10,   N_train_final)
+
+    # Validation
+    X_val         = X_val.T          # shape: (784,  N_val)
+    y_val         = y_val.T          # shape: (10,   N_val)
+
+    # Test
+    X_test        = X_test.T         # shape: (7_84, N_test)
+    y_test_onehot = y_test_onehot.T  # shape: (10,   N_test)
+
+    return X_train_final, y_train_final, X_val, y_val, X_test, y_test_onehot
 
 def build_and_train_ff_model_with_config(config, loss_fun=SoftmaxCrossEntropy()):
     """

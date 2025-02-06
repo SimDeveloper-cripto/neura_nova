@@ -29,7 +29,15 @@ def load_and_preprocess_data_for_cnn(train_limit, test_limit):
     y_train_onehot = one_hot_encode(y_train, num_classes)
     y_test_onehot  = one_hot_encode(y_test, num_classes)
 
-    return X_train, y_train_onehot, X_test, y_test_onehot
+    train_ratio = 0.8
+    split_index = int(X_train.shape[0] * train_ratio)
+
+    X_train_final = X_train[:split_index]
+    y_train_final = y_train_onehot[:split_index]
+    X_val         = X_train[split_index:]
+    y_val         = y_train_onehot[split_index:]
+
+    return X_train_final, y_train_final, X_val, y_val, X_test, y_test_onehot
 
 def build_cnn_model(loss_fun=SoftmaxCrossEntropy()):
     nn = Convolutional(loss_fun)
