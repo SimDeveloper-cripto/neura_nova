@@ -40,12 +40,16 @@ class FeedForward(Network):
             output = layer.forward(output)
         return output
 
-    def train(self, X, y, epochs, X_val, y_val, learning_rate, batch_size=128):
+    def train(self, X, y, epochs, X_val, y_val, learning_rate, batch_size=128, patience=10):
         """
         X shape: (input_dim, N)
         y shape: (num_classes, N)
         """
         num_samples = X.shape[1]
+
+        best_val_loss = float('inf')
+        patience_counter = 0
+        best_weights = None
 
         for epoch in range(1, epochs + 1):
             # Shuffle
@@ -83,6 +87,23 @@ class FeedForward(Network):
             self.__train_history["train_accuracy"].append(epoch_accuracy)
             self.__validation_history["validation_loss"].append(val_loss)
             self.__validation_history["validation_accuracy"].append(val_accuracy)
+
+            # EARLY STOPPING
+            if val_loss < best_val_loss:
+                best_val_loss = val_loss
+                patience_counter = 0
+                best_weights = [layer.get_weights() for layer in self.layers]  # Salvataggio pesi migliori
+            else:
+                patience_counter += 1
+
+            if patience_counter >= patience:
+                print(f"Early stopping at epoch {epoch}")
+                break
+
+        # Ripristiniamo i migliori pesi trovati
+        if best_weights:
+            for layer, best_weight in zip(self.layers, best_weights):
+                layer.set_weights(best_weight)
 
     def arithmetic_mean_accuracy(self, X, y):
         """

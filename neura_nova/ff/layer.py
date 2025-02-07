@@ -65,6 +65,22 @@ class DenseLayer:
         self.activation = activation
         self.activation_cache = None  # Derivative of activation
 
+    def get_weights(self):
+        return (
+            np.copy(self.weights), np.copy(self.bias),
+            np.copy(self.m_weights), np.copy(self.v_weights),
+            np.copy(self.m_bias), np.copy(self.v_bias),
+            self.t
+        )
+
+    def set_weights(self, saved_state):
+        (
+            self.weights, self.bias,
+            self.m_weights, self.v_weights,
+            self.m_bias, self.v_bias,
+            self.t
+        ) = saved_state
+
     def forward(self, input_data):
         # X
         input_data = input_data.astype(np.float32)

@@ -57,8 +57,12 @@ class Convolutional(Network):
             Z = fc.forward(Z)
         return Z
 
-    def train(self, X, y, epochs, X_val, y_val, learning_rate, batch_size=128):
+    def train(self, X, y, epochs, X_val, y_val, learning_rate, batch_size=128, patience=10):
         num_samples = X.shape[0]
+
+        best_val_loss = float('inf')
+        patience_counter = 0
+        best_weights = None
 
         for epoch in range(1, epochs + 1):
             # Shuffle
@@ -116,6 +120,23 @@ class Convolutional(Network):
             self.__train_history["train_accuracy"].append(epoch_accuracy)
             self.__validation_history["validation_loss"].append(epoch_loss)
             self.__validation_history["validation_accuracy"].append(epoch_accuracy)
+
+            # EARLY STOPPING
+            if val_loss < best_val_loss:
+                best_val_loss = val_loss
+                patience_counter = 0
+                best_weights = [layer.get_weights() for layer in self.conv_layers]
+            else:
+                patience_counter += 1
+
+            if patience_counter >= patience:
+                print(f"Early stopping at epoch {epoch}")
+                break
+
+        # Ripristiniamo i migliori pesi trovati
+        if best_weights:
+            for layer, best_weight in zip(self.conv_layers, best_weights):
+                layer.set_weights(best_weight)
 
     def arithmetic_mean_accuracy(self, X, y):
         logits = self.predict(X)
