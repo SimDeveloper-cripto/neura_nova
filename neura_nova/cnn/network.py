@@ -37,11 +37,8 @@ class Convolutional(Network):
 
     def predict(self, input_X):
         output = input_X
-
-        for conv in self.conv_layers:
+        for conv, pool in zip(self.conv_layers, self.pool_layers):
             output = conv.forward(output)
-
-        for pool in self.pool_layers:
             output = pool.forward(output)
 
         batch_size = output.shape[0]
@@ -78,9 +75,8 @@ class Convolutional(Network):
 
                 # Forward
                 out = X_batch
-                for conv in self.conv_layers:
+                for conv, pool in zip(self.conv_layers, self.pool_layers):
                     out = conv.forward(out)
-                for pool in self.pool_layers:
                     out = pool.forward(out)
 
                 out_shape          = out.shape  # Save shape for backward
@@ -101,9 +97,8 @@ class Convolutional(Network):
                     grad = fc.backward(grad)
                 grad = grad.T.reshape(out_shape)
 
-                for pool in reversed(self.pool_layers):
+                for conv, pool in reversed(list(zip(self.conv_layers, self.pool_layers))):
                     grad = pool.backward(grad)
-                for conv in reversed(self.conv_layers):
                     grad = conv.backward(grad)
 
             epoch_loss /= num_samples
