@@ -12,6 +12,7 @@ class Convolutional(Network):
     def __init__(self, loss_fn: LossFunction):
         self.conv_layers  = []
         self.pool_layers  = []
+        self.fc_layers    = []
         self.loss_fn      = loss_fn
         self.__train_history    = {
             "train_loss": [],
@@ -21,8 +22,6 @@ class Convolutional(Network):
             "validation_loss": [],
             "validation_accuracy": []
         }
-
-        self.fc_layer = None
 
     def add_conv_layer(self, layer):
         self.conv_layers.append(layer)
@@ -50,10 +49,12 @@ class Convolutional(Network):
         # Flattening: from (N, C, H, W) to (N, C * H * W)
         flattened = output.reshape(batch_size, -1).T
 
-        if self.fc_layer is None:
-            raise ValueError("Fully-Connected layer is not initialized.")
+        if self.fc_layers is None:
+            raise ValueError("Fully-Connected layers are not initialized.")
 
-        Z = self.fc_layer.forward(flattened)
+        Z = flattened
+        for fc in self.fc_layers:
+            Z = fc.forward(Z)
         return Z
 
     def train(self, X, y, epochs, X_val, y_val, learning_rate, batch_size=128):
@@ -82,16 +83,19 @@ class Convolutional(Network):
                 current_batch_size = out.shape[0]
                 flattened          = out.reshape(current_batch_size, -1).T
 
-                Z = self.fc_layer.forward(flattened)
+                Z = flattened
+                for fc in self.fc_layers:
+                    Z = fc.forward(Z)
 
                 loss = self.loss_fn.forward(Z, y_batch.T)
                 epoch_loss += loss * current_batch_size
 
                 # Backward
                 # Backprop from the fully-connected layer
-                grad_loss = self.loss_fn.backward()  # grad_loss: (10, batch_size)
-                grad_fc   = self.fc_layer.backward(grad_loss)
-                grad      = grad_fc.T.reshape(out_shape)
+                grad = self.loss_fn.backward()  # grad: (10, batch_size)
+                for fc in reversed(self.fc_layers):
+                    grad = fc.backward(grad)
+                grad = grad.T.reshape(out_shape)
 
                 for pool in reversed(self.pool_layers):
                     grad = pool.backward(grad)
@@ -105,8 +109,8 @@ class Convolutional(Network):
             val_loss = self.loss_fn.forward(val_logits, y_val.T)
             val_accuracy = self.arithmetic_mean_accuracy(X_val, y_val)
 
-            print(f"epoch {epoch}/{epochs}, train_loss: {epoch_loss:.4f}, train_accuracy: {epoch_accuracy:.4f}, "
-                  f"validation_loss: {val_loss:.4f}, validation_accuracy: {val_accuracy:.4f}")
+            print(f"epoch {epoch}/{epochs}: train_loss: {epoch_loss:.4f},"
+                  f"train_accuracy: {epoch_accuracy:.4f}, val_loss: {val_loss:.4f}, val_accuracy: {val_accuracy:.4f}")
 
             self.__train_history["train_loss"].append(epoch_loss)
             self.__train_history["train_accuracy"].append(epoch_accuracy)

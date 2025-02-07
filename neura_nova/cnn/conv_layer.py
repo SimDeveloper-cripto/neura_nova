@@ -118,7 +118,6 @@ class ConvLayer:
 
         # Variabili per forward/backward
         self.input            = None  # input originale in forma (batch_size, input_channels, H, W)
-        self.input_padded     = None  # input dopo il padding
         self.output           = None
         self.activation_cache = None
         self.pre_activation   = None

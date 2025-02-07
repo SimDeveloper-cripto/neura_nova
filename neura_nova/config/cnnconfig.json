@@ -24,7 +24,7 @@
     "train_dimension": 40000,
     "test_dimension": 10000,
     "validation_dimension": 20000,
-    "epochs": 15,
+    "epochs": 2,
     "batch_size": 128
   }
 ]

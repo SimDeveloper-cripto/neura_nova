@@ -96,8 +96,8 @@ def build_and_train_ff_model_with_config(config, loss_fun=SoftmaxCrossEntropy())
     batch_size = config['batch_size']
     nn.train(X_train, y_train_onehot, epochs, X_val, y_val, 0.001, batch_size)
 
-    train_accuracy = nn.arithmetic_mean_accuracy(X_train, y_train_onehot)
-    test_accuracy  = nn.arithmetic_mean_accuracy(X_test, y_test_onehot)
+    train_accuracy      = nn.arithmetic_mean_accuracy(X_train, y_train_onehot)
+    test_accuracy       = nn.arithmetic_mean_accuracy(X_test, y_test_onehot)
     validation_accuracy = nn.arithmetic_mean_accuracy(X_val, y_val)
 
     # Read config/ffconfig.json

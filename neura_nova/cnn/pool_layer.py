@@ -7,7 +7,6 @@ class MaxPoolLayer:
         self.stride      = stride
         self.input       = None
         self.argmax      = None
-        self.input_shape = None
 
     def forward(self, input_data):
         self.input = input_data
@@ -20,8 +19,6 @@ class MaxPoolLayer:
         output = input_reshaped.max(axis=(-1, -2))
 
         self.argmax = np.argmax(input_reshaped.reshape(batch_size, input_channels, out_h, out_w, -1), axis=-1)
-        self.input_shape = input_data.shape
-
         return output
 
     def backward(self, grad_output):
