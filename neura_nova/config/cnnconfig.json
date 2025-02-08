@@ -54,7 +54,7 @@
   "validation_dimension": 20000,
   "epochs": 15,
   "batch_size": 128
-},
+  },
   {
     "conv_layers": [
       {

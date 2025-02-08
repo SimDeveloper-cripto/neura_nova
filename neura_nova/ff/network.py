@@ -40,7 +40,7 @@ class FeedForward(Network):
             output = layer.forward(output)
         return output
 
-    def train(self, X, y, epochs, X_val, y_val, learning_rate, batch_size=128, patience=6):
+    def train(self, X, y, epochs, X_val, y_val, learning_rate, batch_size=128, stopping_criterion=6):
         """
         X shape: (input_dim, N)
         y shape: (num_classes, N)
@@ -48,7 +48,7 @@ class FeedForward(Network):
         num_samples = X.shape[1]
 
         best_val_loss = float('inf')
-        patience_counter = 0
+        stopping_counter = 0
         best_weights = None
 
         for epoch in range(1, epochs + 1):
@@ -91,19 +91,19 @@ class FeedForward(Network):
             # EARLY STOPPING
             if val_loss < best_val_loss:
                 best_val_loss = val_loss
-                patience_counter = 0
+                stopping_counter = 0
                 best_weights = [layer.get_weights() for layer in self.layers]  # Salvataggio pesi migliori
             else:
-                patience_counter += 1
+                stopping_counter += 1
 
-            if patience_counter >= patience:
+            if stopping_counter >= stopping_criterion:
                 print(f"Early stopping at epoch {epoch}")
                 break
 
-        # Ripristiniamo i migliori pesi trovati
-        if best_weights:
-            for layer, best_weight in zip(self.layers, best_weights):
-                layer.set_weights(best_weight)
+            # Ripristiniamo i migliori pesi trovati
+            if best_weights:
+                for layer, best_weight in zip(self.layers, best_weights):
+                    layer.set_weights(best_weight)
 
     def arithmetic_mean_accuracy(self, X, y):
         """

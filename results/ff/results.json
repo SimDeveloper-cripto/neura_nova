@@ -27,9 +27,9 @@
             "test_dimension": 10000,
             "epochs": 15,
             "batch_size": 128,
-            "train_accuracy": "98.84",
-            "test_accuracy": "96.38",
-            "validation_accuracy": "96.08"
+            "train_accuracy": "99.97",
+            "test_accuracy": "97.39",
+            "validation_accuracy": "97.14"
         },
         {
             "layers": [
@@ -58,9 +58,9 @@
             "test_dimension": 10000,
             "epochs": 15,
             "batch_size": 128,
-            "train_accuracy": "98.87",
-            "test_accuracy": "95.86",
-            "validation_accuracy": "95.69"
+            "train_accuracy": "99.30",
+            "test_accuracy": "96.35",
+            "validation_accuracy": "96.05"
         },
         {
             "layers": [
@@ -89,9 +89,9 @@
             "test_dimension": 10000,
             "epochs": 15,
             "batch_size": 128,
-            "train_accuracy": "99.76",
-            "test_accuracy": "96.55",
-            "validation_accuracy": "96.41"
+            "train_accuracy": "99.99",
+            "test_accuracy": "97.01",
+            "validation_accuracy": "96.70"
         },
         {
             "layers": [
@@ -120,9 +120,9 @@
             "test_dimension": 10000,
             "epochs": 15,
             "batch_size": 128,
-            "train_accuracy": "98.37",
-            "test_accuracy": "95.04",
-            "validation_accuracy": "94.89"
+            "train_accuracy": "99.05",
+            "test_accuracy": "95.41",
+            "validation_accuracy": "95.00"
         },
         {
             "layers": [
@@ -151,9 +151,9 @@
             "test_dimension": 10000,
             "epochs": 20,
             "batch_size": 128,
-            "train_accuracy": "99.39",
-            "test_accuracy": "96.90",
-            "validation_accuracy": "96.64"
+            "train_accuracy": "99.60",
+            "test_accuracy": "97.23",
+            "validation_accuracy": "96.75"
         },
         {
             "layers": [
@@ -182,9 +182,9 @@
             "test_dimension": 10000,
             "epochs": 20,
             "batch_size": 128,
-            "train_accuracy": "99.60",
-            "test_accuracy": "96.96",
-            "validation_accuracy": "97.45"
+            "train_accuracy": "99.85",
+            "test_accuracy": "97.32",
+            "validation_accuracy": "97.40"
         },
         {
             "layers": [
@@ -213,9 +213,9 @@
             "test_dimension": 10000,
             "epochs": 20,
             "batch_size": 64,
-            "train_accuracy": "99.83",
-            "test_accuracy": "97.31",
-            "validation_accuracy": "97.00"
+            "train_accuracy": "99.73",
+            "test_accuracy": "97.06",
+            "validation_accuracy": "96.47"
         },
         {
             "layers": [
@@ -244,9 +244,9 @@
             "test_dimension": 10000,
             "epochs": 20,
             "batch_size": 64,
-            "train_accuracy": "99.58",
-            "test_accuracy": "95.53",
-            "validation_accuracy": "95.12"
+            "train_accuracy": "99.75",
+            "test_accuracy": "95.86",
+            "validation_accuracy": "95.64"
         },
         {
             "layers": [
@@ -275,9 +275,9 @@
             "test_dimension": 10000,
             "epochs": 15,
             "batch_size": 64,
-            "train_accuracy": "97.75",
-            "test_accuracy": "90.95",
-            "validation_accuracy": "90.49"
+            "train_accuracy": "97.97",
+            "test_accuracy": "91.32",
+            "validation_accuracy": "90.81"
         },
         {
             "layers": [
@@ -306,9 +306,9 @@
             "test_dimension": 10000,
             "epochs": 15,
             "batch_size": 64,
-            "train_accuracy": "98.61",
-            "test_accuracy": "94.58",
-            "validation_accuracy": "94.61"
+            "train_accuracy": "100.00",
+            "test_accuracy": "96.33",
+            "validation_accuracy": "96.05"
         },
         {
             "layers": [
@@ -337,9 +337,9 @@
             "test_dimension": 5000,
             "epochs": 20,
             "batch_size": 128,
-            "train_accuracy": "99.25",
-            "test_accuracy": "95.98",
-            "validation_accuracy": "96.90"
+            "train_accuracy": "99.28",
+            "test_accuracy": "95.84",
+            "validation_accuracy": "96.15"
         },
         {
             "layers": [
@@ -368,9 +368,9 @@
             "test_dimension": 5000,
             "epochs": 20,
             "batch_size": 128,
-            "train_accuracy": "99.22",
-            "test_accuracy": "94.42",
-            "validation_accuracy": "95.43"
+            "train_accuracy": "99.63",
+            "test_accuracy": "94.48",
+            "validation_accuracy": "95.41"
         },
         {
             "layers": [
@@ -399,9 +399,9 @@
             "test_dimension": 10000,
             "epochs": 20,
             "batch_size": 128,
-            "train_accuracy": "99.31",
-            "test_accuracy": "96.87",
-            "validation_accuracy": "96.71"
+            "train_accuracy": "99.25",
+            "test_accuracy": "96.61",
+            "validation_accuracy": "96.17"
         },
         {
             "layers": [
@@ -430,9 +430,9 @@
             "test_dimension": 3000,
             "epochs": 10,
             "batch_size": 32,
-            "train_accuracy": "98.82",
-            "test_accuracy": "95.30",
-            "validation_accuracy": "96.50"
+            "train_accuracy": "99.64",
+            "test_accuracy": "96.40",
+            "validation_accuracy": "97.11"
         },
         {
             "layers": [
@@ -453,9 +453,9 @@
             "test_dimension": 10000,
             "epochs": 15,
             "batch_size": 128,
-            "train_accuracy": "99.22",
-            "test_accuracy": "96.90",
-            "validation_accuracy": "96.66"
+            "train_accuracy": "100.00",
+            "test_accuracy": "97.74",
+            "validation_accuracy": "97.34"
         },
         {
             "layers": [
@@ -492,9 +492,9 @@
             "test_dimension": 10000,
             "epochs": 15,
             "batch_size": 128,
-            "train_accuracy": "99.25",
-            "test_accuracy": "96.85",
-            "validation_accuracy": "96.62"
+            "train_accuracy": "99.33",
+            "test_accuracy": "96.60",
+            "validation_accuracy": "96.30"
         },
         {
             "layers": [
@@ -531,9 +531,9 @@
             "test_dimension": 10000,
             "epochs": 15,
             "batch_size": 128,
-            "train_accuracy": "98.00",
-            "test_accuracy": "95.42",
-            "validation_accuracy": "95.07"
+            "train_accuracy": "98.40",
+            "test_accuracy": "95.58",
+            "validation_accuracy": "95.14"
         }
     ]
 ]

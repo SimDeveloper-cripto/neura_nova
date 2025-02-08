@@ -120,6 +120,9 @@ class DenseLayer:
         grad_output = grad_output.astype(np.float32)
         grad_z = grad_output * self.activation_cache
 
+        # Gradiente in input per lo strato precedente
+        grad_input = self.weights.T @ grad_z
+
         # gradient W: (output_dim, batch_size) @ (batch_size, input_dim) = (output_dim, input_dim)
         grad_weights = grad_z @ self.input.T
 
@@ -153,6 +156,4 @@ class DenseLayer:
         self.weights -= self.learning_rate * m_hat_weights / (np.sqrt(v_hat_weights) + self.epsilon)
         self.bias -= self.learning_rate * m_hat_bias / (np.sqrt(v_hat_bias) + self.epsilon)
 
-        # Gradiente in input per lo strato precedente
-        grad_input = self.weights.T @ grad_z
         return grad_input
