@@ -11,10 +11,12 @@ from .layer import DenseLayer
 from .network import FeedForward
 from ..loss import SoftmaxCrossEntropy
 
-def save_to_json(results, filename='results/ff/results.json'):
+def save_ff_to_json(results, filename='results/ff/results.json'):
     os.makedirs(os.path.dirname(filename), exist_ok=True)
     with open(filename, 'w', newline='', encoding='utf-8') as file:
         json.dump([results], file, indent=4)
+
+    print("results/ff/results.json has been updated!")
 
 def closest_power_of_2(n):
     lower = 2 ** math.floor(math.log2(n))

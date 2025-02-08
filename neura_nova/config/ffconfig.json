@@ -77,9 +77,9 @@
       {"neurons": 64,  "activation": "sigmoid"},
       {"neurons": 10,  "activation": "identity"}
     ],
-    "train_dimension": 25000,
+    "train_dimension": 31000,
     "test_dimension": 10000,
-    "validation_dimension": 35000,
+    "validation_dimension": 29000,
     "epochs": 20,
     "batch_size": 128
   },
@@ -91,9 +91,9 @@
       {"neurons": 64,  "activation": "sigmoid"},
       {"neurons": 10,  "activation": "identity"}
     ],
-    "train_dimension": 30000,
+    "train_dimension": 33000,
     "test_dimension": 10000,
-    "validation_dimension": 30000,
+    "validation_dimension": 27000,
     "epochs": 20,
     "batch_size": 64
   },
@@ -147,9 +147,9 @@
       {"neurons": 64,  "activation": "relu"},
       {"neurons": 10,  "activation": "identity"}
     ],
-    "train_dimension": 30000,
+    "train_dimension": 32000,
     "test_dimension": 5000,
-    "validation_dimension": 30000,
+    "validation_dimension": 28000,
     "epochs": 20,
     "batch_size": 128
   },
@@ -161,9 +161,9 @@
       {"neurons": 64,  "activation": "sigmoid"},
       {"neurons": 10,  "activation": "identity"}
     ],
-    "train_dimension": 30000,
+    "train_dimension": 45000,
     "test_dimension": 5000,
-    "validation_dimension": 30000,
+    "validation_dimension": 15000,
     "epochs": 20,
     "batch_size": 128
   },

@@ -1,6 +1,7 @@
 import numpy as np
 
 
+# This trick assumes that the height and width are nicely divisible by the pooling kernel/stride
 def im2col(input_data, kernel_size, stride, padding):
     """
     Trasforma l'input (batch_size, channels, H, W) in una matrice 2D, in cui ogni riga
@@ -93,6 +94,8 @@ class ConvLayer:
         self.weights = np.ascontiguousarray(self.weights, dtype=np.float32)
         self.bias    = np.ascontiguousarray(self.bias, dtype=np.float32)
 
+        # self.weights shape: (filters, input_channels, kernel_size, kernel_size)
+        # self.bias    shape: mono-dimensional array of dim (self.num_filters,)
         if activation == 'relu':
             # Kaiming/He initialization
             self.weights = np.random.randn(self.num_filters, self.input_channels, self.kernel_size, self.kernel_size) * \
@@ -101,8 +104,7 @@ class ConvLayer:
             # Xavier/Glorot initialization
             self.weights = np.random.randn(self.num_filters, self.input_channels, self.kernel_size, self.kernel_size) * \
                            np.sqrt(1. / (self.input_channels * self.kernel_size * self.kernel_size))
-            # self.weights shape: (filters, input_channels, kernel_size, kernel_size)
-        self.bias = np.zeros((self.num_filters, input_channels), dtype=np.float32)
+        self.bias = np.zeros((self.num_filters,), dtype=np.float32)
 
         # Parametri per Adam
         self.learning_rate = learning_rate
@@ -189,8 +191,8 @@ class ConvLayer:
         dW = self.cols.T.dot(dconv_reshaped)
         dW = dW.transpose(1, 0).reshape(self.weights.shape)
 
-        # shape: (num_filters, 1)
-        dB = np.sum(dconv_reshaped, axis=0, keepdims=True).T
+        # shape: (num_filters,)
+        dB = np.sum(dconv_reshaped, axis=0)
 
         filters_col = self.weights.reshape(self.num_filters, -1).T
         dcols = dconv_reshaped.dot(filters_col.T)

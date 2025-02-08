@@ -3,8 +3,8 @@
 # TODO: USE GPU TO COMPUTE
 
 from .config import load_config
-from .ff.setup import build_and_train_ff_model_with_config, save_to_json
-from .cnn.setup import build_and_train_cnn_model_with_config, save_to_json
+from .ff.setup import build_and_train_ff_model_with_config, save_ff_to_json
+from .cnn.setup import build_and_train_cnn_model_with_config, save_cnn_to_json
 
 # TODO 1 [PROF]: MEDIA ARITMETICA OPPURE PRECISION PER ACCURACY
 # TODO 2 [PROF]: LA LOSS DEL VALIDATION SET DEVE ESSERE DIVERSA DA QUELLA PER IL TRAINING SET?
@@ -28,7 +28,7 @@ def run_ff_model():
         result = build_and_train_ff_model_with_config(config)
         results.append(result)
         index += 1
-    save_to_json(results)
+    save_ff_to_json(results)
 
 def run_cnn_model():
     configs = load_config('config/cnnconfig.json')
@@ -40,4 +40,4 @@ def run_cnn_model():
         result = build_and_train_cnn_model_with_config(config)
         results.append(result)
         index += 1
-    save_to_json(results)
+    save_cnn_to_json(results)

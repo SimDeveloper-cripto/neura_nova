@@ -11,10 +11,12 @@ from ..loss import SoftmaxCrossEntropy
 from .conv_layer import ConvLayer
 from .pool_layer import MaxPoolLayer
 
-def save_to_json(results, filename='results/cnn/results.json'):
+def save_cnn_to_json(results, filename='results/cnn/results.json'):
     os.makedirs(os.path.dirname(filename), exist_ok=True)
     with open(filename, 'w', newline='', encoding='utf-8') as file:
         json.dump([results], file, indent=4)
+
+    print("results/cnn/results.json has been updated!")
 
 def one_hot_encode(y, num_classes):
     one_hot = np.zeros((y.shape[0], num_classes), dtype=np.float32)

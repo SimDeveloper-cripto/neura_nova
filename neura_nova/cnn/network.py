@@ -54,7 +54,7 @@ class Convolutional(Network):
             Z = fc.forward(Z)
         return Z
 
-    def train(self, X, y, epochs, X_val, y_val, learning_rate, batch_size=128, patience=10):
+    def train(self, X, y, epochs, X_val, y_val, learning_rate, batch_size=128, patience=6):
         num_samples = X.shape[0]
 
         best_val_loss = float('inf')

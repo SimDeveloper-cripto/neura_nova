@@ -40,7 +40,7 @@ class FeedForward(Network):
             output = layer.forward(output)
         return output
 
-    def train(self, X, y, epochs, X_val, y_val, learning_rate, batch_size=128, patience=10):
+    def train(self, X, y, epochs, X_val, y_val, learning_rate, batch_size=128, patience=6):
         """
         X shape: (input_dim, N)
         y shape: (num_classes, N)
