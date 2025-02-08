@@ -82,6 +82,7 @@ class DenseLayer:
         ) = saved_state
 
     def forward(self, input_data):
+
         # X
         input_data = input_data.astype(np.float32)
         self.input = input_data
