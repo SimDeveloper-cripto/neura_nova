@@ -34,6 +34,8 @@ class SoftmaxCrossEntropy(LossFunction):
         # Cross-Entropy
         self.batch_size = logits.shape[1]
         log_p      = np.log(self.probs + 1e-9)
+
+        # Returns an average cross-entropy based on the batch
         loss       = -np.sum(labels * log_p) / self.batch_size
         return loss
 

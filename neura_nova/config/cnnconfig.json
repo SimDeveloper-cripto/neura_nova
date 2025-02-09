@@ -2,6 +2,77 @@
   {
     "conv_layers": [
       {
+        "filters": 8,
+        "kernel_size": 3,
+        "stride": 1,
+        "padding": 1,
+        "activation": "relu"
+      }
+    ],
+    "max_pool_layers": [
+      {
+        "kernel_size": 2,
+        "stride": 2
+      }
+    ],
+    "fc_layers": [
+      {
+        "neurons": 10,
+        "activation": "identity"
+      }
+    ],
+    "train_dimension": 40000,
+    "test_dimension": 10000,
+    "validation_dimension": 20000,
+    "epochs": 15,
+    "batch_size": 128
+  },
+  {
+    "conv_layers": [
+      {
+        "filters": 16,
+        "kernel_size": 3,
+        "stride": 1,
+        "padding": 1,
+        "activation": "relu"
+      },
+      {
+        "filters": 32,
+        "kernel_size": 3,
+        "stride": 1,
+        "padding": 1,
+        "activation": "relu"
+      }
+    ],
+    "max_pool_layers": [
+      {
+        "kernel_size": 2,
+        "stride": 2
+      },
+      {
+        "kernel_size": 2,
+        "stride": 2
+      }
+    ],
+    "fc_layers": [
+      {
+        "neurons": 64,
+        "activation": "relu"
+      },
+      {
+        "neurons": 10,
+        "activation": "identity"
+      }
+    ],
+    "train_dimension": 45000,
+    "test_dimension": 10000,
+    "validation_dimension": 15000,
+    "epochs": 20,
+    "batch_size": 128
+  },
+  {
+    "conv_layers": [
+      {
         "filters": 12,
         "kernel_size": 4,
         "stride": 2,
@@ -25,73 +96,6 @@
     "test_dimension": 10000,
     "validation_dimension": 29000,
     "epochs": 20,
-    "batch_size": 64
-  },
-  {
-  "conv_layers": [
-    {
-      "filters": 6,
-      "kernel_size": 3,
-      "stride": 1,
-      "padding": 1,
-      "activation": "relu"
-    }
-  ],
-  "max_pool_layers": [
-    {
-      "kernel_size": 2,
-      "stride": 2
-    }
-  ],
-  "fc_layers": [
-    {
-      "neurons": 10,
-      "activation": "identity"
-    }
-  ],
-  "train_dimension": 40000,
-  "test_dimension": 10000,
-  "validation_dimension": 20000,
-  "epochs": 15,
-  "batch_size": 128
-  },
-  {
-    "conv_layers": [
-      {
-        "filters": 5,
-        "kernel_size": 3,
-        "stride": 1,
-        "padding": 1,
-        "activation": "sigmoid"
-      },
-      {
-        "filters": 5,
-        "kernel_size": 3,
-        "stride": 1,
-        "padding": 1,
-        "activation": "sigmoid"
-      }
-    ],
-    "max_pool_layers": [
-      {
-        "kernel_size": 2,
-        "stride": 2
-      },
-      {
-        "kernel_size": 2,
-        "stride": 2
-      }
-    ],
-    "fc_layers": [
-      {
-        "neurons": 10,
-        "activation": "identity"
-      }
-    ],
-    "train_dimension": 45000,
-    "test_dimension": 10000,
-    "validation_dimension": 15000,
-    "epochs": 15,
     "batch_size": 64
   }
 ]

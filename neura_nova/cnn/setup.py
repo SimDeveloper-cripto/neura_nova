@@ -102,6 +102,7 @@ def build_and_train_cnn_model_with_config(config, loss_fun=SoftmaxCrossEntropy()
 
     nn.train(X_train, y_train_onehot, epochs, X_val, y_val, learning_rate, batch_size)
 
+    # Sulla base dei pesi migliori
     train_accuracy      = nn.arithmetic_mean_accuracy(X_train, y_train_onehot)
     test_accuracy       = nn.arithmetic_mean_accuracy(X_test, y_test_onehot)
     validation_accuracy = nn.arithmetic_mean_accuracy(X_val, y_val)

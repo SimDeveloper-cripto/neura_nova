@@ -1,4 +1,5 @@
 import numpy as np
+from ..init import glorot_uniform_init_conv
 
 
 # This trick assumes that the height and width are nicely divisible by the pooling kernel/stride
@@ -98,12 +99,13 @@ class ConvLayer:
         # self.bias    shape: mono-dimensional array of dim (self.num_filters,)
         if activation == 'relu':
             # Kaiming/He initialization
-            self.weights = np.random.randn(self.num_filters, self.input_channels, self.kernel_size, self.kernel_size) * \
-                           np.sqrt(2. / (self.input_channels * self.kernel_size * self.kernel_size))
+            self.weights = (
+                    np.random.randn(self.num_filters, self.input_channels, self.kernel_size, self.kernel_size) *
+                    np.sqrt(2. / (self.input_channels * self.kernel_size * self.kernel_size))
+            ).astype(np.float32)
         else:
             # Xavier/Glorot initialization
-            self.weights = np.random.randn(self.num_filters, self.input_channels, self.kernel_size, self.kernel_size) * \
-                           np.sqrt(1. / (self.input_channels * self.kernel_size * self.kernel_size))
+            self.weights = glorot_uniform_init_conv(self.num_filters, self.input_channels, self.kernel_size)
         self.bias = np.zeros((self.num_filters,), dtype=np.float32)
 
         # Parametri per Adam

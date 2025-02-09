@@ -1,6 +1,7 @@
 # neura_nova/ff/conv_layer.py
 
 import numpy as np
+from ..init import glorot_uniform_init_dense
 
 
 class DenseLayer:
@@ -33,14 +34,13 @@ class DenseLayer:
             B     : (10, 1)
             Output: (10, N)
         """
-
         self.weights = None
         if activation == 'relu':
             # Kaiming/He initialization
             self.weights = np.random.randn(output_dim, input_dim) * np.sqrt(2. / input_dim)
         else:
             # Xavier/Glorot initialization
-            self.weights = np.random.randn(output_dim, input_dim) * np.sqrt(1. / input_dim)
+            self.weights = glorot_uniform_init_dense(input_dim, output_dim)
         self.bias = np.zeros((output_dim, 1))
 
         self.weights = np.ascontiguousarray(self.weights, dtype=np.float32)

@@ -128,10 +128,9 @@ class Convolutional(Network):
                 print(f"Early stopping at epoch {epoch}")
                 break
 
-            # Ripristiniamo i migliori pesi trovati
-            if best_weights:
-                for layer, best_weight in zip(self.conv_layers, best_weights):
-                    layer.set_weights(best_weight)
+        if best_weights:
+            for layer, best_weight in zip(self.conv_layers, best_weights):
+                layer.set_weights(best_weight)
 
     def arithmetic_mean_accuracy(self, X, y):
         logits = self.predict(X)

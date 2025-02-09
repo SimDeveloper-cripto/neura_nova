@@ -100,10 +100,11 @@ class FeedForward(Network):
                 print(f"Early stopping at epoch {epoch}")
                 break
 
-            # Ripristiniamo i migliori pesi trovati
-            if best_weights:
-                for layer, best_weight in zip(self.layers, best_weights):
-                    layer.set_weights(best_weight)
+        # Alla fine salviamo il modello migliore: ripristiniamo i migliori pesi trovati
+        # Se c’è un’epoca non migliorativa, non scartiamo immediatamente i pesi di quell’epoca: potremmo migliorare di nuovo nella successiva
+        if best_weights:
+            for layer, best_weight in zip(self.layers, best_weights):
+                layer.set_weights(best_weight)
 
     def arithmetic_mean_accuracy(self, X, y):
         """
