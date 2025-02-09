@@ -62,7 +62,7 @@ def plot_metrics(title, history1, history2, metric_names1, metric_names2):
     plt.ioff()
     plt.show()
 
-def show_results(nn, X_test, y_train_onehot, X_val, y_val):
+def show_results(nn, X_train, y_train_onehot, X_val, y_val):
     plot_metrics("RESULTS", nn.getTrainHistory(), nn.getValidationHistory(), metric_names1=["train_loss", "train_accuracy"], metric_names2=["validation_loss", "validation_accuracy"])
-    visualize_predictions(nn, X_test, y_train_onehot)
+    visualize_predictions(nn, X_train, y_train_onehot)
     visualize_predictions(nn, X_val, y_val)
