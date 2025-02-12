@@ -27,6 +27,7 @@ class MaxPoolLayer:
         # grad_output.shape[2]: H
         # grad_output.shape[3]: W
 
+
         batch_size, input_channels, H, W = self.input.shape
         out_h = (H - self.kernel_size) // self.stride + 1
         out_w = (W - self.kernel_size) // self.stride + 1

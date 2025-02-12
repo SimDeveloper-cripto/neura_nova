@@ -146,6 +146,7 @@ class ConvLayer:
         ) = saved_state
 
     def forward(self, input_data):
+
         """
         :param input_data: (batch_size, input_channels, H, W)
         :return: (batch_size, num_filters, H_out, W_out)
@@ -183,6 +184,7 @@ class ConvLayer:
         return output
 
     def backward(self, grad_output):
+
         # grad_output shape: (batch_size, num_filters, out_h, out_w)
         batch_size = self.input.shape[0]
 

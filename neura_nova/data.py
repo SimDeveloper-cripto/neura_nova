@@ -11,12 +11,14 @@ def load_mnist(train_limit, test_limit, path='../data/MNIST/raw'):
             magic_num, total, rows, cols = struct.unpack(">IIII", f.read(16))
             images = np.frombuffer(f.read(), dtype=np.uint8)
             images = images.reshape(total, rows, cols)
+
         return images
 
     def load_labels(filename):
         with open(filename, 'rb') as f:
             magic_num, num = struct.unpack(">II", f.read(8))
             labels         = np.frombuffer(f.read(), dtype=np.uint8)
+
         return labels
 
     X_train = load_images(os.path.join(path, 'train-images-idx3-ubyte'))
