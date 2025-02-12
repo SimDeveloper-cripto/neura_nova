@@ -103,9 +103,7 @@ def build_and_train_cnn_model_with_config(config, loss_fun=SoftmaxCrossEntropy()
     nn.train(X_train, y_train_onehot, epochs, X_val, y_val, learning_rate, batch_size)
 
     # Sulla base dei pesi migliori
-    train_accuracy      = nn.arithmetic_mean_accuracy(X_train, y_train_onehot)
-    test_accuracy       = nn.arithmetic_mean_accuracy(X_test, y_test_onehot)
-    validation_accuracy = nn.arithmetic_mean_accuracy(X_val, y_val)
+    test_accuracy = 0  # TODO: nn.arithmetic_mean_accuracy(X_test, y_test_onehot, config['test_dimension'])
 
     result = {
         'conv_layers': config['conv_layers'],
@@ -116,8 +114,6 @@ def build_and_train_cnn_model_with_config(config, loss_fun=SoftmaxCrossEntropy()
         'validation_dimension': config['validation_dimension'],
         'epochs': epochs,
         'batch_size': batch_size,
-        'train_accuracy': "{:.2f}".format(train_accuracy * 100),
-        'test_accuracy': "{:.2f}".format(test_accuracy * 100),
-        'validation_accuracy': "{:.2f}".format(validation_accuracy * 100)
+        'test_accuracy': "{:.2f}".format(test_accuracy * 100)
     }
     return result

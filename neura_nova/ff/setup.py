@@ -100,9 +100,7 @@ def build_and_train_ff_model_with_config(config, loss_fun=SoftmaxCrossEntropy())
     nn.train(X_train, y_train_onehot, epochs, X_val, y_val, lr, batch_size)
 
     # Sulla base dei pesi migliori
-    train_accuracy      = nn.arithmetic_mean_accuracy(X_train, y_train_onehot)
-    test_accuracy       = nn.arithmetic_mean_accuracy(X_test, y_test_onehot)
-    validation_accuracy = nn.arithmetic_mean_accuracy(X_val, y_val)
+    test_accuracy = 0  # TODO: nn.getAccuracy(X_test, y_test_onehot, config['test_dimension'])
 
     # Read config/ffconfig.json
     result = {
@@ -111,8 +109,6 @@ def build_and_train_ff_model_with_config(config, loss_fun=SoftmaxCrossEntropy())
         'test_dimension': config['test_dimension'],
         'epochs': epochs,
         'batch_size': batch_size,
-        'train_accuracy': "{:.2f}".format(train_accuracy * 100),
-        'test_accuracy': "{:.2f}".format(test_accuracy * 100),
-        'validation_accuracy': "{:.2f}".format(validation_accuracy * 100)
+        'test_accuracy': "{:.2f}".format(test_accuracy * 100)
     }
     return result

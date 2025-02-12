@@ -12,6 +12,7 @@ class FeedForward(Network):
     def __init__(self, loss_fn: LossFunction):
         self.layers    = []
         self.loss_fn   = loss_fn
+    """
         self.__train_history = {
             "train_loss": [],
             "train_accuracy": []
@@ -20,15 +21,18 @@ class FeedForward(Network):
             "validation_loss": [],
             "validation_accuracy": []
         }
+    """
 
     def add_layer(self, layer):
         self.layers.append(layer)
 
+    """
     def getTrainHistory(self):
         return self.__train_history
 
     def getValidationHistory(self):
         return self.__validation_history
+    """
 
     def predict(self, input_X):
         """
@@ -40,7 +44,7 @@ class FeedForward(Network):
             output = layer.forward(output)
         return output
 
-    def train(self, X, y, epochs, X_val, y_val, learning_rate, batch_size=128, stopping_criterion=6):
+    def train(self, X, y, epochs, X_val, y_val, learning_rate, batch_size=128, stopping_criterion=10):
         """
         X shape: (input_dim, N)
         y shape: (num_classes, N)
@@ -74,19 +78,20 @@ class FeedForward(Network):
                     grad = layer.backward(grad)
 
             epoch_loss /= num_samples
-            epoch_accuracy = self.arithmetic_mean_accuracy(X_shuffled, y_shuffled)
-
             val_logits = self.predict(X_val)
-            val_loss = self.loss_fn.forward(val_logits, y_val)
-            val_accuracy = self.arithmetic_mean_accuracy(X_val, y_val)
+            val_loss   = self.loss_fn.forward(val_logits, y_val)
 
-            print(f"epoch {epoch}/{epochs}, train_loss: {epoch_loss:.4f}, train_accuracy: {epoch_accuracy:.4f}, "
-                  f"validation_loss: {val_loss:.4f}, validation_accuracy: {val_accuracy:.4f}")
+            # BASED ON CROSS-ENTROPY + SOFTMAX
+            print(f"epoch {epoch}/{epochs}, train_loss: {epoch_loss:.4f} val_loss: {val_loss:.4f}")
 
-            self.__train_history["train_loss"].append(epoch_loss)
-            self.__train_history["train_accuracy"].append(epoch_accuracy)
-            self.__validation_history["validation_loss"].append(val_loss)
-            self.__validation_history["validation_accuracy"].append(val_accuracy)
+            # GRAFICI DI FUNZIONE: BASATI SU MEDIE ARITMETICHE
+            # epoch_accuracy = self.arithmetic_mean(X_shuffled, y_shuffled)
+            # val_accuracy   = self.arithmetic_mean(X_val, y_val)
+
+            # self.__train_history["train_loss"].append(epoch_loss)
+            # self.__train_history["train_accuracy"].append(epoch_accuracy)
+            # self.__validation_history["validation_loss"].append(val_loss)
+            # self.__validation_history["validation_accuracy"].append(val_accuracy)
 
             # EARLY STOPPING
             if val_loss < best_val_loss:
@@ -106,24 +111,26 @@ class FeedForward(Network):
             for layer, best_weight in zip(self.layers, best_weights):
                 layer.set_weights(best_weight)
 
-    def arithmetic_mean_accuracy(self, X, y):
-        """
-        X shape  : (input_dim, N)
-        y shape  : (num_classes, N)
-        precision: boolean to specify the usage of PRECISION algorithm
-        """
+    def getAccuracy(self, X_test, y_test_onehot, dataset_size):
+        # TODO: quante immagini predette correttamente / totale immagini del set
+        pass
 
-        """
-        - [GOOD] Arithmetic mean
-            - Accuracy = (# of correct predictions) / (# of predictions in total)
-        MNIST contains approximately equal numbers of samples for each of the 10 classes.
-        In this context, accuracy is an effective metric because it is not affected by class imbalances.
-        """
+"""
+    def arithmetic_mean(self, X, y):
+        # X shape  : (input_dim, N)
+        # y shape  : (num_classes, N)
+        # precision: boolean to specify the usage of PRECISION algorithm
+
+        # - [GOOD] Arithmetic mean
+        # - Accuracy = (# of correct predictions) / (# of predictions in total)
+        # MNIST contains approximately equal numbers of samples for each of the 10 classes.
+        # In this context, accuracy is an effective metric because it is not affected by class imbalances.
         logits      = self.predict(X)
         predictions = np.argmax(logits, axis=0)  # shape: (N,)
         true_labels = np.argmax(y, axis=0)       # shape: (N,)
         accuracy    = np.mean(predictions == true_labels)
         return accuracy
+"""
 
 """
     def precision_accuracy(self, X, y, message):
