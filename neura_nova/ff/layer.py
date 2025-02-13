@@ -6,7 +6,7 @@ from ..init import glorot_uniform_init_dense
 
 class DenseLayer:
     # A fully connected neural network layer
-    def __init__(self, input_dim, output_dim, activation='relu', learning_rate=0.001, beta1=0.9, beta2=0.999, epsilon=1e-8):
+    def __init__(self, input_dim, output_dim, activation, learning_rate, beta1, beta2, epsilon):
         """
         :param input_dim    : number of input features/neurons
         :param output_dim   : number of neurons in the layer

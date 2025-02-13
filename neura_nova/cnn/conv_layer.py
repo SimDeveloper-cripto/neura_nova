@@ -81,8 +81,8 @@ class ConvLayer:
     Quindi con un solo canale di input, il grouping non ha effetto.
     """
 
-    def __init__(self, input_channels, num_filters, kernel_size, stride, padding, activation='relu',
-                 learning_rate=0.001, beta1=0.9, beta2=0.999, epsilon=1e-8):
+    def __init__(self, input_channels, num_filters, kernel_size, stride, padding, activation,
+                 learning_rate, beta1, beta2, epsilon):
         self.input_channels = input_channels
         self.num_filters    = num_filters
         self.kernel_size    = kernel_size

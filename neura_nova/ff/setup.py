@@ -1,8 +1,3 @@
-import os
-import json
-import math
-import array
-import random
 import numpy as np
 
 from ..data import load_mnist
@@ -11,12 +6,10 @@ from .layer import DenseLayer
 from .network import FeedForward
 from ..loss import SoftmaxCrossEntropy
 
-def save_ff_to_json(results, filename='results/ff/results.json'):
-    os.makedirs(os.path.dirname(filename), exist_ok=True)
-    with open(filename, 'w', newline='', encoding='utf-8') as file:
-        json.dump([results], file, indent=4)
-
-    print("results/ff/results.json has been updated!")
+"""
+import math
+import array
+import random
 
 def closest_power_of_2(n):
     lower = 2 ** math.floor(math.log2(n))
@@ -38,6 +31,7 @@ def create_neurons(input_dim, output_dim, hidden_layers):
         i += 1
     neurons.append(output_dim)
     return neurons
+"""
 
 def one_hot_encode(y, num_classes):
     one_hot = np.zeros((y.shape[0], num_classes), dtype=np.float32)
@@ -86,21 +80,28 @@ def build_and_train_ff_model_with_config(config, loss_fun=SoftmaxCrossEntropy())
     - output_dim    = 10
     - weights shape = (output_dim, input_dim) = (# neurons, # features)
     """
-    X_train, y_train_onehot, X_val, y_val, X_test, y_test_onehot = load_and_preprocess_data_for_ff(config['train_dimension'], config['test_dimension'], config['validation_dimension'])
+    test_dimension = config['test_dimension']
+
+    X_train, y_train_onehot, X_val, y_val, X_test, y_test_onehot = load_and_preprocess_data_for_ff(config['train_dimension'], test_dimension, config['validation_dimension'])
     nn = FeedForward(loss_fun)  # See conv_layer.py __init__() and forward()
+
+    lr      = config['learning_rate']
+    beta1   = config['beta1']
+    beta2   = config['beta2']
+    epsilon = config['epsilon']
 
     for layer_config in config['layers']:
         nn.add_layer(DenseLayer(input_dim=784 if len(nn.layers) == 0 else nn.layers[-1].weights.shape[0],
                                 output_dim=layer_config['neurons'],
-                                activation=layer_config['activation']))
+                                activation=layer_config['activation'],
+                                learning_rate=lr, beta1=beta1, beta2=beta2, epsilon=epsilon))
 
     epochs     = config['epochs']
     batch_size = config['batch_size']
-    lr         = 0.001
-    nn.train(X_train, y_train_onehot, epochs, X_val, y_val, lr, batch_size)
+    nn.train(X_train, y_train_onehot, epochs, X_val, y_val, batch_size)
 
     # Sulla base dei pesi migliori
-    test_accuracy = 0  # TODO: nn.getAccuracy(X_test, y_test_onehot, config['test_dimension'])
+    test_accuracy = nn.getAccuracy(X_test, y_test_onehot, test_dimension)
 
     # Read config/ffconfig.json
     result = {

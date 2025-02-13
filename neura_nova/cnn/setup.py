@@ -1,5 +1,3 @@
-import os
-import json
 import numpy as np
 
 from .network import Convolutional
@@ -10,13 +8,6 @@ from ..loss import SoftmaxCrossEntropy
 
 from .conv_layer import ConvLayer
 from .pool_layer import MaxPoolLayer
-
-def save_cnn_to_json(results, filename='results/cnn/results.json'):
-    os.makedirs(os.path.dirname(filename), exist_ok=True)
-    with open(filename, 'w', newline='', encoding='utf-8') as file:
-        json.dump([results], file, indent=4)
-
-    print("results/cnn/results.json has been updated!")
 
 def one_hot_encode(y, num_classes):
     one_hot = np.zeros((y.shape[0], num_classes), dtype=np.float32)
@@ -46,11 +37,18 @@ def load_and_preprocess_data_for_cnn(train_limit, test_limit, validation_limit):
     return X_train_final, y_train_final, X_val, y_val, X_test, y_test_onehot
 
 def build_and_train_cnn_model_with_config(config, loss_fun=SoftmaxCrossEntropy()):
+    test_dimension = config['test_dimension']
+
     X_train, y_train_onehot, X_val, y_val, X_test, y_test_onehot = load_and_preprocess_data_for_cnn(
         config['train_dimension'],
-        config['test_dimension'],
+        test_dimension,
         config['validation_dimension'])
     nn = Convolutional(loss_fun)
+
+    lr      = config['learning_rate']
+    beta1   = config['beta1']
+    beta2   = config['beta2']
+    epsilon = config['epsilon']
 
     input_channels = 1
     for conv_conf in config.get("conv_layers", []):
@@ -60,7 +58,11 @@ def build_and_train_cnn_model_with_config(config, loss_fun=SoftmaxCrossEntropy()
             kernel_size=conv_conf["kernel_size"],
             stride=conv_conf["stride"],
             padding=conv_conf["padding"],
-            activation=conv_conf["activation"]
+            activation=conv_conf["activation"],
+            learning_rate=lr,
+            beta1=beta1,
+            beta2=beta2,
+            epsilon=epsilon
         )
         nn.add_conv_layer(conv_layer)
         input_channels = conv_conf["filters"]
@@ -91,19 +93,21 @@ def build_and_train_cnn_model_with_config(config, loss_fun=SoftmaxCrossEntropy()
             input_size,
             fc_conf["neurons"],
             activation=fc_conf["activation"],
-            learning_rate=0.001
+            learning_rate=lr,
+            beta1=beta1,
+            beta2=beta2,
+            epsilon=epsilon
         )
         nn.fc_layers.append(fc_layer)
         input_size = fc_conf["neurons"]
 
     epochs        = config["epochs"]
     batch_size    = config["batch_size"]
-    learning_rate = 0.001
 
-    nn.train(X_train, y_train_onehot, epochs, X_val, y_val, learning_rate, batch_size)
+    nn.train(X_train, y_train_onehot, epochs, X_val, y_val, batch_size)
 
     # Sulla base dei pesi migliori
-    test_accuracy = 0  # TODO: nn.arithmetic_mean_accuracy(X_test, y_test_onehot, config['test_dimension'])
+    test_accuracy = nn.getAccuracy(X_test, y_test_onehot, test_dimension)
 
     result = {
         'conv_layers': config['conv_layers'],

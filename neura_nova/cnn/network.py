@@ -5,8 +5,18 @@ from ..loss import LossFunction
 
 
 class Network:
-    def train(self, X, y, epochs, X_val, y_val, learning_rate, batch_size=128):
+    def predict(self, Input_X):
         raise NotImplementedError
+
+    def train(self, X, y, epochs, X_val, y_val, batch_size):
+        raise NotImplementedError
+
+    def getAccuracy(self, X_test, y_test_onehot, dataset_size):
+        logits      = self.predict(X_test)
+        predictions = np.argmax(logits, axis=0)
+        true_labels = np.argmax(y_test_onehot, axis=1)
+        correct     = np.sum(predictions == true_labels)
+        return correct / dataset_size
 
 class Convolutional(Network):
     def __init__(self, loss_fn: LossFunction):
@@ -59,7 +69,7 @@ class Convolutional(Network):
             Z = fc.forward(Z)
         return Z
 
-    def train(self, X, y, epochs, X_val, y_val, learning_rate, batch_size=128, patience=10):
+    def train(self, X, y, epochs, X_val, y_val, batch_size, patience=10):
         num_samples = X.shape[0]
 
         best_val_loss = float('inf')
@@ -138,12 +148,8 @@ class Convolutional(Network):
             for layer, best_weight in zip(self.conv_layers, best_weights):
                 layer.set_weights(best_weight)
 
-    def getAccuracy(self, X_test, y_test_onehot, dataset_size):
-        # TODO: quante immagini predette correttamente / totale immagini del set
-        pass
-
     """
-    def arithmetic_mean_accuracy(self, X, y):
+    def arithmetic_mean(self, X, y):
         logits = self.predict(X)
         predictions = np.argmax(logits, axis=0)
         true_labels = np.argmax(y, axis=1)

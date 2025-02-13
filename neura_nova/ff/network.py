@@ -5,8 +5,26 @@ from ..loss import LossFunction
 
 
 class Network:
-    def train(self, X, y, epochs, X_val, y_val, learning_rate, batch_size=128):
+    def predict(self, input_X):
         raise NotImplementedError
+
+    def train(self, X, y, epochs, X_val, y_val, batch_size):
+        raise NotImplementedError
+
+    def getAccuracy(self, X_test, y_test_onehot, dataset_size):
+        """
+        - input_dim being the number of input features
+
+        :param X_test       : test dataset,      shape (input_dim, N)
+        :param y_test_onehot: etichette one-hot, shape (num_classes, N)
+        :param dataset_size : numero totale di immagini di test (N)
+        :return             : accuracy (float) based on: How many images predicted correctly / total number of images in the set
+        """
+        logits      = self.predict(X_test)
+        predictions = np.argmax(logits, axis=0)
+        true_labels = np.argmax(y_test_onehot, axis=0)
+        correct     = np.sum(predictions == true_labels)
+        return correct / dataset_size
 
 class FeedForward(Network):
     def __init__(self, loss_fn: LossFunction):
@@ -44,7 +62,7 @@ class FeedForward(Network):
             output = layer.forward(output)
         return output
 
-    def train(self, X, y, epochs, X_val, y_val, learning_rate, batch_size=128, stopping_criterion=10):
+    def train(self, X, y, epochs, X_val, y_val, batch_size, stopping_criterion=10):
         """
         X shape: (input_dim, N)
         y shape: (num_classes, N)
@@ -110,10 +128,6 @@ class FeedForward(Network):
         if best_weights:
             for layer, best_weight in zip(self.layers, best_weights):
                 layer.set_weights(best_weight)
-
-    def getAccuracy(self, X_test, y_test_onehot, dataset_size):
-        # TODO: quante immagini predette correttamente / totale immagini del set
-        pass
 
 """
     def arithmetic_mean(self, X, y):
