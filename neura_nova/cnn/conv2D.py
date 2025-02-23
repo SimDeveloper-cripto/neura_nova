@@ -1,6 +1,10 @@
 import numpy as np
+
+from neura_nova.cnn.pool_layer import MaxPoolLayer
 from neura_nova.init import glorot_uniform_init_conv
 
+# TODO: unificare in un unico layer convolutivo conv2d e maxpoollayer
+# TODO: Trainare la rete e stampare i risultati
 
 class Conv2D:
     def __init__(self, input_channels, filter_number, kernel_size, stride, padding, activation_funct, learning_rate,
@@ -43,29 +47,41 @@ class Conv2D:
         self.m_bias    = np.zeros_like(self.bias)
         self.v_bias    = np.zeros_like(self.bias)
 
-        # Variabili per forward/backward
-        self.input            = None  # input originale
-        self.output           = None
-        self.activation_cache = None
-        self.pre_activation   = None
-        self.cols             = None
-        self.out_h            = None
-        self.out_w            = None
-
         # Cache
-        self.input    = None
-        self.output   = None
-        self.X_padded = None
+        self.input             = None  # input originale
+        self.X_padded          = None
+        self.output            = None
+        self.activation_cache  = None
+        self.out_h             = None
+        self.out_w             = None
 
     def forward(self, X):
         self.input = X
         batch_size, _, H, W = X.shape
 
         # Calculate output dimensions
-        self.out_h = (H - self.kernel_size + 2 * self.padding) // self.stride + 1
-        self.out_w = (W - self.kernel_size + 2 * self.padding) // self.stride + 1
+        out_h = (H - self.kernel_size + 2 * self.padding) // self.stride + 1
+        out_w = (W - self.kernel_size + 2 * self.padding) // self.stride + 1
 
-        self.X_padded = np.pad(X,((0, 0), (0, 0), (self.padding, self.padding), (self.padding, self.padding)), mode='constant')
+        # Per ottenere "same shape" (kernel_size dispari, stride, padding)
+        # (k = 1, p = 0, s = 1)
+        # (k = 3, p = 1, s = 1)
+        # (k = 5, p = 2, s = 1)
+        # (k = 7, p = 3, s = 1)
+
+        # Per ottenere "same shape" (kernel_size pari, stride, padding)
+        # (k = 2, p = 14, s = 2)
+
+        # TODO: VERIFICA STESSO RAGIONAMENTO PER MAXPOOLLAYER
+
+        if out_h != H or out_w != W:
+            print("Wrong choice of (kernel_size, stride, padding)")
+            raise ValueError("[CONVOLUTION] Constraint not satisfied: out_h = H, out_w = W")
+
+        self.out_h = out_h
+        self.out_w = out_w
+
+        self.X_padded = np.pad(X, ((0, 0), (0, 0), (self.padding, self.padding), (self.padding, self.padding)), mode='constant')
 
         # Initialize output
         output = np.zeros((batch_size, self.filter_number, self.out_h, self.out_w))
@@ -157,37 +173,69 @@ if __name__ == "__main__":
     # Testiamo con un batch fittizio di immagini
     batch_size = 2
     in_channels = 1
-    height = 32
-    width = 32
-    input_data = np.random.randn(batch_size, in_channels, height, width)
+    height = 28
+    width = 28
+    input_data = np.random.randn(batch_size, in_channels, height, width).astype(np.float32)
 
     # Creiamo il layer convoluzionale con 6 filtri 3x3, stride 1, padding 1
     conv = Conv2D(
         input_channels=in_channels,
         filter_number=16,
-        kernel_size=3,
+        kernel_size=2,
+        stride=2,
+        padding=14,
+        activation_funct='relu',
+        learning_rate=0.001
+    )
+    conv2 = Conv2D(
+        input_channels=16,  # num_filter of first conv layer
+        filter_number=16,
+        kernel_size=5,
         stride=1,
-        padding=1,
+        padding=2,
         activation_funct='relu',
         learning_rate=0.001
     )
 
-    # Forward pass
-    output = conv.forward(input_data)
+    pool  = MaxPoolLayer(kernel_size=2, stride=2)
+    pool2 = MaxPoolLayer(kernel_size=2, stride=2)
 
-    # Print shapes to verify
-    print("Forward pass")
-    print("Input shape:", input_data.shape)
-    print("Output shape:", output.shape)
-    print("out_h:", conv.out_h)
-    print("out_w:", conv.out_w)
+    # a)
+    out_conv = conv.forward(input_data)
+    print("Output shape dopo la prima convoluzione:", out_conv.shape)
 
-    # Backward pass
-    grad_output = np.random.randn(*output.shape)  # Create random gradient
-    grad_input = conv.backward(grad_output)
+    # b) Pooling
+    out_pool = pool.forward(out_conv)
+    print("Output shape dopo il primo pooling:", out_pool.shape)
 
-    print("\nBackward pass")
-    print("Input shape 2:", input_data.shape)
-    print("Output shape 2:", output.shape)
-    print("out_h 2:", conv.out_h)
-    print("out_w 2:", conv.out_w)
+    # c)
+    out_conv2 = conv2.forward(out_pool)
+    print("Output shape dopo la seconda convoluzione:", out_conv2.shape)
+
+    # d) Pooling
+    out_pool2 = pool2.forward(out_conv2)
+    print("Output shape dopo il secondo pooling:", out_pool2.shape)
+
+    # --------------------------
+    # BACKWARD PASS
+    # --------------------------
+
+    grad_next2 = np.random.randn(*out_pool2.shape).astype(np.float32)
+
+    # a) Backprop del pooling
+    grad_pool2 = pool2.backward(grad_next2)
+    print("2 grad_pool shape:", grad_pool2.shape)
+
+    # b) Backprop della convoluzione
+    grad_conv2 = conv2.backward(grad_pool2)
+    print("2 grad_conv shape:", grad_conv2.shape)
+
+    grad_next = np.random.randn(*grad_conv2.shape).astype(np.float32)
+
+    # a) Backprop del pooling
+    grad_pool = pool.backward(grad_next)
+    print("1 grad_pool shape:", grad_pool.shape)
+
+    # b) Backprop della convoluzione
+    grad_conv = conv.backward(grad_pool)
+    print("1 grad_conv shape:", grad_conv.shape)

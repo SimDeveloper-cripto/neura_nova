@@ -1,59 +1,62 @@
 import numpy as np
 
-
+# TODO: LO SPESSORE DEL FEATURE VOLUME RISULTANTE E' PARI AL NUMERO DI FILTRI?
 class MaxPoolLayer:
     def __init__(self, kernel_size=2, stride=2):
         self.kernel_size = kernel_size
         self.stride      = stride
         self.input       = None
         self.argmax      = None
+        self.out_h       = None
+        self.out_w       = None
 
-    def forward(self, input_data):
-        self.input = input_data
-        batch_size, input_channels, H, W = input_data.shape
-        out_h = (H - self.kernel_size) // self.stride + 1
-        out_w = (W - self.kernel_size) // self.stride + 1
+    def forward(self, X):
+        self.input = X
+        batch_size, channels, H, W = X.shape
 
-        input_reshaped = input_data.reshape(batch_size, input_channels, out_h, self.stride, out_w, self.stride)
-        input_reshaped = input_reshaped.transpose(0, 1, 2, 4, 3, 5)
-        output = input_reshaped.max(axis=(-1, -2))
+        self.out_h = (H - self.kernel_size) // self.stride + 1
+        self.out_w = (W - self.kernel_size) // self.stride + 1
 
-        self.argmax = np.argmax(input_reshaped.reshape(batch_size, input_channels, out_h, out_w, -1), axis=-1)
+        output = np.zeros((batch_size, channels, self.out_h, self.out_w), dtype=X.dtype)
+
+        # 2 --> Salviamo indici (riga, colonna) di dove si trova il massimo
+        self.argmax = np.zeros((batch_size, channels, self.out_h, self.out_w, 2), dtype=np.int32)
+
+        for b in range(batch_size):
+            for c in range(channels):
+                for i in range(self.out_h):
+                    for j in range(self.out_w):
+                        h_start = i * self.stride
+                        h_end   = h_start + self.kernel_size
+                        w_start = j * self.stride
+                        w_end   = w_start + self.kernel_size
+
+                        patch   = X[b, c, h_start:h_end, w_start:w_end]
+                        max_val = np.max(patch)
+                        output[b, c, i, j] = max_val
+
+                        local_i, local_j = np.unravel_index(np.argmax(patch), patch.shape)
+                        self.argmax[b, c, i, j] = (local_i, local_j)
         return output
 
     def backward(self, grad_output):
-        # grad_output.shape[0]: batch_size
-        # grad_output.shape[1]: input_channels
-        # grad_output.shape[2]: H
-        # grad_output.shape[3]: W
-
-
-        batch_size, input_channels, H, W = self.input.shape
-        out_h = (H - self.kernel_size) // self.stride + 1
-        out_w = (W - self.kernel_size) // self.stride + 1
-
-        dinput = np.zeros(self.input.shape, dtype=grad_output.dtype)
-
-        input_reshaped  = self.input.reshape(batch_size, input_channels, out_h, self.stride, out_w, self.stride)
-        input_reshaped  = input_reshaped.transpose(0, 1, 2, 4, 3, 5).reshape(batch_size, input_channels, out_h, out_w, -1)
-        dinput_reshaped = np.zeros_like(input_reshaped)
+        batch_size, channels, out_h, out_w = grad_output.shape
+        _, _, H, W = self.input.shape
+        dinput = np.zeros_like(self.input)
 
         for b in range(batch_size):
-            for c in range(input_channels):
+            for c in range(channels):
                 for i in range(out_h):
                     for j in range(out_w):
-                        idx = self.argmax[b, c, i, j]
-                        dinput_reshaped[b, c, i, j, idx] = grad_output[b, c, i, j]
+                        # Gradiente relativo al singolo valore max nella finestra
+                        grad_val = grad_output[b, c, i, j]
 
-        dinput_reshaped = dinput_reshaped.reshape(batch_size, input_channels, out_h, out_w, self.kernel_size, self.kernel_size)
-        dinput_reshaped = dinput_reshaped.transpose(0, 1, 2, 4, 3, 5)
+                        # Posizione locale del massimo
+                        local_i, local_j = self.argmax[b, c, i, j]
 
-        for i in range(out_h):
-            for j in range(out_w):
-                h_start = i * self.stride
-                h_end   = h_start + self.kernel_size
-                w_start = j * self.stride
-                w_end   = w_start + self.kernel_size
-                dinput[:, :, h_start:h_end, w_start:w_end] += dinput_reshaped[:, :, i, :, j, :]
+                        h_start = i * self.stride
+                        w_start = j * self.stride
 
+                        # Aggiungiamo il gradiente solo nella posizione di max
+                        dinput[b, c, h_start + local_i, w_start + local_j] += grad_val
         return dinput
