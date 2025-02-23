@@ -29,8 +29,11 @@ def im2col(input_data, kernel_size, stride, padding):
     patches = np.lib.stride_tricks.as_strided(input_padded, shape=shape, strides=strides)
 
     # Each row corresponds to a flattened patch
+    # cols[][] = [numero_patch][elementi_per_patch]
+    # numero_patch = batch_size * out_h * out_w
+    # elementi_per_patch = channels * kernel_size * kernel_size
     cols = patches.reshape(batch_size, channels, out_h * out_w, kernel_size, kernel_size)
-    cols = cols.transpose(0, 2, 1, 3, 4).reshape(batch_size * out_h * out_w, -1)
+    cols = cols.transpose(0, 2, 1, 3, 4).reshape(batch_size * out_h * out_w, -1) #ho una matrice 2D di dimensioni (batch_size * out_h * out_w) x (channels * kernel_size * kernel_size)
     return cols, out_h, out_w
 
 def col2im(cols, input_shape, kernel_size, stride, padding, out_h, out_w):
@@ -129,6 +132,19 @@ class ConvLayer:
         self.out_h = None
         self.out_w = None
 
+        # Dizionario per attivazioni
+        self.activation_functions = {
+            'relu': lambda x: np.maximum(0, x),
+            'sigmoid': lambda x: 1 / (1 + np.exp(-x)),
+            'identity': lambda x: x
+        }
+
+        self.derivative_functions = {
+            'relu': lambda x: (x > 0).astype(np.float32),
+            'sigmoid': lambda x: x * (1 - x),
+            'identity': lambda x: np.ones_like(x)
+        }
+
     def get_weights(self):
         return (
             np.copy(self.weights), np.copy(self.bias),
@@ -155,18 +171,19 @@ class ConvLayer:
         batch_size, _, H, W = input_data.shape
 
         cols, out_h, out_w = im2col(input_data, self.kernel_size, self.stride, self.padding)
-        self.cols  = cols
+        self.cols = cols
         self.out_h = out_h
         self.out_w = out_w
 
         # Organize filters in a column matrix
         filters_col = self.weights.reshape(self.num_filters, -1).T  # shape: (channels * kernel_size^2, num_filters)
-        conv = cols.dot(filters_col) + self.bias.ravel()            # shape: (batch_size*out_h*out_w, num_filters)
+        conv = cols.dot(filters_col) + self.bias.ravel()  # shape: (batch_size*out_h*out_w, num_filters)
 
         # Re-organize output
         conv = conv.reshape(batch_size, out_h, out_w, self.num_filters).transpose(0, 3, 1, 2)
         self.pre_activation = conv.copy()
 
+        # Applica la funzione di attivazione
         match self.activation:
             case 'relu':
                 output = np.maximum(0, conv)
