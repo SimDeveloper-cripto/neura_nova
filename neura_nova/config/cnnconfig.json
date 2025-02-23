@@ -70,7 +70,7 @@
     ],
     "train_dimension": 60000,
     "test_dimension": 10000,
-    "validation_dimension": 15000,
+    "validation_dimension": 18000,
     "epochs": 20,
     "batch_size": 128,
     "learning_rate":  0.001,
