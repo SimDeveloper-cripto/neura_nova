@@ -13,6 +13,13 @@ from .cnn.setup import build_and_train_cnn_model_with_config
 
 # TODO [PROF]: ABBIAMO PENSATO AD UN DROP-OUT PER AUMENTARE LA GENERALIZZAZIONE
 # TODO [PROF]: ABBIAMO PENSATO AD UN WEIGHT-DECAY (TERMINE DI PENALITA' NELLA LOSS) NELL'AGGIORNAMENTO DEI PESI
+# TODO: unificare in un unico layer convolutivo conv2d e maxpoollayer
+# TODO: CNN TROPPO LENTA
+
+
+# TODO: VERIFICA STESSO RAGIONAMENTO PER MAXPOOLLAYER (ks = 2, stride = 2)
+# TODO: LO SPESSORE DEL FEATURE VOLUME RISULTANTE E' PARI AL NUMERO DI FILTRI? (LAYER DI POOLING)
+
 
 def run_ff_model():
     configs = load_config('config/ffconfig.json')

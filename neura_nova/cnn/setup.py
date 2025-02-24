@@ -6,7 +6,7 @@ from ..data import load_mnist
 from ..ff.layer import DenseLayer
 from ..loss import SoftmaxCrossEntropy
 
-from .conv_layer import ConvLayer
+from .conv2D import Conv2D
 from .pool_layer import MaxPoolLayer
 
 def one_hot_encode(y, num_classes):
@@ -52,13 +52,13 @@ def build_and_train_cnn_model_with_config(config, loss_fun=SoftmaxCrossEntropy()
 
     input_channels = 1
     for conv_conf in config.get("conv_layers", []):
-        conv_layer = ConvLayer(
+        conv_layer = Conv2D(
             input_channels=input_channels,
-            num_filters=conv_conf["filters"],
+            filter_number=conv_conf["filters"],
             kernel_size=conv_conf["kernel_size"],
             stride=conv_conf["stride"],
             padding=conv_conf["padding"],
-            activation=conv_conf["activation"],
+            activation_funct=conv_conf["activation"],
             learning_rate=lr,
             beta1=beta1,
             beta2=beta2,

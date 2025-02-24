@@ -1,10 +1,106 @@
+import numba
 import numpy as np
-
-from neura_nova.cnn.pool_layer import MaxPoolLayer
+from numba import njit, prange
 from neura_nova.init import glorot_uniform_init_conv
 
-# TODO: unificare in un unico layer convolutivo conv2d e maxpoollayer
-# TODO: Trainare la rete e stampare i risultati
+numba.set_num_threads(6)
+
+@njit(parallel=True)
+def conv_forward_naive(X_padded, weights, bias, stride, kernel_size, filter_number, out_h, out_w):
+    """
+    Esegue la convoluzione 'naive' con loop annidati su batch, filtri, out_h e out_w.
+
+    Parametri:
+    ----------
+    X_padded      : np.array di shape (batch_size, in_channels, H_pad, W_pad)
+    weights       : np.array di shape (filter_number, in_channels, kernel_size, kernel_size)
+    bias          : np.array di shape (filter_number, 1)
+    stride        : int
+    kernel_size   : int
+    filter_number : int
+    out_h, out_w  : dimensioni spaziali dell'output
+
+    Ritorno:
+    --------
+    output : np.array di shape (batch_size, filter_number, out_h, out_w)
+    """
+    batch_size, _, _, _ = X_padded.shape
+    filter_number = weights.shape[0]
+
+    out = np.zeros((batch_size, filter_number, out_h, out_w), dtype=X_padded.dtype)
+    for b in prange(batch_size):
+        for f in range(filter_number):
+            for i in range(out_h):
+                for j in range(out_w):
+                    h_start = i * stride
+                    h_end   = h_start + kernel_size
+                    w_start = j * stride
+                    w_end   = w_start + kernel_size
+
+                    patch = X_padded[b, :, h_start:h_end, w_start:w_end]
+                    out[b, f, i, j] = np.sum(patch * weights[f]) + bias[f, 0]
+    return out
+
+@njit(parallel=True)
+def conv_backward_naive(X_padded, weights, grad_output, stride, kernel_size):
+    """
+    Calcola:
+      - grad_weights
+      - grad_bias
+      - grad_input_padded
+    con un approccio naive: quadruplo for (batch, filter, i, j).
+
+    Parametri:
+    ----------
+    X_padded    : np.array (batch_size, in_channels, H_pad, W_pad)
+    weights     : np.array (filter_number, in_channels, kernel_size, kernel_size)
+    grad_output : np.array (batch_size, filter_number, out_height, out_width)
+    stride      : int
+    kernel_size : int
+
+    Ritorna:
+    --------
+    grad_input_padded : np.array (stessa shape di X_padded)
+    grad_weights      : np.array (stessa shape di weights)
+    grad_bias         : np.array (shape = (filter_number, 1))
+    """
+    batch_size, in_channels, H_pad, W_pad = X_padded.shape
+    filter_number = weights.shape[0]
+    out_height    = grad_output.shape[2]
+    out_width     = grad_output.shape[3]
+
+    grad_weights      = np.zeros_like(weights)
+    grad_bias         = np.zeros((filter_number, 1), dtype=weights.dtype)
+    grad_input_padded = np.zeros_like(X_padded)
+
+    # Manualmente: somma su (batch, i, j) per ogni f
+    for b in prange(batch_size):
+        for f in range(filter_number):
+            for i in range(out_height):
+                for j in range(out_width):
+                    grad_bias[f, 0] += grad_output[b, f, i, j]
+
+            # Calcolo di grad_weights e grad_input_padded
+            for i in range(out_height):
+                for j in range(out_width):
+                    gval    = grad_output[b, f, i, j]
+                    h_start = i * stride
+                    h_end   = h_start + kernel_size
+                    w_start = j * stride
+                    w_end   = w_start + kernel_size
+
+                    for c in range(in_channels):
+                        for hh in range(kernel_size):
+                            for ww in range(kernel_size):
+                                grad_weights[f, c, hh, ww] += X_padded[b, c, h_start+hh, w_start+ww] * gval
+
+                    # grad_input_padded aggiunge:
+                    # grad_input_padded[b, :, h_start:h_end, w_start:w_end] += weights[f]*gval
+                    for c in range(in_channels):
+                        for hh in range(kernel_size):
+                            for ww in range(kernel_size):
+                                grad_input_padded[b, c, h_start+hh, w_start+ww] += weights[f, c, hh, ww] * gval
+    return grad_input_padded, grad_weights, grad_bias
 
 class Conv2D:
     def __init__(self, input_channels, filter_number, kernel_size, stride, padding, activation_funct, learning_rate,
@@ -55,6 +151,22 @@ class Conv2D:
         self.out_h             = None
         self.out_w             = None
 
+    def get_weights(self):
+        return (
+            np.copy(self.weights), np.copy(self.bias),
+            np.copy(self.m_weights), np.copy(self.v_weights),
+            np.copy(self.m_bias), np.copy(self.v_bias),
+            self.t
+        )
+
+    def set_weights(self, saved_state):
+        (
+            self.weights, self.bias,
+            self.m_weights, self.v_weights,
+            self.m_bias, self.v_bias,
+            self.t
+        ) = saved_state
+
     def forward(self, X):
         self.input = X
         batch_size, _, H, W = X.shape
@@ -72,8 +184,6 @@ class Conv2D:
         # Per ottenere "same shape" (kernel_size pari, stride, padding)
         # (k = 2, p = 14, s = 2)
 
-        # TODO: VERIFICA STESSO RAGIONAMENTO PER MAXPOOLLAYER
-
         if out_h != H or out_w != W:
             print("Wrong choice of (kernel_size, stride, padding)")
             raise ValueError("[CONVOLUTION] Constraint not satisfied: out_h = H, out_w = W")
@@ -87,17 +197,16 @@ class Conv2D:
         output = np.zeros((batch_size, self.filter_number, self.out_h, self.out_w))
 
         # Perform convolution
-        for b in range(batch_size):
-            for f in range(self.filter_number):
-                for i in range(self.out_h):
-                    for j in range(self.out_w):
-                        h_start = i * self.stride
-                        h_end   = h_start + self.kernel_size
-                        w_start = j * self.stride
-                        w_end   = w_start + self.kernel_size
-
-                        patch = self.X_padded[b, :, h_start:h_end, w_start:w_end]
-                        output[b, f, i, j] = np.sum(patch * self.weights[f]) + self.bias[f, 0]
+        output = conv_forward_naive(
+            self.X_padded,
+            self.weights,
+            self.bias,
+            self.stride,
+            self.kernel_size,
+            self.filter_number,
+            self.out_h,
+            self.out_w
+        )
 
         if self.activation_funct == 'relu':
             self.activation_cache = (output > 0).astype(np.float32)
@@ -125,30 +234,15 @@ class Conv2D:
         elif self.activation_funct == 'sigmoid':
             grad_output = grad_output * self.activation_cache
 
-        # Initialize gradients
-        grad_weights = np.zeros_like(self.weights)
+        grad_input_padded, grad_weights, grad_bias = conv_backward_naive(
+            self.X_padded,   # shape: (batch_size, in_channels, H_pad, W_pad)
+            self.weights,    # shape: (filter_number, in_channels, kernel_size, kernel_size)
+            grad_output,     # shape: (batch_size, filter_number, out_height, out_width)
+            self.stride,
+            self.kernel_size
+        )
 
-        grad_bias         = np.sum(grad_output, axis=(0, 2, 3))       # shape: (filter_number,)
-        grad_bias         = grad_bias.reshape(self.filter_number, 1)  # shape: (filter_number, 1)
-        grad_input_padded = np.zeros_like(self.X_padded)
-
-        for i in range(out_height):
-            for j in range(out_width):
-                h_start = i * self.stride
-                h_end   = h_start + self.kernel_size
-                w_start = j * self.stride
-                w_end   = w_start + self.kernel_size
-                patch   = self.X_padded[:, :, h_start:h_end, w_start:w_end]
-
-                for k in range(self.filter_number):
-                    grad_weights[k] += np.sum(
-                        patch * grad_output[:, k, i, j][:, None, None, None],
-                        axis=0
-                    )
-                    grad_input_padded[:, :, h_start:h_end, w_start:w_end] += \
-                        self.weights[k] * grad_output[:, k, i, j][:, None, None, None]
-
-        # Remove padding from gradient
+        # Rimuovere padding da grad_input
         if self.padding > 0:
             grad_input = grad_input_padded[:, :, self.padding:-self.padding, self.padding:-self.padding]
         else:
@@ -156,86 +250,15 @@ class Conv2D:
 
         self.m_weights = self.beta1 * self.m_weights + (1 - self.beta1) * grad_weights
         self.v_weights = self.beta2 * self.v_weights + (1 - self.beta2) * (grad_weights ** 2)
-        self.m_bias    = self.beta1 * self.m_bias + (1 - self.beta1) * grad_bias
-        self.v_bias    = self.beta2 * self.v_bias + (1 - self.beta2) * (grad_bias ** 2)
+        self.m_bias    = self.beta1 * self.m_bias    + (1 - self.beta1) * grad_bias
+        self.v_bias    = self.beta2 * self.v_bias    + (1 - self.beta2) * (grad_bias ** 2)
 
         m_hat_weights = self.m_weights / (1 - self.beta1 ** self.t)
         v_hat_weights = self.v_weights / (1 - self.beta2 ** self.t)
-        m_hat_bias    = self.m_bias / (1 - self.beta1 ** self.t)
-        v_hat_bias    = self.v_bias / (1 - self.beta2 ** self.t)
+        m_hat_bias    = self.m_bias    / (1 - self.beta1 ** self.t)
+        v_hat_bias    = self.v_bias    / (1 - self.beta2 ** self.t)
 
         self.weights -= self.learning_rate * m_hat_weights / (np.sqrt(v_hat_weights) + self.epsilon)
-        self.bias    -= self.learning_rate * m_hat_bias / (np.sqrt(v_hat_bias) + self.epsilon)
+        self.bias    -= self.learning_rate * m_hat_bias    / (np.sqrt(v_hat_bias)    + self.epsilon)
+
         return grad_input
-
-
-if __name__ == "__main__":
-    # Testiamo con un batch fittizio di immagini
-    batch_size = 2
-    in_channels = 1
-    height = 28
-    width = 28
-    input_data = np.random.randn(batch_size, in_channels, height, width).astype(np.float32)
-
-    # Creiamo il layer convoluzionale con 6 filtri 3x3, stride 1, padding 1
-    conv = Conv2D(
-        input_channels=in_channels,
-        filter_number=16,
-        kernel_size=2,
-        stride=2,
-        padding=14,
-        activation_funct='relu',
-        learning_rate=0.001
-    )
-    conv2 = Conv2D(
-        input_channels=16,  # num_filter of first conv layer
-        filter_number=16,
-        kernel_size=5,
-        stride=1,
-        padding=2,
-        activation_funct='relu',
-        learning_rate=0.001
-    )
-
-    pool  = MaxPoolLayer(kernel_size=2, stride=2)
-    pool2 = MaxPoolLayer(kernel_size=2, stride=2)
-
-    # a)
-    out_conv = conv.forward(input_data)
-    print("Output shape dopo la prima convoluzione:", out_conv.shape)
-
-    # b) Pooling
-    out_pool = pool.forward(out_conv)
-    print("Output shape dopo il primo pooling:", out_pool.shape)
-
-    # c)
-    out_conv2 = conv2.forward(out_pool)
-    print("Output shape dopo la seconda convoluzione:", out_conv2.shape)
-
-    # d) Pooling
-    out_pool2 = pool2.forward(out_conv2)
-    print("Output shape dopo il secondo pooling:", out_pool2.shape)
-
-    # --------------------------
-    # BACKWARD PASS
-    # --------------------------
-
-    grad_next2 = np.random.randn(*out_pool2.shape).astype(np.float32)
-
-    # a) Backprop del pooling
-    grad_pool2 = pool2.backward(grad_next2)
-    print("2 grad_pool shape:", grad_pool2.shape)
-
-    # b) Backprop della convoluzione
-    grad_conv2 = conv2.backward(grad_pool2)
-    print("2 grad_conv shape:", grad_conv2.shape)
-
-    grad_next = np.random.randn(*grad_conv2.shape).astype(np.float32)
-
-    # a) Backprop del pooling
-    grad_pool = pool.backward(grad_next)
-    print("1 grad_pool shape:", grad_pool.shape)
-
-    # b) Backprop della convoluzione
-    grad_conv = conv.backward(grad_pool)
-    print("1 grad_conv shape:", grad_conv.shape)
