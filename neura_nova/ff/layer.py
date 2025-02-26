@@ -88,7 +88,6 @@ class DenseLayer:
         self.input = input_data
         self.input = np.ascontiguousarray(input_data, dtype=np.float32)
 
-
         """
         - input_data shape: (input_dim, batch_size)
         - W          shape: (output_dim, input_dim)

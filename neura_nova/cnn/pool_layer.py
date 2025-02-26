@@ -46,7 +46,7 @@ def maxpool_forward_naive(X, kernel_size, stride):
     return output, argmax
 
 @njit(parallel=True)
-def maxpool_backward_naive(grad_output, argmax, kernel_size, stride, in_shape):
+def maxpool_backward_naive(grad_output, argmax, stride, in_shape):
     """
     Backprop del Max Pooling.
     grad_output: (batch_size, channels, out_h, out_w)
@@ -93,7 +93,6 @@ class MaxPoolLayer:
         dinput = maxpool_backward_naive(
             grad_output,
             self.argmax,
-            self.kernel_size,
             self.stride,
             (batch_size, channels, H, W)
         )
