@@ -36,8 +36,7 @@ def conv_forward_naive(X_padded, weights, bias, stride, kernel_size, filter_numb
                     h_end   = h_start + kernel_size
                     w_start = j * stride
                     w_end   = w_start + kernel_size
-
-                    patch = X_padded[b, :, h_start:h_end, w_start:w_end]
+                    patch   = X_padded[b, :, h_start:h_end, w_start:w_end]
                     out[b, f, i, j] = np.sum(patch * weights[f]) + bias[f, 0]
     return out
 
@@ -85,9 +84,7 @@ def conv_backward_naive(X_padded, weights, grad_output, stride, kernel_size):
                 for j in range(out_width):
                     gval    = grad_output[b, f, i, j]
                     h_start = i * stride
-                    h_end   = h_start + kernel_size
                     w_start = j * stride
-                    w_end   = w_start + kernel_size
 
                     for c in range(in_channels):
                         for hh in range(kernel_size):
@@ -102,16 +99,30 @@ def conv_backward_naive(X_padded, weights, grad_output, stride, kernel_size):
                                 grad_input_padded[b, c, h_start+hh, w_start+ww] += weights[f, c, hh, ww] * gval
     return grad_input_padded, grad_weights, grad_bias
 
+def compute_padding(in_dim, kernel_size, stride):
+    # Se il kernel è pari e stride = 1, non esiste una soluzione "perfetta"
+    # simmetrica e intera
+
+    # Per stride = 1
+    # Usare kernel dispari (1, 3, 5, 7, ...) --> pad = (k-1)/2
+
+    # Per stride > 1 (2, 4)
+    # 2, 4, 6
+
+    # per ottenere out_dim = (in_dim + 2*pad - kernel_size) // stride + 1 == in_dim
+
+    pad_tot = stride * (in_dim - 1) + kernel_size - in_dim
+    return max(0, pad_tot // 2)
+
+
 class Conv2D:
-    def __init__(self, input_channels, filter_number, kernel_size, stride, padding, activation_funct, learning_rate,
+    def __init__(self, input_channels, filter_number, kernel_size, stride, activation_funct, learning_rate,
                  beta1=0.9, beta2=0.999, epsilon=1e-8):
         self.input_channels   = input_channels
         self.filter_number    = filter_number
         self.kernel_size      = kernel_size
         self.stride           = stride
-        self.padding          = padding
         self.activation_funct = activation_funct
-        self.kernels          = np.random.randn(filter_number, input_channels, kernel_size, kernel_size)
 
         self.weights = None
         self.bias    = None
@@ -136,7 +147,7 @@ class Conv2D:
         self.beta1         = beta1
         self.beta2         = beta2
         self.epsilon       = epsilon
-        self.t             = 0  # step counter
+        self.t             = 0
 
         self.m_weights = np.zeros_like(self.weights)
         self.v_weights = np.zeros_like(self.weights)
@@ -171,9 +182,14 @@ class Conv2D:
         self.input = X
         batch_size, _, H, W = X.shape
 
+        pad_h = compute_padding(H, self.kernel_size, self.stride)
+        pad_w = compute_padding(W, self.kernel_size, self.stride)
+
+        self.X_padded = np.pad(X, ((0, 0), (0, 0), (pad_h, pad_h), (pad_w, pad_w)), mode='constant')
+
         # Calculate output dimensions
-        out_h = (H - self.kernel_size + 2 * self.padding) // self.stride + 1
-        out_w = (W - self.kernel_size + 2 * self.padding) // self.stride + 1
+        self.out_h = (H + 2 * pad_h - self.kernel_size) // self.stride + 1
+        self.out_w = (W + 2 * pad_w - self.kernel_size) // self.stride + 1
 
         # Per ottenere "same shape" (kernel_size dispari, stride, padding)
         # (k = 1, p = 0, s = 1)
@@ -184,14 +200,9 @@ class Conv2D:
         # Per ottenere "same shape" (kernel_size pari, stride, padding)
         # (k = 2, p = 14, s = 2)
 
-        if out_h != H or out_w != W:
+        if self.out_h != H or self.out_w != W:
             print("Wrong choice of (kernel_size, stride, padding)")
             raise ValueError("[CONVOLUTION] Constraint not satisfied: out_h = H, out_w = W")
-
-        self.out_h = out_h
-        self.out_w = out_w
-
-        self.X_padded = np.pad(X, ((0, 0), (0, 0), (self.padding, self.padding), (self.padding, self.padding)), mode='constant')
 
         # Initialize output
         output = np.zeros((batch_size, self.filter_number, self.out_h, self.out_w))
@@ -242,9 +253,12 @@ class Conv2D:
             self.kernel_size
         )
 
+        pad_h = (self.X_padded.shape[2] - self.input.shape[2]) // 2
+        pad_w = (self.X_padded.shape[3] - self.input.shape[3]) // 2
+
         # Rimuovere padding da grad_input
-        if self.padding > 0:
-            grad_input = grad_input_padded[:, :, self.padding:-self.padding, self.padding:-self.padding]
+        if pad_h > 0 or pad_w > 0:
+            grad_input = grad_input_padded[:, :, pad_h:-pad_h, pad_w:-pad_w]
         else:
             grad_input = grad_input_padded
 

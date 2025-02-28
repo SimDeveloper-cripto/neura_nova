@@ -57,7 +57,6 @@ def build_and_train_cnn_model_with_config(config, loss_fun=SoftmaxCrossEntropy()
             filter_number=conv_conf["filters"],
             kernel_size=conv_conf["kernel_size"],
             stride=conv_conf["stride"],
-            padding=conv_conf["padding"],
             activation_funct=conv_conf["activation"],
             learning_rate=lr,
             beta1=beta1,
