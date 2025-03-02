@@ -1,7 +1,6 @@
 import numpy as np
 
 from ..data import load_mnist
-
 from .layer import DenseLayer
 from .network import FeedForward
 from ..loss import SoftmaxCrossEntropy
@@ -83,7 +82,7 @@ def build_and_train_ff_model_with_config(config, loss_fun=SoftmaxCrossEntropy())
     test_dimension = config['test_dimension']
 
     X_train, y_train_onehot, X_val, y_val, X_test, y_test_onehot = load_and_preprocess_data_for_ff(config['train_dimension'], test_dimension, config['validation_dimension'])
-    nn = FeedForward(loss_fun)  # See conv_layer.py __init__() and forward()
+    nn = FeedForward(loss_fun)
 
     lr      = config['learning_rate']
     beta1   = config['beta1']
@@ -103,7 +102,6 @@ def build_and_train_ff_model_with_config(config, loss_fun=SoftmaxCrossEntropy())
     # Sulla base dei pesi migliori
     test_accuracy = nn.getAccuracy(X_test, y_test_onehot, test_dimension)
 
-    # Read config/ffconfig.json
     result = {
         'layers': config['layers'],
         'train_dimension': config['train_dimension'],

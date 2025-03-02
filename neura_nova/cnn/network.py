@@ -134,9 +134,9 @@ class Convolutional(Network):
 
             # EARLY STOPPING
             if val_loss < best_val_loss:
-                best_val_loss = val_loss
+                best_val_loss    = val_loss
                 patience_counter = 0
-                best_weights = [layer.get_weights() for layer in self.conv_layers]
+                best_weights     = [layer.get_weights() for layer in self.conv_layers]
             else:
                 patience_counter += 1
 

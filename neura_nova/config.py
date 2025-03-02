@@ -5,7 +5,12 @@ import math
 import json
 
 def load_config(file_path):
-    config_file = os.path.join(os.path.dirname(__file__), file_path)
+    base_dir    = os.path.dirname(os.path.abspath(__file__))
+    config_file = os.path.join(base_dir, file_path)
+
+    if not os.path.exists(config_file):
+        raise FileNotFoundError(f"Config file not found: {config_file}")
+
     with open(config_file, 'r') as f:
         configs = json.load(f)
     return configs
@@ -47,5 +52,3 @@ def update_config_results(results, filename):
 
     with open(filename, 'w', encoding='utf-8') as file:
         json.dump(data, file, indent=4)
-
-    print(f"[INFO] {filename} UPDATED")
