@@ -10,8 +10,7 @@ def maxpool_forward_naive(X, kernel_size, stride):
     Esecuzione naive del max pooling con loop, parallelizzata su batch (e canali).
     Ritorna:
       - output: shape (batch_size, channels, out_h, out_w)
-      - argmax: shape (batch_size, channels, out_h, out_w, 2),
-                per salvare la posizione (hh, ww) del massimo nella finestra.
+      - argmax: shape (batch_size, channels, out_h, out_w, 2), per salvare la posizione (hh, ww) del massimo nella finestra.
     """
     batch_size, channels, H, W = X.shape
     out_h = (H - kernel_size) // stride + 1
@@ -20,7 +19,6 @@ def maxpool_forward_naive(X, kernel_size, stride):
     output = np.zeros((batch_size, channels, out_h, out_w), dtype=X.dtype)
     argmax = np.zeros((batch_size, channels, out_h, out_w, 2), dtype=np.int32)
 
-    # Parallelizziamo sul batch e sui canali in un unico loop
     for bc in prange(batch_size * channels):
         b = bc // channels
         c = bc % channels
@@ -49,9 +47,9 @@ def maxpool_forward_naive(X, kernel_size, stride):
 def maxpool_backward_naive(grad_output, argmax, stride, in_shape):
     """
     Backprop del Max Pooling.
-    grad_output: (batch_size, channels, out_h, out_w)
-    argmax     : (batch_size, channels, out_h, out_w, 2)
-    in_shape   : (batch_size, channels, H, W) = shape dell'input originale
+    grad_output : (batch_size, channels, out_h, out_w)
+    argmax      : (batch_size, channels, out_h, out_w, 2)
+    in_shape    : (batch_size, channels, H,     W)
 
     Ritorna:
       dinput : gradiente w.r.t. input, shape = in_shape
@@ -60,7 +58,6 @@ def maxpool_backward_naive(grad_output, argmax, stride, in_shape):
     out_h, out_w = grad_output.shape[2], grad_output.shape[3]
 
     dinput = np.zeros(in_shape, dtype=grad_output.dtype)
-
     for bc in prange(batch_size * channels):
         b = bc // channels
         c = bc % channels

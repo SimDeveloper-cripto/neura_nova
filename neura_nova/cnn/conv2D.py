@@ -12,7 +12,7 @@ def conv_forward_naive(X_padded, weights, bias, stride, kernel_size, filter_numb
 
     Parametri:
     ----------
-    X_padded      : np.array di shape (batch_size, in_channels, H_pad, W_pad)
+    X_padded      : np.array di shape (batch_size,    in_channels, H_pad,       W_pad)
     weights       : np.array di shape (filter_number, in_channels, kernel_size, kernel_size)
     bias          : np.array di shape (filter_number, 1)
     stride        : int
@@ -43,17 +43,16 @@ def conv_forward_naive(X_padded, weights, bias, stride, kernel_size, filter_numb
 @njit(parallel=True)
 def conv_backward_naive(X_padded, weights, grad_output, stride, kernel_size):
     """
-    Calcola:
+    Calcola con un approccio naive: quadruplo ciclo for (batch, filter, i, j)
       - grad_weights
       - grad_bias
       - grad_input_padded
-    con un approccio naive: quadruplo for (batch, filter, i, j).
 
     Parametri:
     ----------
-    X_padded    : np.array (batch_size, in_channels, H_pad, W_pad)
-    weights     : np.array (filter_number, in_channels, kernel_size, kernel_size)
-    grad_output : np.array (batch_size, filter_number, out_height, out_width)
+    X_padded    : np.array (batch_size,    in_channels,   H_pad, W_pad)
+    weights     : np.array (filter_number, in_channels,   kernel_size, kernel_size)
+    grad_output : np.array (batch_size,    filter_number, out_height,  out_width)
     stride      : int
     kernel_size : int
 
@@ -91,7 +90,6 @@ def conv_backward_naive(X_padded, weights, grad_output, stride, kernel_size):
                             for ww in range(kernel_size):
                                 grad_weights[f, c, hh, ww] += X_padded[b, c, h_start+hh, w_start+ww] * gval
 
-                    # grad_input_padded aggiunge:
                     # grad_input_padded[b, :, h_start:h_end, w_start:w_end] += weights[f]*gval
                     for c in range(in_channels):
                         for hh in range(kernel_size):
@@ -100,17 +98,6 @@ def conv_backward_naive(X_padded, weights, grad_output, stride, kernel_size):
     return grad_input_padded, grad_weights, grad_bias
 
 def compute_padding(in_dim, kernel_size, stride):
-    # Se il kernel è pari e stride = 1, non esiste una soluzione "perfetta"
-    # simmetrica e intera
-
-    # Per stride = 1
-    # Usare kernel dispari (1, 3, 5, 7, ...) --> pad = (k-1)/2
-
-    # Per stride > 1 (2, 4)
-    # 2, 4, 6
-
-    # per ottenere out_dim = (in_dim + 2*pad - kernel_size) // stride + 1 == in_dim
-
     pad_tot = stride * (in_dim - 1) + kernel_size - in_dim
     return max(0, pad_tot // 2)
 
@@ -155,7 +142,7 @@ class Conv2D:
         self.v_bias    = np.zeros_like(self.bias)
 
         # Cache
-        self.input             = None  # input originale
+        self.input             = None
         self.X_padded          = None
         self.output            = None
         self.activation_cache  = None
@@ -191,20 +178,9 @@ class Conv2D:
         self.out_h = (H + 2 * pad_h - self.kernel_size) // self.stride + 1
         self.out_w = (W + 2 * pad_w - self.kernel_size) // self.stride + 1
 
-        # Per ottenere "same shape" (kernel_size dispari, stride, padding)
-        # (k = 1, p = 0, s = 1)
-        # (k = 3, p = 1, s = 1)
-        # (k = 5, p = 2, s = 1)
-        # (k = 7, p = 3, s = 1)
-
-        # Per ottenere "same shape" (kernel_size pari, stride, padding)
-        # (k = 2, p = 14, s = 2)
-
         if self.out_h != H or self.out_w != W:
-            print("Wrong choice of (kernel_size, stride, padding)")
             raise ValueError("[CONVOLUTION] Constraint not satisfied: out_h = H, out_w = W")
 
-        # Initialize output
         output = np.zeros((batch_size, self.filter_number, self.out_h, self.out_w))
 
         # Perform convolution
@@ -239,7 +215,6 @@ class Conv2D:
         self.t += 1
         batch_size, _, out_height, out_width = grad_output.shape
 
-        # Apply activation function derivative
         if self.activation_funct == 'relu':
             grad_output = grad_output * self.activation_cache
         elif self.activation_funct == 'sigmoid':

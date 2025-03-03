@@ -79,7 +79,7 @@ def build_and_train_cnn_model_with_config(config, loss_fun=SoftmaxCrossEntropy()
         out = conv.forward(out)
     for pool in nn.pool_layers:
         out = pool.forward(out)
-    flattened_size = int(np.prod(out.shape[1:]))  # Don't consider batch_size
+    flattened_size = int(np.prod(out.shape[1:]))
 
     fc_layers_config = config.get("fc_layers", [])
     if not fc_layers_config:

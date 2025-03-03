@@ -25,30 +25,11 @@ class Convolutional(Network):
         self.fc_layers    = []
         self.loss_fn      = loss_fn
 
-        """
-        self.__train_history    = {
-            "train_loss": [],
-            "train_accuracy": []
-        }
-        self.__validation_history    = {
-            "validation_loss": [],
-            "validation_accuracy": []
-        }
-        """
-
     def add_conv_layer(self, layer):
         self.conv_layers.append(layer)
 
     def add_pool_layer(self, layer):
         self.pool_layers.append(layer)
-
-    """
-    def getTrainHistory(self):
-        return self.__train_history
-
-    def getValidationHistory(self):
-        return self.__validation_history
-    """
 
     def predict(self, input_X):
         output = input_X
@@ -94,7 +75,7 @@ class Convolutional(Network):
                     out = conv.forward(out)
                     out = pool.forward(out)
 
-                out_shape          = out.shape  # Save shape for backward
+                out_shape          = out.shape
                 current_batch_size = out.shape[0]
                 flattened          = out.reshape(current_batch_size, -1).T
 
@@ -107,7 +88,7 @@ class Convolutional(Network):
 
                 # Backward
                 # Backprop from the fully-connected layer
-                grad = self.loss_fn.backward()  # grad: (10, batch_size)
+                grad = self.loss_fn.backward()
                 for fc in reversed(self.fc_layers):
                     grad = fc.backward(grad)
                 grad = grad.T.reshape(out_shape)
@@ -122,15 +103,6 @@ class Convolutional(Network):
 
             # BASED ON CROSS-ENTROPY + SOFTMAX
             print(f"epoch {epoch}/{epochs}, train_loss: {epoch_loss:.4f} val_loss: {val_loss:.4f}")
-
-            # GRAFICI DI FUNZIONE: BASATI SU MEDIE ARITMETICHE
-            # epoch_accuracy = self.arithmetic_mean(X, y)
-            # val_accuracy = self.arithmetic_mean(X_val, y_val)
-
-            # self.__train_history["train_loss"].append(epoch_loss)
-            # self.__train_history["train_accuracy"].append(epoch_accuracy)
-            # self.__validation_history["validation_loss"].append(epoch_loss)
-            # self.__validation_history["validation_accuracy"].append(epoch_accuracy)
 
             # EARLY STOPPING
             if val_loss < best_val_loss:
@@ -147,12 +119,3 @@ class Convolutional(Network):
         if best_weights:
             for layer, best_weight in zip(self.conv_layers, best_weights):
                 layer.set_weights(best_weight)
-
-    """
-    def arithmetic_mean(self, X, y):
-        logits = self.predict(X)
-        predictions = np.argmax(logits, axis=0)
-        true_labels = np.argmax(y, axis=1)
-        accuracy = np.mean(predictions == true_labels)
-        return accuracy
-    """
