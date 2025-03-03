@@ -10,8 +10,9 @@ def create_cnn_config_file(filename):
     epoch               = [15, 20]
     validation_set      = [20000, 30000]
     functions           = ['sigmoid', 'relu']
-    filters             = [8, 12, 16]
-    double_filters      = [[8, 12], [12, 16], [8, 16]]
+    filters             = [8, 12, 16, 32]
+    kernel_size         = [3, 5, 7]
+    double_filters      = [[8, 12], [12, 16], [8, 16], [16, 32]]
     hidden_layer_neuron = 64
 
     # Iperparametri fissi
@@ -22,11 +23,10 @@ def create_cnn_config_file(filename):
     beta2           = 0.999
     epsilon         = 1e-8
     output_layer    = 10
-    kernel_size     = 3
     stride          = 1
 
     configurations = []
-    for hl, bs, fn, ep, vs in product(hidden_layer, batch_sizes, functions, epoch, validation_set):
+    for hl, bs, fn, ep, vs, ks in product(hidden_layer, batch_sizes, functions, epoch, validation_set, kernel_size):
         config = {
             "batch_size": bs,
             "epochs": ep,
@@ -48,7 +48,7 @@ def create_cnn_config_file(filename):
                 new_config["conv_layers"] = [
                     {
                          "filters": filter,
-                         "kernel_size": kernel_size,
+                         "kernel_size": ks,
                          "stride": stride,
                          "activation": fn
                     }
@@ -72,13 +72,13 @@ def create_cnn_config_file(filename):
                 new_config["conv_layers"] = [
                     {
                         "filters": filter[0],
-                        "kernel_size": kernel_size,
+                        "kernel_size": ks,
                         "stride": stride,
                         "activation": fn
                     },
                     {
                         "filters": filter[1],
-                        "kernel_size": kernel_size,
+                        "kernel_size": ks,
                         "stride": stride,
                         "activation": fn
                     }

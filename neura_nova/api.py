@@ -18,7 +18,9 @@ ff_file_config  = os.path.join(os.path.dirname(__file__), "config", "ffconfigura
 cnn_file_config = os.path.join(os.path.dirname(__file__), "config", "cnnconfigurations.json")
 
 def run_ff_model():
-    create_ff_config_file(ff_file_config)
+    if os.getenv("CREATE_CONFIG") == "true":
+        create_ff_config_file(ff_file_config)
+
     configs = load_config(ff_file_config)
     results = []
 
@@ -31,7 +33,9 @@ def run_ff_model():
     update_config_results(results, os.path.join(os.path.dirname(__file__), 'results', 'ff', 'results.json'))
 
 def run_cnn_model():
-    create_cnn_config_file(cnn_file_config)
+    if os.getenv("CREATE_CONFIG") == "true":
+        create_cnn_config_file(cnn_file_config)
+
     configs = load_config(cnn_file_config)
     results = []
 
