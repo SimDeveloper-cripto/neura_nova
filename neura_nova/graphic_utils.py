@@ -5,33 +5,26 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
+# Written for CNNs
 def visualize_predictions(nn, X_test, y_test_onehot, num_immagini=25, save_dir="results"):
     os.makedirs(save_dir, exist_ok=True)
 
-    # Se y_test_onehot è (10, N), trasponiamolo a (N, 10)
     if y_test_onehot.shape[0] == 10 and y_test_onehot.shape[1] == X_test.shape[0]:
         y_test_onehot = y_test_onehot.T
 
-    assert X_test.shape[0] == y_test_onehot.shape[
-        0], f"Dimension mismatch: X_test {X_test.shape}, y_test_onehot {y_test_onehot.shape}"
+    assert X_test.shape[0] == y_test_onehot.shape[0], f"Dimension mismatch: X_test {X_test.shape}, y_test_onehot {y_test_onehot.shape}"
 
-    num_immagini = min(num_immagini, X_test.shape[0])
-
-    indici = np.random.choice(X_test.shape[0], num_immagini, replace=False)
-    immagini_campione = X_test[indici].reshape(-1, 28, 28)  # Reshape per visualizzazione
+    num_immagini       = min(num_immagini, X_test.shape[0])
+    indici             = np.random.choice(X_test.shape[0], num_immagini, replace=False)
+    immagini_campione  = X_test[indici].reshape(-1, 28, 28)
     etichette_campione = y_test_onehot[indici]
 
-    logits = nn.predict(X_test[indici])
+    logits     = nn.predict(X_test[indici])  # shape (10, batch_size)
+    predizioni = np.argmax(logits, axis=0)
+    truth      = np.argmax(etichette_campione, axis=1)
 
-    # Controlliamo che logits abbia la forma corretta
-    # assert logits.shape[0] == num_immagini, f"Mismatch tra logits ({logits.shape[0]}) e num_immagini ({num_immagini})"
-
-    predizioni = np.argmax(logits, axis=1)
-    truth = np.argmax(etichette_campione, axis=1)
-
-    # Verifichiamo che truth e predizioni abbiano la giusta dimensione
-    assert len(predizioni) == num_immagini, f"predizioni ha dimensione {len(predizioni)}, atteso {num_immagini}"
-    assert len(truth) == num_immagini, f"truth ha dimensione {len(truth)}, atteso {num_immagini}"
+    assert len(predizioni) == num_immagini, f"predictions has dimension {len(predizioni)}, expected {num_immagini}"
+    assert len(truth) == num_immagini, f"truth has dimension {len(truth)}, expected {num_immagini}"
 
     griglia_dim = int(np.ceil(np.sqrt(num_immagini)))
     plt.figure(figsize=(12, 12))
@@ -40,7 +33,6 @@ def visualize_predictions(nn, X_test, y_test_onehot, num_immagini=25, save_dir="
         plt.subplot(griglia_dim, griglia_dim, i + 1)
         plt.imshow(immagini_campione[i], cmap='gray')
 
-        # Assicuriamoci che l'indice sia valido
         if i < len(predizioni) and i < len(truth):
             plt.title(f"Pred: {predizioni[i]}\nTrue: {truth[i]}")
         else:
@@ -49,6 +41,8 @@ def visualize_predictions(nn, X_test, y_test_onehot, num_immagini=25, save_dir="
         plt.axis('off')
 
     plt.tight_layout()
+    predictions_file = os.path.join(save_dir, "predictions.png")
+    plt.savefig(predictions_file, bbox_inches='tight', dpi=150)
     plt.show()
 
 def plot_metrics(title, history1, history2, metric_names1, metric_names2, save_dir="results"):
@@ -81,7 +75,7 @@ def plot_metrics(title, history1, history2, metric_names1, metric_names2, save_d
 
 def show_results(nn, X_train, y_train_onehot, X_val, y_val, model, index, save_dir="results"):
     result = os.path.join(os.path.dirname(__file__), save_dir, model, index)
-    os.makedirs(result)
+    os.makedirs(result, exist_ok=True)
 
     plot_metrics("RESULTS", nn.getTrainHistory(), nn.getValidationHistory(),
                  metric_names1=["train_loss", "train_accuracy"],
