@@ -15,7 +15,6 @@ def maxpool_forward_naive(X, kernel_size, stride):
     batch_size, channels, H, W = X.shape
     out_h = (H - kernel_size) // stride + 1
     out_w = (W - kernel_size) // stride + 1
-
     output = np.zeros((batch_size, channels, out_h, out_w), dtype=X.dtype)
     argmax = np.zeros((batch_size, channels, out_h, out_w, 2), dtype=np.int32)
 
@@ -30,7 +29,6 @@ def maxpool_forward_naive(X, kernel_size, stride):
                 max_i   = 0
                 max_j   = 0
 
-                # Ricerca del massimo in kernel_size x kernel_size
                 for hh in range(kernel_size):
                     for ww in range(kernel_size):
                         val = X[b, c, h_start + hh, w_start + ww]
@@ -68,7 +66,6 @@ def maxpool_backward_naive(grad_output, argmax, stride, in_shape):
                 local_j  = argmax[b, c, i, j, 1]
                 h_start  = i * stride
                 w_start  = j * stride
-
                 dinput[b, c, h_start + local_i, w_start + local_j] += grad_val
     return dinput
 

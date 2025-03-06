@@ -18,6 +18,13 @@ class Network:
         correct     = np.sum(predictions == true_labels)
         return correct / dataset_size
 
+    def arithmetic_mean(self, X, y):
+        logits = self.predict(X)
+        predictions = np.argmax(logits, axis=0)
+        true_labels = np.argmax(y, axis=1)
+        accuracy = np.mean(predictions == true_labels)
+        return accuracy
+
 class Convolutional(Network):
     def __init__(self, loss_fn: LossFunction):
         self.conv_layers  = []
@@ -25,11 +32,26 @@ class Convolutional(Network):
         self.fc_layers    = []
         self.loss_fn      = loss_fn
 
+        self.__train_history = {
+            "train_loss": [],
+            "train_accuracy": []
+        }
+        self.__validation_history = {
+            "validation_loss": [],
+            "validation_accuracy": []
+        }
+
     def add_conv_layer(self, layer):
         self.conv_layers.append(layer)
 
     def add_pool_layer(self, layer):
         self.pool_layers.append(layer)
+
+    def getTrainHistory(self):
+        return self.__train_history
+
+    def getValidationHistory(self):
+        return self.__validation_history
 
     def predict(self, input_X):
         output = input_X
@@ -38,8 +60,6 @@ class Convolutional(Network):
             output = pool.forward(output)
 
         batch_size = output.shape[0]
-
-        # Flattening: from (N, C, H, W) to (N, C * H * W)
         flattened = output.reshape(batch_size, -1).T
 
         if self.fc_layers is None:
@@ -58,7 +78,6 @@ class Convolutional(Network):
         best_weights = None
 
         for epoch in range(1, epochs + 1):
-            # Shuffle
             indices = np.random.permutation(num_samples)
             X_shuffled = X[indices]
             y_shuffled = y[indices]
@@ -69,7 +88,6 @@ class Convolutional(Network):
                 X_batch = X_shuffled[start:end]  # (batch_size, channels, H, W)
                 y_batch = y_shuffled[start:end]  # (batch_size, channels, H, W)
 
-                # Forward
                 out = X_batch
                 for conv, pool in zip(self.conv_layers, self.pool_layers):
                     out = conv.forward(out)
@@ -86,8 +104,6 @@ class Convolutional(Network):
                 loss = self.loss_fn.forward(Z, y_batch.T)
                 epoch_loss += loss * current_batch_size
 
-                # Backward
-                # Backprop from the fully-connected layer
                 grad = self.loss_fn.backward()
                 for fc in reversed(self.fc_layers):
                     grad = fc.backward(grad)
@@ -101,10 +117,17 @@ class Convolutional(Network):
             val_logits = self.predict(X_val)
             val_loss   = self.loss_fn.forward(val_logits, y_val.T)
 
-            # BASED ON CROSS-ENTROPY + SOFTMAX
             print(f"epoch {epoch}/{epochs}, train_loss: {epoch_loss:.4f} val_loss: {val_loss:.4f}")
 
-            # EARLY STOPPING
+            # GRAFICI DI FUNZIONE: BASATI SU MEDIE ARITMETICHE
+            epoch_accuracy = self.arithmetic_mean(X_shuffled, y_shuffled)
+            val_accuracy   = self.arithmetic_mean(X_val, y_val)
+
+            self.__train_history["train_loss"].append(epoch_loss)
+            self.__train_history["train_accuracy"].append(epoch_accuracy)
+            self.__validation_history["validation_loss"].append(val_loss)
+            self.__validation_history["validation_accuracy"].append(val_accuracy)
+
             if val_loss < best_val_loss:
                 best_val_loss    = val_loss
                 patience_counter = 0

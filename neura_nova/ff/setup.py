@@ -3,34 +3,9 @@ import numpy as np
 from ..data import load_mnist
 from .layer import DenseLayer
 from .network import FeedForward
+from ..graphic_utils import show_results
 from ..loss import SoftmaxCrossEntropy
 
-"""
-import math
-import array
-import random
-
-def closest_power_of_2(n):
-    lower = 2 ** math.floor(math.log2(n))
-    upper = 2 ** math.ceil(math.log2(n))
-    return lower if (n - lower) < (upper - n) else upper
-
-def create_neurons(input_dim, output_dim, hidden_layers):
-    neurons = array.array('i', [input_dim])
-    i = 1
-    while i < hidden_layers:
-        last_layer = neurons[-1]
-        while True:
-            random_number = random.randint(last_layer // 2, last_layer)
-            neurons_in_layer = closest_power_of_2(random_number)
-            if neurons_in_layer != neurons[-1]:
-                break
-
-        neurons.append(neurons_in_layer)
-        i += 1
-    neurons.append(output_dim)
-    return neurons
-"""
 
 def one_hot_encode(y, num_classes):
     one_hot = np.zeros((y.shape[0], num_classes), dtype=np.float32)
@@ -40,40 +15,33 @@ def one_hot_encode(y, num_classes):
 def load_and_preprocess_data_for_ff(train_limit, test_limit, validation_limit):
     (X_train, y_train), (X_test, y_test) = load_mnist(train_limit, test_limit)
 
-    # Pre-Processing (normalization)
     X_train = X_train.astype(np.float32) / 255.0
     X_test  = X_test.astype(np.float32) / 255.0
 
-    # Flatten images
-    X_train = X_train.reshape(X_train.shape[0], -1)  # shape: (N_train, 784)
-    X_test  = X_test.reshape(X_test.shape[0], -1)    # shape: (N_train, 784)
+    X_train = X_train.reshape(X_train.shape[0], -1)
+    X_test  = X_test.reshape(X_test.shape[0], -1)
 
     num_classes = 10
-    y_train_onehot = one_hot_encode(y_train, num_classes)  # shape: (N, 10)
+    y_train_onehot = one_hot_encode(y_train, num_classes)
     y_test_onehot  = one_hot_encode(y_test, num_classes)
 
-    # % train_set + % validation_set
     X_train_final = X_train[:validation_limit]
     y_train_final = y_train_onehot[:validation_limit]
     X_val         = X_train[validation_limit:]
     y_val         = y_train_onehot[validation_limit:]
 
-    # Use WX + B convention
-    # Training
-    X_train_final = X_train_final.T  # shape: (784,  N_train_final)
-    y_train_final = y_train_final.T  # shape: (10,   N_train_final)
+    X_train_final = X_train_final.T
+    y_train_final = y_train_final.T
 
-    # Validation
-    X_val         = X_val.T          # shape: (784,  N_val)
-    y_val         = y_val.T          # shape: (10,   N_val)
+    X_val         = X_val.T
+    y_val         = y_val.T
 
-    # Test
-    X_test        = X_test.T         # shape: (7_84, N_test)
-    y_test_onehot = y_test_onehot.T  # shape: (10,   N_test)
+    X_test        = X_test.T
+    y_test_onehot = y_test_onehot.T
 
     return X_train_final, y_train_final, X_val, y_val, X_test, y_test_onehot
 
-def build_and_train_ff_model_with_config(config, loss_fun=SoftmaxCrossEntropy()):
+def build_and_train_ff_model_with_config(config, index, loss_fun=SoftmaxCrossEntropy()):
     """
     - input_dim     = 784
     - output_dim    = 10
@@ -98,9 +66,9 @@ def build_and_train_ff_model_with_config(config, loss_fun=SoftmaxCrossEntropy())
     epochs     = config['epochs']
     batch_size = config['batch_size']
     nn.train(X_train, y_train_onehot, epochs, X_val, y_val, batch_size)
-
-    # Sulla base dei pesi migliori
     test_accuracy = nn.getAccuracy(X_test, y_test_onehot, test_dimension)
+
+    show_results(nn, X_train, y_train_onehot, X_val, y_val, "ff", index)
 
     result = {
         'layers': config['layers'],

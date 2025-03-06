@@ -1,47 +1,64 @@
 # neura_nova/graphic_utils.py
 
+import os
 import numpy as np
 import matplotlib.pyplot as plt
 
 
-def visualize_predictions(nn, X_test, y_test_onehot, num_immagini=25):
-    """
-    :param nn           : neural network
-    :param X_test       : test set of images (already processed)
-    :param y_test_onehot: test set one-hot encoding labels
-    :param num_immagini : how many images to visualize
-    """
-    assert X_test.shape[1] == y_test_onehot.shape[1]
-    num_immagini = min(num_immagini, X_test.shape[1])
+def visualize_predictions(nn, X_test, y_test_onehot, num_immagini=25, save_dir="results"):
+    os.makedirs(save_dir, exist_ok=True)
 
-    indici             = np.random.choice(X_test.shape[1], num_immagini, replace=False)
-    immagini_campione  = X_test[:, indici]         # shape: (784, num_immagini)
-    etichette_campione = y_test_onehot[:, indici]  # shape: (10,  num_immagini)
+    # Se y_test_onehot è (10, N), trasponiamolo a (N, 10)
+    if y_test_onehot.shape[0] == 10 and y_test_onehot.shape[1] == X_test.shape[0]:
+        y_test_onehot = y_test_onehot.T
 
-    # Predictions
-    logits     = nn.predict(immagini_campione)
-    predizioni = np.argmax(logits, axis=0)
-    truth      = np.argmax(etichette_campione, axis=0)
+    assert X_test.shape[0] == y_test_onehot.shape[
+        0], f"Dimension mismatch: X_test {X_test.shape}, y_test_onehot {y_test_onehot.shape}"
 
-    # Display images in a grid (each row contains 5 elements)
+    num_immagini = min(num_immagini, X_test.shape[0])
+
+    indici = np.random.choice(X_test.shape[0], num_immagini, replace=False)
+    immagini_campione = X_test[indici].reshape(-1, 28, 28)  # Reshape per visualizzazione
+    etichette_campione = y_test_onehot[indici]
+
+    logits = nn.predict(X_test[indici])
+
+    # Controlliamo che logits abbia la forma corretta
+    # assert logits.shape[0] == num_immagini, f"Mismatch tra logits ({logits.shape[0]}) e num_immagini ({num_immagini})"
+
+    predizioni = np.argmax(logits, axis=1)
+    truth = np.argmax(etichette_campione, axis=1)
+
+    # Verifichiamo che truth e predizioni abbiano la giusta dimensione
+    assert len(predizioni) == num_immagini, f"predizioni ha dimensione {len(predizioni)}, atteso {num_immagini}"
+    assert len(truth) == num_immagini, f"truth ha dimensione {len(truth)}, atteso {num_immagini}"
+
     griglia_dim = int(np.ceil(np.sqrt(num_immagini)))
     plt.figure(figsize=(12, 12))
 
     for i in range(num_immagini):
         plt.subplot(griglia_dim, griglia_dim, i + 1)
-        immagine = immagini_campione[:, i].reshape(28, 28)
-        plt.imshow(immagine, cmap='gray')
-        plt.title(f"Pred: {predizioni[i]}\nTrue: {truth[i]}")
+        plt.imshow(immagini_campione[i], cmap='gray')
+
+        # Assicuriamoci che l'indice sia valido
+        if i < len(predizioni) and i < len(truth):
+            plt.title(f"Pred: {predizioni[i]}\nTrue: {truth[i]}")
+        else:
+            plt.title("Errore indice!")
+
         plt.axis('off')
+
     plt.tight_layout()
-    plt.ioff()
     plt.show()
 
-def plot_metrics(title, history1, history2, metric_names1, metric_names2):
+def plot_metrics(title, history1, history2, metric_names1, metric_names2, save_dir="results"):
+    os.makedirs(save_dir, exist_ok=True)
+
     epochs1 = range(1, len(history1[metric_names1[0]]) + 1)
     epochs2 = range(1, len(history2[metric_names2[0]]) + 1)
 
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 6))
+
     for metric in metric_names1:
         ax1.plot(epochs1, history1[metric], label=metric)
     ax1.set_xlabel("epoch")
@@ -59,10 +76,17 @@ def plot_metrics(title, history1, history2, metric_names1, metric_names2):
     ax2.grid(True)
 
     plt.tight_layout()
-    plt.ioff()
-    plt.show()
+    plt.savefig(os.path.join(save_dir, "metrics.png"))
+    plt.close()
 
-def show_results(nn, X_train, y_train_onehot, X_val, y_val):
-    plot_metrics("RESULTS", nn.getTrainHistory(), nn.getValidationHistory(), metric_names1=["train_loss", "train_accuracy"], metric_names2=["validation_loss", "validation_accuracy"])
-    visualize_predictions(nn, X_train, y_train_onehot)
-    visualize_predictions(nn, X_val, y_val)
+def show_results(nn, X_train, y_train_onehot, X_val, y_val, model, index, save_dir="results"):
+    result = os.path.join(os.path.dirname(__file__), save_dir, model, index)
+    os.makedirs(result)
+
+    plot_metrics("RESULTS", nn.getTrainHistory(), nn.getValidationHistory(),
+                 metric_names1=["train_loss", "train_accuracy"],
+                 metric_names2=["validation_loss", "validation_accuracy"],
+                 save_dir=str(result))
+
+    visualize_predictions(nn, X_train, y_train_onehot, save_dir=str(result))
+    visualize_predictions(nn, X_val, y_val, save_dir=str(result))

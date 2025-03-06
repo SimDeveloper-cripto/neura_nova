@@ -5,7 +5,7 @@ from .network import Convolutional
 from ..data import load_mnist
 from ..ff.layer import DenseLayer
 from ..loss import SoftmaxCrossEntropy
-
+from ..graphic_utils import show_results
 from .conv2D import Conv2D
 from .pool_layer import MaxPoolLayer
 
@@ -16,12 +16,8 @@ def one_hot_encode(y, num_classes):
 
 def load_and_preprocess_data_for_cnn(train_limit, test_limit, validation_limit):
     (X_train, y_train), (X_test, y_test) = load_mnist(train_limit, test_limit)
-
-    # Pre-Processing (normalization)
     X_train = X_train.astype(np.float32) / 255.0
     X_test  = X_test.astype(np.float32) / 255.0
-
-    # shape: (N, 1, 28, 28)
     X_train = X_train.reshape(-1, 1, 28, 28)
     X_test  = X_test.reshape(-1, 1, 28, 28)
 
@@ -36,15 +32,14 @@ def load_and_preprocess_data_for_cnn(train_limit, test_limit, validation_limit):
 
     return X_train_final, y_train_final, X_val, y_val, X_test, y_test_onehot
 
-def build_and_train_cnn_model_with_config(config, loss_fun=SoftmaxCrossEntropy()):
+def build_and_train_cnn_model_with_config(config, index, loss_fun=SoftmaxCrossEntropy()):
     test_dimension = config['test_dimension']
-
     X_train, y_train_onehot, X_val, y_val, X_test, y_test_onehot = load_and_preprocess_data_for_cnn(
         config['train_dimension'],
         test_dimension,
         config['validation_dimension'])
-    nn = Convolutional(loss_fun)
 
+    nn      = Convolutional(loss_fun)
     lr      = config['learning_rate']
     beta1   = config['beta1']
     beta2   = config['beta2']
@@ -104,9 +99,9 @@ def build_and_train_cnn_model_with_config(config, loss_fun=SoftmaxCrossEntropy()
     batch_size    = config["batch_size"]
 
     nn.train(X_train, y_train_onehot, epochs, X_val, y_val, batch_size)
-
-    # Sulla base dei pesi migliori
     test_accuracy = nn.getAccuracy(X_test, y_test_onehot, test_dimension)
+
+    show_results(nn, X_train, y_train_onehot, X_val, y_val, "cnn", index)
 
     result = {
         'conv_layers': config['conv_layers'],

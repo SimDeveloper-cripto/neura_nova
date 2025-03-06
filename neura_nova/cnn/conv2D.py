@@ -71,14 +71,12 @@ def conv_backward_naive(X_padded, weights, grad_output, stride, kernel_size):
     grad_bias         = np.zeros((filter_number, 1), dtype=weights.dtype)
     grad_input_padded = np.zeros_like(X_padded)
 
-    # Manualmente: somma su (batch, i, j) per ogni f
     for b in prange(batch_size):
         for f in range(filter_number):
             for i in range(out_height):
                 for j in range(out_width):
                     grad_bias[f, 0] += grad_output[b, f, i, j]
 
-            # Calcolo di grad_weights e grad_input_padded
             for i in range(out_height):
                 for j in range(out_width):
                     gval    = grad_output[b, f, i, j]
@@ -90,7 +88,6 @@ def conv_backward_naive(X_padded, weights, grad_output, stride, kernel_size):
                             for ww in range(kernel_size):
                                 grad_weights[f, c, hh, ww] += X_padded[b, c, h_start+hh, w_start+ww] * gval
 
-                    # grad_input_padded[b, :, h_start:h_end, w_start:w_end] += weights[f]*gval
                     for c in range(in_channels):
                         for hh in range(kernel_size):
                             for ww in range(kernel_size):
@@ -116,8 +113,6 @@ class Conv2D:
         self.weights = np.ascontiguousarray(self.weights, dtype=np.float32)
         self.bias    = np.ascontiguousarray(self.bias, dtype=np.float32)
 
-        # self.weights shape: (filters, input_channels, kernel_size, kernel_size)
-        # self.bias    shape: (self.num_filters, 1)
         if activation_funct == 'relu':
             # Kaiming/He initialization
             self.weights = (
@@ -129,7 +124,6 @@ class Conv2D:
             self.weights = glorot_uniform_init_conv(self.filter_number, self.input_channels, self.kernel_size)
         self.bias = np.zeros((self.filter_number, 1), dtype=np.float32)
 
-        # Parametri per Adam
         self.learning_rate = learning_rate
         self.beta1         = beta1
         self.beta2         = beta2
@@ -141,7 +135,6 @@ class Conv2D:
         self.m_bias    = np.zeros_like(self.bias)
         self.v_bias    = np.zeros_like(self.bias)
 
-        # Cache
         self.input             = None
         self.X_padded          = None
         self.output            = None
@@ -173,8 +166,6 @@ class Conv2D:
         pad_w = compute_padding(W, self.kernel_size, self.stride)
 
         self.X_padded = np.pad(X, ((0, 0), (0, 0), (pad_h, pad_h), (pad_w, pad_w)), mode='constant')
-
-        # Calculate output dimensions
         self.out_h = (H + 2 * pad_h - self.kernel_size) // self.stride + 1
         self.out_w = (W + 2 * pad_w - self.kernel_size) // self.stride + 1
 
@@ -183,7 +174,6 @@ class Conv2D:
 
         output = np.zeros((batch_size, self.filter_number, self.out_h, self.out_w))
 
-        # Perform convolution
         output = conv_forward_naive(
             self.X_padded,
             self.weights,
@@ -208,7 +198,6 @@ class Conv2D:
         return output
 
     def backward(self, grad_output):
-        # grad_output shape: (batch_size, filter_number, out_height, out_width)
         if self.output is None:
             raise ValueError("Must call forward before backward")
 
@@ -221,9 +210,9 @@ class Conv2D:
             grad_output = grad_output * self.activation_cache
 
         grad_input_padded, grad_weights, grad_bias = conv_backward_naive(
-            self.X_padded,   # shape: (batch_size, in_channels, H_pad, W_pad)
-            self.weights,    # shape: (filter_number, in_channels, kernel_size, kernel_size)
-            grad_output,     # shape: (batch_size, filter_number, out_height, out_width)
+            self.X_padded,
+            self.weights,
+            grad_output,
             self.stride,
             self.kernel_size
         )
@@ -231,7 +220,6 @@ class Conv2D:
         pad_h = (self.X_padded.shape[2] - self.input.shape[2]) // 2
         pad_w = (self.X_padded.shape[3] - self.input.shape[3]) // 2
 
-        # Rimuovere padding da grad_input
         if pad_h > 0 or pad_w > 0:
             grad_input = grad_input_padded[:, :, pad_h:-pad_h, pad_w:-pad_w]
         else:

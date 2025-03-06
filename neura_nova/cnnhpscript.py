@@ -4,7 +4,6 @@ import random
 from itertools import product
 
 def create_cnn_config_file(filename):
-    # Iperparametri variabili: hidden layer, batch size, epochs, validation_set, functions
     hidden_layer        = [1, 2]
     batch_sizes         = [64, 128]
     epoch               = [15, 20]
@@ -15,7 +14,6 @@ def create_cnn_config_file(filename):
     double_filters      = [[8, 12], [12, 16], [8, 16], [16, 32]]
     hidden_layer_neuron = 64
 
-    # Iperparametri fissi
     train_dimension = 60000
     test_dimension  = 10000
     learning_rate   = 0.001
@@ -105,7 +103,6 @@ def create_cnn_config_file(filename):
                 ]
                 configurations.append(new_config)
 
-    # Selezioniamo 10 configurazioni casuali
     selected_configurations = random.sample(configurations, min(10, len(configurations)))
 
     os.makedirs(os.path.dirname(filename), exist_ok=True)
