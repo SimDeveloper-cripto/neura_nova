@@ -73,7 +73,7 @@ def plot_metrics(title, history1, history2, metric_names1, metric_names2, save_d
     plt.savefig(os.path.join(save_dir, "metrics.png"))
     plt.close()
 
-def show_results(nn, X_train, y_train_onehot, X_val, y_val, model, index, save_dir="results"):
+def show_results(nn, X_train, y_train_onehot, model, index, save_dir="results"):
     result = os.path.join(os.path.dirname(__file__), save_dir, model, index)
     os.makedirs(result, exist_ok=True)
 
@@ -82,5 +82,5 @@ def show_results(nn, X_train, y_train_onehot, X_val, y_val, model, index, save_d
                  metric_names2=["validation_loss", "validation_accuracy"],
                  save_dir=str(result))
 
-    visualize_predictions(nn, X_train, y_train_onehot, save_dir=str(result))
-    visualize_predictions(nn, X_val, y_val, save_dir=str(result))
+    # visualize_predictions(nn, X_train, y_train_onehot, save_dir=str(result))
+    # visualize_predictions(nn, X_val, y_val, save_dir=str(result))

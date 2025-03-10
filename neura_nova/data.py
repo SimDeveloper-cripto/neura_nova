@@ -5,7 +5,7 @@ import struct
 import numpy as np
 
 
-def load_mnist(train_limit, test_limit, path='../data/MNIST/raw'):
+def load_mnist(train_limit, test_limit, path='./data/MNIST/raw'):
     def load_images(filename):
         with open(filename, 'rb') as f:
             magic_num, total, rows, cols = struct.unpack(">IIII", f.read(16))

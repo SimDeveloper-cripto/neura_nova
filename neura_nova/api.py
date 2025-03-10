@@ -24,7 +24,7 @@ def run_ff_model():
         result = build_and_train_ff_model_with_config(config, str(index))
         results.append(result)
         index += 1
-    #update_config_results(results, os.path.join(os.path.dirname(__file__), 'results', 'ff', 'results.json'))
+    update_config_results(results, os.path.join(os.path.dirname(__file__), 'results', 'ff', 'results.json'))
 
 def run_cnn_model():
     if os.getenv("CREATE_CONFIG") == "true":
