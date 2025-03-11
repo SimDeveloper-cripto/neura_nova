@@ -188,19 +188,19 @@
                 {
                     "fold_number": 1,
                     "validation_size": 30000,
-                    "val_accuracy": 29555.0,
-                    "test_accuracy": 0.9867
+                    "val_accuracy": 0.9840666666666666,
+                    "test_accuracy": 0.9859
                 },
                 {
                     "fold_number": 2,
                     "validation_size": 30000,
-                    "val_accuracy": 29604.0,
-                    "test_accuracy": 0.9902
+                    "val_accuracy": 0.9848666666666667,
+                    "test_accuracy": 0.9875
                 }
             ],
-            "avg_val_accuracy": "2957950.00",
-            "avg_test_accuracy": "98.84",
-            "std_test_accuracy": "0.17"
+            "avg_val_accuracy": "98.45",
+            "avg_test_accuracy": "98.67",
+            "std_test_accuracy": "0.08"
         },
         {
             "best_model": 10

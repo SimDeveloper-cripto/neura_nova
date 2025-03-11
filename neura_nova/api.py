@@ -10,7 +10,7 @@ from neura_nova.cnnhpscript import create_cnn_config_file
 from .cnn.setup import build_and_train_cnn_model_with_config
 
 ff_file_config  = os.path.join(os.path.dirname(__file__), "config", "ffconfigurations.json")
-cnn_file_config = os.path.join(os.path.dirname(__file__), "config", "cnnconfigurations2.json")
+cnn_file_config = os.path.join(os.path.dirname(__file__), "config", "cnnconfigurations.json")
 
 def run_ff_model():
     if os.getenv("CREATE_CONFIG") == "true":
@@ -35,7 +35,7 @@ def run_cnn_model():
     index   = 1
     for config in configs:
         print(f"\n[CONVOLUTIONAL] TRAINING MODEL WITH CONFIG {index}")
-        result = build_and_train_cnn_model_with_config(config, str(11))
+        result = build_and_train_cnn_model_with_config(config, str(index))
         results.append(result)
         index += 1
     update_config_results_cnn(results, os.path.join(os.path.dirname(__file__), 'results', 'cnn', 'results.json'))
