@@ -1,10 +1,10 @@
 import numpy as np
 
-from ..data import load_mnist
 from .layer import DenseLayer
 from .network import FeedForward
 from ..loss import SoftmaxCrossEntropy
 from ..graphic_utils import show_results
+from ..data import load_mnist, create_kfold_indices
 
 
 def one_hot_encode(y, num_classes):
@@ -26,32 +26,6 @@ def load_and_preprocess_data_for_ff(train_limit, test_limit):
     y_test_onehot  = one_hot_encode(y_test, num_classes)
 
     return X_train, y_train_onehot, X_test, y_test_onehot
-
-def create_kfold_indices(n_samples, n_folds, seed=42):
-    np.random.seed(seed)
-
-    indices = np.arange(n_samples)
-    np.random.shuffle(indices)
-
-    fold_size = n_samples // n_folds
-    remainder = n_samples % n_folds
-
-    folds = []
-    start = 0
-    for fold in range(n_folds):
-        extra = 1 if fold < remainder else 0  # add an extra element to some folds if n_samples is not divisible by n_folds
-        end = start + fold_size + extra
-
-        val_indices = indices[start:end]
-
-        train_mask            = np.ones(n_samples, dtype=bool)
-        train_mask[start:end] = False
-        train_indices         = indices[train_mask]
-
-        folds.append((train_indices, val_indices))
-        start = end
-    return folds
-
 
 def build_and_train_ff_model_with_config(config, index, loss_fun=SoftmaxCrossEntropy()):
     """

@@ -1,7 +1,7 @@
 # neura_nova/api.py
 
 import os
-from .config import load_config, update_config_results
+from .config import load_config, update_config_results_ff, update_config_results_cnn
 
 from neura_nova.ffhpscript import create_ff_config_file
 from .ff.setup import build_and_train_ff_model_with_config
@@ -24,7 +24,7 @@ def run_ff_model():
         result = build_and_train_ff_model_with_config(config, str(index))
         results.append(result)
         index += 1
-    update_config_results(results, os.path.join(os.path.dirname(__file__), 'results', 'ff', 'results.json'))
+    update_config_results_ff(results, os.path.join(os.path.dirname(__file__), 'results', 'ff', 'results.json'))
 
 def run_cnn_model():
     if os.getenv("CREATE_CONFIG") == "true":
@@ -38,4 +38,4 @@ def run_cnn_model():
         result = build_and_train_cnn_model_with_config(config, str(index))
         results.append(result)
         index += 1
-    # update_config_results(results, os.path.join(os.path.dirname(__file__), 'results', 'cnn', 'results.json'))
+    update_config_results_cnn(results, os.path.join(os.path.dirname(__file__), 'results', 'cnn', 'results.json'))

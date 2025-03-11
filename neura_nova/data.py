@@ -29,3 +29,28 @@ def load_mnist(train_limit, test_limit, path='./data/MNIST/raw'):
     X_test,  y_test  = X_test[:test_limit],   y_test[:test_limit]
 
     return (X_train, y_train), (X_test, y_test)
+
+def create_kfold_indices(n_samples, n_folds, seed=42):
+    np.random.seed(seed)
+
+    indices = np.arange(n_samples)
+    np.random.shuffle(indices)
+
+    fold_size = n_samples // n_folds
+    remainder = n_samples % n_folds
+
+    folds = []
+    start = 0
+    for fold in range(n_folds):
+        extra = 1 if fold < remainder else 0  # add an extra element to some folds if n_samples is not divisible by n_folds
+        end = start + fold_size + extra
+
+        val_indices = indices[start:end]
+
+        train_mask            = np.ones(n_samples, dtype=bool)
+        train_mask[start:end] = False
+        train_indices         = indices[train_mask]
+
+        folds.append((train_indices, val_indices))
+        start = end
+    return folds
