@@ -102,7 +102,7 @@ def build_and_train_cnn_model_with_config(config, index, loss_fun=SoftmaxCrossEn
 
         nn.train(X_train_fold, y_train_fold, epochs, X_val_fold, y_val_fold, batch_size)
 
-        val_accuracy  = nn.getAccuracy(X_val_fold, y_val_fold, X_val_fold.shape[1])
+        val_accuracy  = nn.getAccuracy(X_val_fold, y_val_fold, X_val_fold.shape[0])
         test_accuracy = nn.getAccuracy(X_test, y_test_onehot, test_dimension)
         test_accuracies.append(test_accuracy)
 
