@@ -5,17 +5,14 @@
                 {
                     "fold_number": 1,
                     "validation_size": 30000,
-                    "val_accuracy": 29533.0,
                     "test_accuracy": 0.9865
                 },
                 {
                     "fold_number": 2,
                     "validation_size": 30000,
-                    "val_accuracy": 29539.0,
                     "test_accuracy": 0.9864
                 }
             ],
-            "avg_val_accuracy": "2953600.00",
             "avg_test_accuracy": "98.65",
             "std_test_accuracy": "0.00"
         },
@@ -24,17 +21,14 @@
                 {
                     "fold_number": 1,
                     "validation_size": 30000,
-                    "val_accuracy": 29458.0,
                     "test_accuracy": 0.9849
                 },
                 {
                     "fold_number": 2,
                     "validation_size": 30000,
-                    "val_accuracy": 29583.0,
                     "test_accuracy": 0.9864
                 }
             ],
-            "avg_val_accuracy": "2952050.00",
             "avg_test_accuracy": "98.56",
             "std_test_accuracy": "0.08"
         },
@@ -43,17 +37,14 @@
                 {
                     "fold_number": 1,
                     "validation_size": 30000,
-                    "val_accuracy": 29393.0,
                     "test_accuracy": 0.9799
                 },
                 {
                     "fold_number": 2,
                     "validation_size": 30000,
-                    "val_accuracy": 29189.0,
                     "test_accuracy": 0.9748
                 }
             ],
-            "avg_val_accuracy": "2929100.00",
             "avg_test_accuracy": "97.73",
             "std_test_accuracy": "0.25"
         },
@@ -62,23 +53,19 @@
                 {
                     "fold_number": 1,
                     "validation_size": 20000,
-                    "val_accuracy": 19697.0,
                     "test_accuracy": 0.9873
                 },
                 {
                     "fold_number": 2,
                     "validation_size": 20000,
-                    "val_accuracy": 19784.0,
                     "test_accuracy": 0.9883
                 },
                 {
                     "fold_number": 3,
                     "validation_size": 20000,
-                    "val_accuracy": 19737.0,
                     "test_accuracy": 0.989
                 }
             ],
-            "avg_val_accuracy": "1973933.33",
             "avg_test_accuracy": "98.82",
             "std_test_accuracy": "0.07"
         },
@@ -87,23 +74,19 @@
                 {
                     "fold_number": 1,
                     "validation_size": 20000,
-                    "val_accuracy": 19705.0,
                     "test_accuracy": 0.9866
                 },
                 {
                     "fold_number": 2,
                     "validation_size": 20000,
-                    "val_accuracy": 19717.0,
                     "test_accuracy": 0.9884
                 },
                 {
                     "fold_number": 3,
                     "validation_size": 20000,
-                    "val_accuracy": 19685.0,
                     "test_accuracy": 0.9858
                 }
             ],
-            "avg_val_accuracy": "1970233.33",
             "avg_test_accuracy": "98.69",
             "std_test_accuracy": "0.11"
         },
@@ -112,17 +95,14 @@
                 {
                     "fold_number": 1,
                     "validation_size": 30000,
-                    "val_accuracy": 29340.0,
                     "test_accuracy": 0.9785
                 },
                 {
                     "fold_number": 2,
                     "validation_size": 30000,
-                    "val_accuracy": 29296.0,
                     "test_accuracy": 0.9785
                 }
             ],
-            "avg_val_accuracy": "2931800.00",
             "avg_test_accuracy": "97.85",
             "std_test_accuracy": "0.00"
         },
@@ -131,17 +111,14 @@
                 {
                     "fold_number": 1,
                     "validation_size": 30000,
-                    "val_accuracy": 29305.0,
                     "test_accuracy": 0.981
                 },
                 {
                     "fold_number": 2,
                     "validation_size": 30000,
-                    "val_accuracy": 29251.0,
                     "test_accuracy": 0.9774
                 }
             ],
-            "avg_val_accuracy": "2927800.00",
             "avg_test_accuracy": "97.92",
             "std_test_accuracy": "0.18"
         },
@@ -150,17 +127,14 @@
                 {
                     "fold_number": 1,
                     "validation_size": 30000,
-                    "val_accuracy": 29369.0,
                     "test_accuracy": 0.9842
                 },
                 {
                     "fold_number": 2,
                     "validation_size": 30000,
-                    "val_accuracy": 29398.0,
                     "test_accuracy": 0.9808
                 }
             ],
-            "avg_val_accuracy": "2938350.00",
             "avg_test_accuracy": "98.25",
             "std_test_accuracy": "0.17"
         },
@@ -169,17 +143,14 @@
                 {
                     "fold_number": 1,
                     "validation_size": 30000,
-                    "val_accuracy": 29437.0,
                     "test_accuracy": 0.985
                 },
                 {
                     "fold_number": 2,
                     "validation_size": 30000,
-                    "val_accuracy": 29442.0,
                     "test_accuracy": 0.9824
                 }
             ],
-            "avg_val_accuracy": "2943950.00",
             "avg_test_accuracy": "98.37",
             "std_test_accuracy": "0.13"
         },
@@ -188,22 +159,19 @@
                 {
                     "fold_number": 1,
                     "validation_size": 30000,
-                    "val_accuracy": 0.9840666666666666,
                     "test_accuracy": 0.9859
                 },
                 {
                     "fold_number": 2,
                     "validation_size": 30000,
-                    "val_accuracy": 0.9848666666666667,
                     "test_accuracy": 0.9875
                 }
             ],
-            "avg_val_accuracy": "98.45",
             "avg_test_accuracy": "98.67",
             "std_test_accuracy": "0.08"
         },
         {
-            "best_model": 10
+            "best_model": 4
         }
     ]
 ]

@@ -92,7 +92,7 @@ def build_and_train_ff_model_with_config(config, index, loss_fun=SoftmaxCrossEnt
         fold_results.append({
             'fold_number': fold_count,
             'validation_size': X_val_fold.shape[1],
-            'val_accuracy': val_accuracy,
+            # 'val_accuracy': val_accuracy,
             'test_accuracy': test_accuracy
         })
         fold_count += 1
@@ -103,10 +103,10 @@ def build_and_train_ff_model_with_config(config, index, loss_fun=SoftmaxCrossEnt
     # Show results using the best model
     show_results(best_model, X_test_T, y_test_onehot_T, "ff", index)
 
-    avg_val_accuracy = np.mean([fold['val_accuracy'] for fold in fold_results])
+    # avg_val_accuracy = np.mean([fold['val_accuracy'] for fold in fold_results])
     result = {
         'fold_results': fold_results,
-        'avg_val_accuracy': "{:.2f}".format(avg_val_accuracy * 100),
+        # 'avg_val_accuracy': "{:.2f}".format(avg_val_accuracy * 100),
         'avg_test_accuracy': "{:.2f}".format(mean_test_accuracy * 100),
         'std_test_accuracy': "{:.2f}".format(std_test_accuracy * 100),
     }
