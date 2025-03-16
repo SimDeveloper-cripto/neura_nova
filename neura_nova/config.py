@@ -24,7 +24,7 @@ def update_config_results_ff(results, filename):
         data = json.load(f)
 
     best_model_index = max(
-        enumerate(data),
+        enumerate(data[0]),
         key=lambda x: float(x[1].get("avg_test_accuracy", "0"))
     )[0]
 

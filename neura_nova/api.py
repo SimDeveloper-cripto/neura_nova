@@ -12,6 +12,9 @@ from .cnn.setup import build_and_train_cnn_model_with_config
 ff_file_config  = os.path.join(os.path.dirname(__file__), "config", "ffconfigurations.json")
 cnn_file_config = os.path.join(os.path.dirname(__file__), "config", "cnnconfigurations.json")
 
+# ff_file_config2  = os.path.join(os.path.dirname(__file__), "config", "ffconfigurations2.json")
+# cnn_file_config2 = os.path.join(os.path.dirname(__file__), "config", "cnnconfigurations2.json")
+
 def run_ff_model():
     if os.getenv("CREATE_CONFIG") == "true":
         create_ff_config_file(ff_file_config)
