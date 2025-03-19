@@ -197,9 +197,9 @@
     ]
   },
   {
-    "batch_size": 64,
-    "epoch": 15,
-    "validation_set": 30000,
+    "batch_size": 128,
+    "epochs": 15,
+    "validation_dimension": 30000,
     "train_dimension": 60000,
     "test_dimension": 10000,
     "learning_rate": 0.001,
@@ -208,7 +208,7 @@
     "epsilon": 1e-08,
     "conv_layers": [
       {
-        "filters": 12,
+        "filters": 8,
         "kernel_size": 3,
         "stride": 1,
         "activation": "relu"

@@ -1,8 +1,163 @@
 [
     {
+        "batch_size": 128,
+        "epoch": 15,
+        "validation_set": 20000,
+        "train_dimension": 60000,
+        "test_dimension": 10000,
+        "learning_rate": 0.001,
+        "beta1": 0.9,
+        "beta2": 0.999,
+        "epsilon": 1e-08,
+        "layers": [
+            {
+                "neurons": 64,
+                "activation": "relu"
+            },
+            {
+                "neurons": 10,
+                "activation": "identity"
+            }
+        ]
+    },
+    {
+        "batch_size": 128,
+        "epoch": 15,
+        "validation_set": 30000,
+        "train_dimension": 60000,
+        "test_dimension": 10000,
+        "learning_rate": 0.001,
+        "beta1": 0.9,
+        "beta2": 0.999,
+        "epsilon": 1e-08,
+        "layers": [
+            {
+                "neurons": 64,
+                "activation": "relu"
+            },
+            {
+                "neurons": 10,
+                "activation": "identity"
+            }
+        ]
+    },
+    {
+        "batch_size": 128,
+        "epoch": 15,
+        "validation_set": 20000,
+        "train_dimension": 60000,
+        "test_dimension": 10000,
+        "learning_rate": 0.001,
+        "beta1": 0.9,
+        "beta2": 0.999,
+        "epsilon": 1e-08,
+        "layers": [
+            {
+                "neurons": 64,
+                "activation": "sigmoid"
+            },
+            {
+                "neurons": 10,
+                "activation": "identity"
+            }
+        ]
+    },
+    {
+        "batch_size": 128,
+        "epoch": 15,
+        "validation_set": 30000,
+        "train_dimension": 60000,
+        "test_dimension": 10000,
+        "learning_rate": 0.001,
+        "beta1": 0.9,
+        "beta2": 0.999,
+        "epsilon": 1e-08,
+        "layers": [
+            {
+                "neurons": 256,
+                "activation": "sigmoid"
+            },
+            {
+                "neurons": 64,
+                "activation": "sigmoid"
+            },
+            {
+                "neurons": 10,
+                "activation": "identity"
+            }
+        ]
+    },
+    {
         "batch_size": 64,
-        "epochs": 20,
-        "validation_dimension": 30000,
+        "epoch": 15,
+        "validation_set": 20000,
+        "train_dimension": 60000,
+        "test_dimension": 10000,
+        "learning_rate": 0.001,
+        "beta1": 0.9,
+        "beta2": 0.999,
+        "epsilon": 1e-08,
+        "layers": [
+            {
+                "neurons": 256,
+                "activation": "relu"
+            },
+            {
+                "neurons": 10,
+                "activation": "identity"
+            }
+        ]
+    },
+    {
+        "batch_size": 128,
+        "epoch": 15,
+        "validation_set": 20000,
+        "train_dimension": 60000,
+        "test_dimension": 10000,
+        "learning_rate": 0.001,
+        "beta1": 0.9,
+        "beta2": 0.999,
+        "epsilon": 1e-08,
+        "layers": [
+            {
+                "neurons": 128,
+                "activation": "sigmoid"
+            },
+            {
+                "neurons": 10,
+                "activation": "identity"
+            }
+        ]
+    },
+    {
+        "batch_size": 64,
+        "epoch": 15,
+        "validation_set": 30000,
+        "train_dimension": 60000,
+        "test_dimension": 10000,
+        "learning_rate": 0.001,
+        "beta1": 0.9,
+        "beta2": 0.999,
+        "epsilon": 1e-08,
+        "layers": [
+            {
+                "neurons": 256,
+                "activation": "sigmoid"
+            },
+            {
+                "neurons": 64,
+                "activation": "sigmoid"
+            },
+            {
+                "neurons": 10,
+                "activation": "identity"
+            }
+        ]
+    },
+    {
+        "batch_size": 128,
+        "epoch": 15,
+        "validation_set": 30000,
         "train_dimension": 60000,
         "test_dimension": 10000,
         "learning_rate": 0.001,
@@ -25,193 +180,9 @@
         ]
     },
     {
-        "batch_size": 128,
-        "epochs": 15,
-        "validation_dimension": 30000,
-        "train_dimension": 60000,
-        "test_dimension": 10000,
-        "learning_rate": 0.001,
-        "beta1": 0.9,
-        "beta2": 0.999,
-        "epsilon": 1e-08,
-        "layers": [
-            {
-                "neurons": 512,
-                "activation": "sigmoid"
-            },
-            {
-                "neurons": 256,
-                "activation": "sigmoid"
-            },
-            {
-                "neurons": 10,
-                "activation": "identity"
-            }
-        ]
-    },
-    {
         "batch_size": 64,
-        "epochs": 15,
-        "validation_dimension": 30000,
-        "train_dimension": 60000,
-        "test_dimension": 10000,
-        "learning_rate": 0.001,
-        "beta1": 0.9,
-        "beta2": 0.999,
-        "epsilon": 1e-08,
-        "layers": [
-            {
-                "neurons": 512,
-                "activation": "sigmoid"
-            },
-            {
-                "neurons": 256,
-                "activation": "sigmoid"
-            },
-            {
-                "neurons": 10,
-                "activation": "identity"
-            }
-        ]
-    },
-    {
-        "batch_size": 64,
-        "epochs": 15,
-        "validation_dimension": 30000,
-        "train_dimension": 60000,
-        "test_dimension": 10000,
-        "learning_rate": 0.001,
-        "beta1": 0.9,
-        "beta2": 0.999,
-        "epsilon": 1e-08,
-        "layers": [
-            {
-                "neurons": 512,
-                "activation": "relu"
-            },
-            {
-                "neurons": 256,
-                "activation": "relu"
-            },
-            {
-                "neurons": 10,
-                "activation": "identity"
-            }
-        ]
-    },
-    {
-        "batch_size": 64,
-        "epochs": 15,
-        "validation_dimension": 20000,
-        "train_dimension": 60000,
-        "test_dimension": 10000,
-        "learning_rate": 0.001,
-        "beta1": 0.9,
-        "beta2": 0.999,
-        "epsilon": 1e-08,
-        "layers": [
-            {
-                "neurons": 256,
-                "activation": "relu"
-            },
-            {
-                "neurons": 10,
-                "activation": "identity"
-            }
-        ]
-    },
-    {
-        "batch_size": 128,
-        "epochs": 20,
-        "validation_dimension": 20000,
-        "train_dimension": 60000,
-        "test_dimension": 10000,
-        "learning_rate": 0.001,
-        "beta1": 0.9,
-        "beta2": 0.999,
-        "epsilon": 1e-08,
-        "layers": [
-            {
-                "neurons": 256,
-                "activation": "sigmoid"
-            },
-            {
-                "neurons": 10,
-                "activation": "identity"
-            }
-        ]
-    },
-    {
-        "batch_size": 128,
-        "epochs": 15,
-        "validation_dimension": 20000,
-        "train_dimension": 60000,
-        "test_dimension": 10000,
-        "learning_rate": 0.001,
-        "beta1": 0.9,
-        "beta2": 0.999,
-        "epsilon": 1e-08,
-        "layers": [
-            {
-                "neurons": 128,
-                "activation": "relu"
-            },
-            {
-                "neurons": 10,
-                "activation": "identity"
-            }
-        ]
-    },
-    {
-        "batch_size": 128,
-        "epochs": 20,
-        "validation_dimension": 30000,
-        "train_dimension": 60000,
-        "test_dimension": 10000,
-        "learning_rate": 0.001,
-        "beta1": 0.9,
-        "beta2": 0.999,
-        "epsilon": 1e-08,
-        "layers": [
-            {
-                "neurons": 128,
-                "activation": "sigmoid"
-            },
-            {
-                "neurons": 10,
-                "activation": "identity"
-            }
-        ]
-    },
-    {
-        "batch_size": 64,
-        "epochs": 20,
-        "validation_dimension": 20000,
-        "train_dimension": 60000,
-        "test_dimension": 10000,
-        "learning_rate": 0.001,
-        "beta1": 0.9,
-        "beta2": 0.999,
-        "epsilon": 1e-08,
-        "layers": [
-            {
-                "neurons": 512,
-                "activation": "sigmoid"
-            },
-            {
-                "neurons": 256,
-                "activation": "sigmoid"
-            },
-            {
-                "neurons": 10,
-                "activation": "identity"
-            }
-        ]
-    },
-    {
-        "batch_size": 64,
-        "epochs": 15,
-        "validation_dimension": 30000,
+        "epoch": 15,
+        "validation_set": 20000,
         "train_dimension": 60000,
         "test_dimension": 10000,
         "learning_rate": 0.001,
@@ -226,6 +197,27 @@
             {
                 "neurons": 64,
                 "activation": "sigmoid"
+            },
+            {
+                "neurons": 10,
+                "activation": "identity"
+            }
+        ]
+    },
+    {
+        "batch_size": 64,
+        "epoch": 20,
+        "validation_set": 30000,
+        "train_dimension": 60000,
+        "test_dimension": 10000,
+        "learning_rate": 0.001,
+        "beta1": 0.9,
+        "beta2": 0.999,
+        "epsilon": 1e-08,
+        "layers": [
+            {
+                "neurons": 128,
+                "activation": "relu"
             },
             {
                 "neurons": 10,

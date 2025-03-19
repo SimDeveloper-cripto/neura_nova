@@ -3,21 +3,18 @@
 import os
 from .config import load_config, update_config_results_ff, update_config_results_cnn
 
-from neura_nova.ffhpscript import create_ff_config_file
 from .ff.setup import build_and_train_ff_model_with_config
-
-from neura_nova.cnnhpscript import create_cnn_config_file
 from .cnn.setup import build_and_train_cnn_model_with_config
+
+# from neura_nova.ffhpscript import create_ff_config_file
+# from neura_nova.cnnhpscript import create_cnn_config_file
+
 
 ff_file_config  = os.path.join(os.path.dirname(__file__), "config", "ffconfigurations.json")
 cnn_file_config = os.path.join(os.path.dirname(__file__), "config", "cnnconfigurations.json")
 
-# ff_file_config2  = os.path.join(os.path.dirname(__file__), "config", "ffconfigurations2.json")
-# cnn_file_config2 = os.path.join(os.path.dirname(__file__), "config", "cnnconfigurations2.json")
-
 def run_ff_model():
-    if os.getenv("CREATE_CONFIG") == "true":
-        create_ff_config_file(ff_file_config)
+    # create_ff_config_file(ff_file_config)
 
     configs = load_config(ff_file_config)
     results = []
@@ -30,8 +27,7 @@ def run_ff_model():
     update_config_results_ff(results, os.path.join(os.path.dirname(__file__), 'results', 'ff', 'results.json'))
 
 def run_cnn_model():
-    if os.getenv("CREATE_CONFIG") == "true":
-        create_cnn_config_file(cnn_file_config)
+    # create_cnn_config_file(cnn_file_config)
 
     configs = load_config(cnn_file_config)
     results = []

@@ -4,6 +4,7 @@ from .layer import DenseLayer
 from .network import FeedForward
 from ..loss import SoftmaxCrossEntropy
 from ..graphic_utils import show_results
+from ..predict import predict_custom_images
 from ..data import load_mnist, create_kfold_indices
 
 
@@ -50,6 +51,9 @@ def build_and_train_ff_model_with_config(config, index, loss_fun=SoftmaxCrossEnt
     X_test_T        = X_test.T
     y_test_onehot_T = y_test_onehot.T
     test_accuracies = []
+
+    predict_custom = True
+    custom_images_path = './batch/'
 
     for train_idx, val_idx in folds:
         print(f"\n[FOLD {fold_count}/{n_folds}]")
@@ -102,6 +106,11 @@ def build_and_train_ff_model_with_config(config, index, loss_fun=SoftmaxCrossEnt
 
     # Show results using the best model
     show_results(best_model, X_test_T, y_test_onehot_T, "ff", index)
+
+    """
+    if predict_custom and best_model is not None:
+        predictions, filenames = predict_custom_images(best_model, custom_images_path)
+    """
 
     avg_val_accuracy = np.mean([fold['val_accuracy'] for fold in fold_results])
     result = {

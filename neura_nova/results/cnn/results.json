@@ -4,16 +4,139 @@
             "fold_results": [
                 {
                     "fold_number": 1,
+                    "validation_size": 20000,
+                    "val_accuracy": 0.96655,
+                    "test_accuracy": 0.9682
+                },
+                {
+                    "fold_number": 2,
+                    "validation_size": 20000,
+                    "val_accuracy": 0.9707,
+                    "test_accuracy": 0.9735
+                },
+                {
+                    "fold_number": 3,
+                    "validation_size": 20000,
+                    "val_accuracy": 0.96025,
+                    "test_accuracy": 0.9627
+                }
+            ],
+            "avg_val_accuracy": "96.58",
+            "avg_test_accuracy": "96.81",
+            "std_test_accuracy": "0.44"
+        },
+        {
+            "fold_results": [
+                {
+                    "fold_number": 1,
                     "validation_size": 30000,
-                    "test_accuracy": 0.9865
+                    "val_accuracy": 0.9813,
+                    "test_accuracy": 0.982
                 },
                 {
                     "fold_number": 2,
                     "validation_size": 30000,
-                    "test_accuracy": 0.9864
+                    "val_accuracy": 0.9777333333333333,
+                    "test_accuracy": 0.9782
                 }
             ],
-            "avg_test_accuracy": "98.65",
+            "avg_val_accuracy": "97.95",
+            "avg_test_accuracy": "98.01",
+            "std_test_accuracy": "0.19"
+        },
+        {
+            "fold_results": [
+                {
+                    "fold_number": 1,
+                    "validation_size": 30000,
+                    "val_accuracy": 0.9743,
+                    "test_accuracy": 0.976
+                },
+                {
+                    "fold_number": 2,
+                    "validation_size": 30000,
+                    "val_accuracy": 0.9755666666666667,
+                    "test_accuracy": 0.9764
+                }
+            ],
+            "avg_val_accuracy": "97.49",
+            "avg_test_accuracy": "97.62",
+            "std_test_accuracy": "0.02"
+        },
+        {
+            "fold_results": [
+                {
+                    "fold_number": 1,
+                    "validation_size": 30000,
+                    "val_accuracy": 0.981,
+                    "test_accuracy": 0.984
+                },
+                {
+                    "fold_number": 2,
+                    "validation_size": 30000,
+                    "val_accuracy": 0.9815,
+                    "test_accuracy": 0.9845
+                }
+            ],
+            "avg_val_accuracy": "98.12",
+            "avg_test_accuracy": "98.43",
+            "std_test_accuracy": "0.03"
+        },
+        {
+            "fold_results": [
+                {
+                    "fold_number": 1,
+                    "validation_size": 30000,
+                    "val_accuracy": 0.9831333333333333,
+                    "test_accuracy": 0.9843
+                },
+                {
+                    "fold_number": 2,
+                    "validation_size": 30000,
+                    "val_accuracy": 0.9796666666666667,
+                    "test_accuracy": 0.9803
+                }
+            ],
+            "avg_val_accuracy": "98.14",
+            "avg_test_accuracy": "98.23",
+            "std_test_accuracy": "0.20"
+        },
+        {
+            "fold_results": [
+                {
+                    "fold_number": 1,
+                    "validation_size": 30000,
+                    "val_accuracy": 0.9820333333333333,
+                    "test_accuracy": 0.9853
+                },
+                {
+                    "fold_number": 2,
+                    "validation_size": 30000,
+                    "val_accuracy": 0.9822333333333333,
+                    "test_accuracy": 0.9844
+                }
+            ],
+            "avg_val_accuracy": "98.21",
+            "avg_test_accuracy": "98.48",
+            "std_test_accuracy": "0.04"
+        },
+        {
+            "fold_results": [
+                {
+                    "fold_number": 1,
+                    "validation_size": 30000,
+                    "val_accuracy": 0.9758666666666667,
+                    "test_accuracy": 0.9752
+                },
+                {
+                    "fold_number": 2,
+                    "validation_size": 30000,
+                    "val_accuracy": 0.9745333333333334,
+                    "test_accuracy": 0.9751
+                }
+            ],
+            "avg_val_accuracy": "97.52",
+            "avg_test_accuracy": "97.52",
             "std_test_accuracy": "0.00"
         },
         {
@@ -21,157 +144,66 @@
                 {
                     "fold_number": 1,
                     "validation_size": 30000,
-                    "test_accuracy": 0.9849
+                    "val_accuracy": 0.9399,
+                    "test_accuracy": 0.9439
                 },
                 {
                     "fold_number": 2,
                     "validation_size": 30000,
-                    "test_accuracy": 0.9864
+                    "val_accuracy": 0.9278,
+                    "test_accuracy": 0.9332
                 }
             ],
-            "avg_test_accuracy": "98.56",
-            "std_test_accuracy": "0.08"
+            "avg_val_accuracy": "93.38",
+            "avg_test_accuracy": "93.86",
+            "std_test_accuracy": "0.53"
         },
         {
             "fold_results": [
                 {
                     "fold_number": 1,
-                    "validation_size": 30000,
+                    "validation_size": 20000,
+                    "val_accuracy": 0.97905,
                     "test_accuracy": 0.9799
                 },
                 {
                     "fold_number": 2,
-                    "validation_size": 30000,
-                    "test_accuracy": 0.9748
-                }
-            ],
-            "avg_test_accuracy": "97.73",
-            "std_test_accuracy": "0.25"
-        },
-        {
-            "fold_results": [
-                {
-                    "fold_number": 1,
                     "validation_size": 20000,
-                    "test_accuracy": 0.9873
-                },
-                {
-                    "fold_number": 2,
-                    "validation_size": 20000,
-                    "test_accuracy": 0.9883
+                    "val_accuracy": 0.978,
+                    "test_accuracy": 0.9798
                 },
                 {
                     "fold_number": 3,
                     "validation_size": 20000,
-                    "test_accuracy": 0.989
+                    "val_accuracy": 0.97875,
+                    "test_accuracy": 0.9812
                 }
             ],
-            "avg_test_accuracy": "98.82",
-            "std_test_accuracy": "0.07"
-        },
-        {
-            "fold_results": [
-                {
-                    "fold_number": 1,
-                    "validation_size": 20000,
-                    "test_accuracy": 0.9866
-                },
-                {
-                    "fold_number": 2,
-                    "validation_size": 20000,
-                    "test_accuracy": 0.9884
-                },
-                {
-                    "fold_number": 3,
-                    "validation_size": 20000,
-                    "test_accuracy": 0.9858
-                }
-            ],
-            "avg_test_accuracy": "98.69",
-            "std_test_accuracy": "0.11"
+            "avg_val_accuracy": "97.86",
+            "avg_test_accuracy": "98.03",
+            "std_test_accuracy": "0.06"
         },
         {
             "fold_results": [
                 {
                     "fold_number": 1,
                     "validation_size": 30000,
-                    "test_accuracy": 0.9785
+                    "val_accuracy": 0.9712333333333333,
+                    "test_accuracy": 0.9723
                 },
                 {
                     "fold_number": 2,
                     "validation_size": 30000,
-                    "test_accuracy": 0.9785
+                    "val_accuracy": 0.9743666666666667,
+                    "test_accuracy": 0.9758
                 }
             ],
-            "avg_test_accuracy": "97.85",
-            "std_test_accuracy": "0.00"
-        },
-        {
-            "fold_results": [
-                {
-                    "fold_number": 1,
-                    "validation_size": 30000,
-                    "test_accuracy": 0.981
-                },
-                {
-                    "fold_number": 2,
-                    "validation_size": 30000,
-                    "test_accuracy": 0.9774
-                }
-            ],
-            "avg_test_accuracy": "97.92",
-            "std_test_accuracy": "0.18"
-        },
-        {
-            "fold_results": [
-                {
-                    "fold_number": 1,
-                    "validation_size": 30000,
-                    "test_accuracy": 0.9842
-                },
-                {
-                    "fold_number": 2,
-                    "validation_size": 30000,
-                    "test_accuracy": 0.9808
-                }
-            ],
-            "avg_test_accuracy": "98.25",
+            "avg_val_accuracy": "97.28",
+            "avg_test_accuracy": "97.41",
             "std_test_accuracy": "0.17"
-        },
-        {
-            "fold_results": [
-                {
-                    "fold_number": 1,
-                    "validation_size": 30000,
-                    "test_accuracy": 0.985
-                },
-                {
-                    "fold_number": 2,
-                    "validation_size": 30000,
-                    "test_accuracy": 0.9824
-                }
-            ],
-            "avg_test_accuracy": "98.37",
-            "std_test_accuracy": "0.13"
-        },
-        {
-            "fold_results": [
-                {
-                    "fold_number": 1,
-                    "validation_size": 30000,
-                    "test_accuracy": 0.9859
-                },
-                {
-                    "fold_number": 2,
-                    "validation_size": 30000,
-                    "test_accuracy": 0.9875
-                }
-            ],
-            "avg_test_accuracy": "98.67",
-            "std_test_accuracy": "0.08"
-        },
-        {
-            "best_model": 4
         }
-    ]
+    ],
+    {
+        "best_model": 6
+    }
 ]
