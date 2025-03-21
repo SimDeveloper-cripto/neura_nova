@@ -46,6 +46,7 @@ def build_and_train_ff_model_with_config(config, index, loss_fun=SoftmaxCrossEnt
     fold_results      = []
     fold_count        = 1
     best_val_accuracy = 0
+    best_test_accuracy = 0
     best_model        = None
 
     X_test_T        = X_test.T
@@ -89,8 +90,14 @@ def build_and_train_ff_model_with_config(config, index, loss_fun=SoftmaxCrossEnt
         test_accuracy = nn.getAccuracy(X_test_T, y_test_onehot_T, test_dimension)
         test_accuracies.append(test_accuracy)
 
+        """
         if val_accuracy > best_val_accuracy:
             best_val_accuracy = val_accuracy
+            best_model = nn
+        """
+
+        if test_accuracy > best_test_accuracy:
+            best_test_accuracy = test_accuracy
             best_model = nn
 
         fold_results.append({
@@ -107,10 +114,8 @@ def build_and_train_ff_model_with_config(config, index, loss_fun=SoftmaxCrossEnt
     # Show results using the best model
     show_results(best_model, X_test_T, y_test_onehot_T, "ff", index)
 
-    """
     if predict_custom and best_model is not None:
         predictions, filenames = predict_custom_images(best_model, custom_images_path)
-    """
 
     avg_val_accuracy = np.mean([fold['val_accuracy'] for fold in fold_results])
     result = {

@@ -33,7 +33,7 @@ def load_custom_images(folder_path):
                 images.append(img_array)
                 filenames.append(filename)
             except Exception as e:
-                print(f"Errore nel caricamento dell'immagine {filename}: {e}")
+                print(f"Could not load image {filename}: {e}")
 
     if images:
         return np.vstack(images), filenames
@@ -44,7 +44,7 @@ def predict_custom_images(model, batch_folder_path):
     X_custom, filenames = load_custom_images(batch_folder_path)
 
     if len(X_custom) == 0:
-        print("Nessuna immagine trovata nella cartella.")
+        print("Could not find image's folder.")
         return
 
     X_custom_T  = X_custom.T
@@ -59,7 +59,7 @@ def predict_custom_images(model, batch_folder_path):
         plt.axis('off')
 
     plt.tight_layout()
-    plt.savefig('custom_predictions.png')
+    plt.savefig('ff_predictions.png')
     plt.show()
 
     for i, filename in enumerate(filenames):

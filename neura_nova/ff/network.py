@@ -54,7 +54,7 @@ class FeedForward(Network):
     def getValidationHistory(self):
         return self.__validation_history
 
-    def train(self, X, y, epochs, X_val, y_val, batch_size, stopping_criterion=10):
+    def train(self, X, y, epochs, X_val, y_val, batch_size, stopping_criterion=3):
         num_samples = X.shape[1]
 
         best_val_loss = float('inf')
