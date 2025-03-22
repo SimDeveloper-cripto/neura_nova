@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 from PIL import Image, ImageEnhance
 
 
+# CNN exec
 def load_custom_images(folder_path):
     images    = []
     filenames = []
@@ -28,7 +29,9 @@ def load_custom_images(folder_path):
                 img = ImageEnhance.Brightness(img).enhance(1.2)
 
                 img_array = np.array(img).astype(np.float32) / 255.0
-                img_array = img_array.reshape(1, -1)
+                # img_array = img_array.reshape(1, -1)
+
+                img_array = img_array.reshape(1, 1, 28, 28)
 
                 images.append(img_array)
                 filenames.append(filename)
@@ -40,6 +43,7 @@ def load_custom_images(folder_path):
     else:
         return np.array([]), []
 
+# CNN exec
 def predict_custom_images(model, batch_folder_path):
     X_custom, filenames = load_custom_images(batch_folder_path)
 
@@ -47,19 +51,19 @@ def predict_custom_images(model, batch_folder_path):
         print("Could not find image's folder.")
         return
 
-    X_custom_T  = X_custom.T
-    predictions = model.predict(X_custom_T)
+    # X_custom_T  = X_custom.T
+    predictions = model.predict(X_custom)
 
-    plt.figure(figsize=(15, 5))
-    for i in range(min(10, len(X_custom))):
-        plt.subplot(2, 5, i+1)
+    plt.figure(figsize=(15, 12))
+    for i in range(min(20, len(X_custom))):
+        plt.subplot(4, 5, i+1)
         plt.imshow(X_custom[i].reshape(28, 28), cmap='gray')
         predicted_class = np.argmax(predictions[:, i])
         plt.title(f"Pred: {predicted_class}")
         plt.axis('off')
 
     plt.tight_layout()
-    plt.savefig('ff_predictions.png')
+    plt.savefig('cnn_predictions.png')
     plt.show()
 
     for i, filename in enumerate(filenames):

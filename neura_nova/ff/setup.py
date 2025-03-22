@@ -43,11 +43,11 @@ def build_and_train_ff_model_with_config(config, index, loss_fun=SoftmaxCrossEnt
     n_folds = max(2, train_dimension // validation_dimension)
     folds   = create_kfold_indices(X_train.shape[0], n_folds)
 
-    fold_results      = []
-    fold_count        = 1
-    best_val_accuracy = 0
+    fold_results       = []
+    fold_count         = 1
+    best_val_accuracy  = 0
     best_test_accuracy = 0
-    best_model        = None
+    best_model         = None
 
     X_test_T        = X_test.T
     y_test_onehot_T = y_test_onehot.T
@@ -89,12 +89,6 @@ def build_and_train_ff_model_with_config(config, index, loss_fun=SoftmaxCrossEnt
         val_accuracy  = nn.getAccuracy(X_val_fold, y_val_fold, X_val_fold.shape[1])
         test_accuracy = nn.getAccuracy(X_test_T, y_test_onehot_T, test_dimension)
         test_accuracies.append(test_accuracy)
-
-        """
-        if val_accuracy > best_val_accuracy:
-            best_val_accuracy = val_accuracy
-            best_model = nn
-        """
 
         if test_accuracy > best_test_accuracy:
             best_test_accuracy = test_accuracy

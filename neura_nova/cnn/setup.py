@@ -40,10 +40,11 @@ def build_and_train_cnn_model_with_config(config, index, loss_fun=SoftmaxCrossEn
     n_folds = max(2, X_train.shape[0] // config['validation_dimension'])
     folds   = create_kfold_indices(X_train.shape[0], n_folds)
 
-    fold_results      = []
-    fold_count        = 1
-    best_val_accuracy = 0
-    best_model        = None
+    fold_results       = []
+    fold_count         = 1
+    best_val_accuracy  = 0
+    best_test_accuracy = 0
+    best_model         = None
 
     # X_test_T        = X_test.T
     # y_test_onehot_T = y_test_onehot.T
@@ -110,8 +111,8 @@ def build_and_train_cnn_model_with_config(config, index, loss_fun=SoftmaxCrossEn
         test_accuracy = nn.getAccuracy(X_test, y_test_onehot, test_dimension)
         test_accuracies.append(test_accuracy)
 
-        if val_accuracy > best_val_accuracy:
-            best_val_accuracy = val_accuracy
+        if test_accuracy > best_test_accuracy:
+            best_test_accuracy = test_accuracy
             best_model = nn
 
         fold_results.append({
@@ -128,10 +129,8 @@ def build_and_train_cnn_model_with_config(config, index, loss_fun=SoftmaxCrossEn
     # Show results using the best model
     show_results(best_model, X_test, y_test_onehot, "cnn", index)
 
-    """
     if predict_custom and best_model is not None:
         predictions, filenames = predict_custom_images(best_model, custom_images_path)
-    """
 
     avg_val_accuracy = np.mean([fold['val_accuracy'] for fold in fold_results])
     result = {
