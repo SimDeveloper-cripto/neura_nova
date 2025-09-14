@@ -109,7 +109,7 @@ def build_and_train_ff_model_with_config(config, index, loss_fun=SoftmaxCrossEnt
     show_results(best_model, X_test_T, y_test_onehot_T, "ff", index)
 
     if predict_custom and best_model is not None:
-        predictions, filenames = predict_custom_images(best_model, custom_images_path)
+        predictions, filenames = predict_custom_images(best_model, custom_images_path)  # TODO: this method is used for CNNs, It needs an update
 
     avg_val_accuracy = np.mean([fold['val_accuracy'] for fold in fold_results])
     result = {

@@ -49,7 +49,7 @@ def predict_custom_images(model, batch_folder_path):
 
     if len(X_custom) == 0:
         print("Could not find image's folder.")
-        return
+        return None
 
     # X_custom_T  = X_custom.T
     predictions = model.predict(X_custom)

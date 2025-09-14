@@ -119,7 +119,7 @@ class Convolutional(Network):
 
             print(f"epoch {epoch}/{epochs}, train_loss: {epoch_loss:.4f} val_loss: {val_loss:.4f}")
 
-            # GRAFICI DI FUNZIONE: BASATI SU MEDIE ARITMETICHE
+            # GRAPHS: BASED ON ARITHMETIC MEANS
             epoch_accuracy = self.arithmetic_mean(X_shuffled, y_shuffled)
             val_accuracy   = self.arithmetic_mean(X_val, y_val)
 

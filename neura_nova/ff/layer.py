@@ -67,7 +67,7 @@ class DenseLayer:
         input_data = input_data.astype(np.float32)
         self.input = input_data
         self.input = np.ascontiguousarray(input_data, dtype=np.float32)
-        z          = self.weights @ input_data + self.bias
+        z          = self.weights @ self.input + self.bias
 
         match self.activation:
             case 'relu':

@@ -57,12 +57,12 @@ class FeedForward(Network):
     def train(self, X, y, epochs, X_val, y_val, batch_size, stopping_criterion=3):
         num_samples = X.shape[1]
 
-        best_val_loss = float('inf')
+        best_val_loss    = float('inf')
         stopping_counter = 0
-        best_weights = None
+        best_weights     = None
 
         for epoch in range(1, epochs + 1):
-            indices = np.random.permutation(num_samples)
+            indices    = np.random.permutation(num_samples)
             X_shuffled = X[:, indices]  # (input_dim, N)
             y_shuffled = y[:, indices]  # (num_classes, N)
 

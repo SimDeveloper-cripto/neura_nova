@@ -5,7 +5,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-# Written for CNNs
+# TODO: written for CNNs
 def visualize_predictions(nn, X_test, y_test_onehot, num_immagini=25, save_dir="results"):
     os.makedirs(save_dir, exist_ok=True)
 
